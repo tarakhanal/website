@@ -1,16 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useCountdown } from '@/hooks/useCountdown';
 
+const GUEST_NAME_KEY = 'wedding_guest_name';
+
 export default function EnvelopeLanding() {
   const [stage, setStage] = useState<'envelope' | 'animating' | 'opened'>('envelope');
+  const [guestName, setGuestName] = useState<string | null>(null);
   const { days, hours, minutes, seconds } = useCountdown();
   const searchParams = useSearchParams();
-  const guestName = searchParams.get('name');
+
+  useEffect(() => {
+    const urlName = searchParams.get('name');
+    if (urlName) {
+      localStorage.setItem(GUEST_NAME_KEY, urlName);
+      setGuestName(urlName);
+    } else {
+      setGuestName(localStorage.getItem(GUEST_NAME_KEY));
+    }
+  }, [searchParams]);
 
   const handleCardClick = () => {
     if (stage === 'envelope') {
