@@ -269,7 +269,7 @@ export default function EnvelopeLanding() {
 
               {/* ===== JANTI BADGE (only if guest name provided) ===== */}
               {guestName && (
-                <g transform="translate(180, 0) scale(1.3)">
+                <g transform="translate(180, 18) scale(1.3)">
                   {/* Ribbon tails hanging down */}
                   <path d="M -8,38 L -14,95 L -6,80 L 0,95 L 2,38" fill="#8B1A2B" opacity="0.85"/>
                   <path d="M -2,38 L 0,95 L 6,80 L 14,95 L 8,38" fill="#A02035" opacity="0.85"/>
