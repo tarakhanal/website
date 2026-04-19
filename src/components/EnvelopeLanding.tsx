@@ -7,16 +7,20 @@ import Link from 'next/link';
 import { useCountdown } from '@/hooks/useCountdown';
 
 export default function EnvelopeLanding() {
-  const [isOpened, setIsOpened] = useState(false);
+  const [stage, setStage] = useState<'envelope' | 'animating' | 'opened'>('envelope');
   const { days, hours, minutes, seconds } = useCountdown();
   const searchParams = useSearchParams();
   const guestName = searchParams.get('name');
 
   const handleCardClick = () => {
-    setIsOpened(true);
+    if (stage === 'envelope') {
+      setStage('animating');
+      setTimeout(() => setStage('opened'), 2400);
+    }
   };
 
-  if (isOpened) {
+  // Stage 3: Fully opened - show the invitation content
+  if (stage === 'opened') {
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -56,7 +60,7 @@ export default function EnvelopeLanding() {
             transition={{ duration: 0.6, delay: 1 }}
             className="text-lg text-[#3D3D3D] mb-8 font-light"
           >
-            May 8, 2027 • Kenwood, CA
+            May 8, 2027
           </motion.p>
 
           <motion.div
@@ -104,6 +108,258 @@ export default function EnvelopeLanding() {
     );
   }
 
+  // Stage 2: Card flying out animation
+  // We render the FULL envelope (same as stage 1) sliding down,
+  // with a cream card sliding up from behind it.
+  if (stage === 'animating') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] flex items-center justify-center p-4 overflow-hidden">
+        <div className="relative w-full max-w-sm flex flex-col items-center">
+
+          {/* Letter card – starts behind envelope, slides UP */}
+          <motion.div
+            className="absolute w-[88%] left-[6%]"
+            style={{ aspectRatio: '9/14', zIndex: 1 }}
+            initial={{ y: 0 }}
+            animate={{
+              y: [0, -300, -300],
+              scale: [1, 1, 3.5],
+              borderRadius: ['8px', '8px', '0px'],
+            }}
+            transition={{
+              duration: 2.4,
+              times: [0, 0.5, 1],
+              ease: 'easeInOut',
+            }}
+          >
+            <div className="w-full h-full bg-gradient-to-b from-[#FFF8F0] to-[#F5E6E0] rounded-lg shadow-xl flex flex-col items-center justify-center p-8">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+                className="text-center"
+              >
+                <p className="text-[#8B7355] text-sm uppercase tracking-widest mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>Together with</p>
+                <h2 className="text-3xl md:text-4xl font-bold text-[#C41E3A] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  Tara & Bandana
+                </h2>
+                <p className="text-[#8B7355] text-xs tracking-wide">May 8, 2027</p>
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Full envelope – slides DOWN while staying on top */}
+          <motion.div
+            className="w-full relative"
+            style={{ zIndex: 2 }}
+            initial={{ y: 0 }}
+            animate={{ y: 600 }}
+            transition={{ duration: 1.4, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <div
+              className="relative w-full bg-[#B81A2D] rounded-lg shadow-2xl overflow-hidden"
+              style={{ aspectRatio: '9/14' }}
+            >
+              {/* Textured paper background */}
+              <div className="absolute inset-0 opacity-15">
+                <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+                  <filter id="paperNoise2">
+                    <feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="5" />
+                    <feColorMatrix type="saturate" values="0" />
+                  </filter>
+                  <rect width="100" height="100" fill="#fff" filter="url(#paperNoise2)" />
+                </svg>
+              </div>
+
+              {/* Gold double border */}
+              <div className="absolute inset-[10px] border-[2px] border-[#D4AF85] opacity-70 rounded-sm z-[1]"></div>
+              <div className="absolute inset-[16px] border-[1px] border-[#D4AF85] opacity-50 rounded-sm z-[1]"></div>
+
+              {/* Full SVG decorations */}
+              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 360 560" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <g id="lotusUpLg2">
+                    <path d="M 0,0 C -4,-2 -14,-12 -10,-18 C -7,-22 -2,-18 0,-10 C 2,-18 7,-22 10,-18 C 14,-12 4,-2 0,0 Z" fill="#E8C896" opacity="0.65" transform="translate(-14, 2) rotate(-35, 0, 0)"/>
+                    <path d="M 0,0 C -4,-2 -14,-12 -10,-18 C -7,-22 -2,-18 0,-10 C 2,-18 7,-22 10,-18 C 14,-12 4,-2 0,0 Z" fill="#E8C896" opacity="0.65" transform="translate(14, 2) rotate(35, 0, 0)"/>
+                    <path d="M 0,0 C -4,-2 -14,-14 -9,-20 C -6,-24 -2,-19 0,-12 C 2,-19 6,-24 9,-20 C 14,-14 4,-2 0,0 Z" fill="#E8C896" opacity="0.75" transform="translate(-8, -1) rotate(-18, 0, 0)"/>
+                    <path d="M 0,0 C -4,-2 -14,-14 -9,-20 C -6,-24 -2,-19 0,-12 C 2,-19 6,-24 9,-20 C 14,-14 4,-2 0,0 Z" fill="#E8C896" opacity="0.75" transform="translate(8, -1) rotate(18, 0, 0)"/>
+                    <path d="M 0,0 C -3,-3 -10,-16 -6,-22 C -3,-26 -1,-20 0,-14 C 1,-20 3,-26 6,-22 C 10,-16 3,-3 0,0 Z" fill="#E8C896" opacity="0.85" transform="translate(-3, -2)"/>
+                    <path d="M 0,0 C -3,-3 -10,-16 -6,-22 C -3,-26 -1,-20 0,-14 C 1,-20 3,-26 6,-22 C 10,-16 3,-3 0,0 Z" fill="#E8C896" opacity="0.85" transform="translate(3, -2)"/>
+                    <path d="M 0,0 C -2,-4 -7,-18 -4,-24 C -2,-27 -0.5,-22 0,-16 C 0.5,-22 2,-27 4,-24 C 7,-18 2,-4 0,0 Z" fill="#F0D8A8" opacity="0.95"/>
+                    <circle cx="0" cy="-3" r="2" fill="#D4A050" opacity="0.5"/>
+                  </g>
+                  <g id="lotusUpMd2">
+                    <path d="M 0,0 C -3,-2 -10,-10 -7,-14 C -5,-17 -1.5,-13 0,-8 C 1.5,-13 5,-17 7,-14 C 10,-10 3,-2 0,0 Z" fill="#E8C896" opacity="0.65" transform="translate(-10, 1.5) rotate(-32, 0, 0)"/>
+                    <path d="M 0,0 C -3,-2 -10,-10 -7,-14 C -5,-17 -1.5,-13 0,-8 C 1.5,-13 5,-17 7,-14 C 10,-10 3,-2 0,0 Z" fill="#E8C896" opacity="0.65" transform="translate(10, 1.5) rotate(32, 0, 0)"/>
+                    <path d="M 0,0 C -3,-2 -10,-11 -7,-16 C -4.5,-19 -1.5,-15 0,-9 C 1.5,-15 4.5,-19 7,-16 C 10,-11 3,-2 0,0 Z" fill="#E8C896" opacity="0.78" transform="translate(-5.5, -0.5) rotate(-15, 0, 0)"/>
+                    <path d="M 0,0 C -3,-2 -10,-11 -7,-16 C -4.5,-19 -1.5,-15 0,-9 C 1.5,-15 4.5,-19 7,-16 C 10,-11 3,-2 0,0 Z" fill="#E8C896" opacity="0.78" transform="translate(5.5, -0.5) rotate(15, 0, 0)"/>
+                    <path d="M 0,0 C -2,-3 -7,-14 -4,-18 C -2,-21 -0.5,-16 0,-11 C 0.5,-16 2,-21 4,-18 C 7,-14 2,-3 0,0 Z" fill="#F0D8A8" opacity="0.92"/>
+                    <circle cx="0" cy="-2.5" r="1.5" fill="#D4A050" opacity="0.5"/>
+                  </g>
+                  <g id="lotusUpSm2">
+                    <path d="M 0,0 C -2,-1.5 -7,-8 -5,-11 C -3.5,-13 -1,-10 0,-6 C 1,-10 3.5,-13 5,-11 C 7,-8 2,-1.5 0,0 Z" fill="#E8C896" opacity="0.7" transform="translate(-6, 1) rotate(-28, 0, 0)"/>
+                    <path d="M 0,0 C -2,-1.5 -7,-8 -5,-11 C -3.5,-13 -1,-10 0,-6 C 1,-10 3.5,-13 5,-11 C 7,-8 2,-1.5 0,0 Z" fill="#E8C896" opacity="0.7" transform="translate(6, 1) rotate(28, 0, 0)"/>
+                    <path d="M 0,0 C -2,-2 -6,-10 -4,-13 C -2,-15.5 -0.5,-12 0,-8 C 0.5,-12 2,-15.5 4,-13 C 6,-10 2,-2 0,0 Z" fill="#F0D8A8" opacity="0.9"/>
+                    <circle cx="0" cy="-2" r="1.2" fill="#D4A050" opacity="0.5"/>
+                  </g>
+                  <g id="lotusBud2">
+                    <path d="M 0,0 C -1.5,-1.5 -5,-7 -3,-10 C -1.5,-12 -0.5,-9 0,-5.5 C 0.5,-9 1.5,-12 3,-10 C 5,-7 1.5,-1.5 0,0 Z" fill="#E8C896" opacity="0.75" transform="translate(-3, 0.5) rotate(-18, 0, 0)"/>
+                    <path d="M 0,0 C -1.5,-1.5 -5,-7 -3,-10 C -1.5,-12 -0.5,-9 0,-5.5 C 0.5,-9 1.5,-12 3,-10 C 5,-7 1.5,-1.5 0,0 Z" fill="#E8C896" opacity="0.75" transform="translate(3, 0.5) rotate(18, 0, 0)"/>
+                    <path d="M 0,0 C -1,-2 -4,-8 -2.5,-10.5 C -1,-12.5 -0.3,-9 0,-6 C 0.3,-9 1,-12.5 2.5,-10.5 C 4,-8 1,-2 0,0 Z" fill="#F0D8A8" opacity="0.9"/>
+                    <circle cx="0" cy="-1.5" r="0.9" fill="#D4A050" opacity="0.5"/>
+                  </g>
+                  <g id="lotusHangLg2">
+                    <path d="M 0,0 C -4,2 -14,12 -10,18 C -7,22 -2,18 0,10 C 2,18 7,22 10,18 C 14,12 4,2 0,0 Z" fill="#E8C896" opacity="0.65" transform="translate(-14, -2) rotate(35, 0, 0)"/>
+                    <path d="M 0,0 C -4,2 -14,12 -10,18 C -7,22 -2,18 0,10 C 2,18 7,22 10,18 C 14,12 4,2 0,0 Z" fill="#E8C896" opacity="0.65" transform="translate(14, -2) rotate(-35, 0, 0)"/>
+                    <path d="M 0,0 C -4,2 -14,14 -9,20 C -6,24 -2,19 0,12 C 2,19 6,24 9,20 C 14,14 4,2 0,0 Z" fill="#E8C896" opacity="0.75" transform="translate(-8, 1) rotate(18, 0, 0)"/>
+                    <path d="M 0,0 C -4,2 -14,14 -9,20 C -6,24 -2,19 0,12 C 2,19 6,24 9,20 C 14,14 4,2 0,0 Z" fill="#E8C896" opacity="0.75" transform="translate(8, 1) rotate(-18, 0, 0)"/>
+                    <path d="M 0,0 C -2,4 -7,18 -4,24 C -2,27 -0.5,22 0,16 C 0.5,22 2,27 4,24 C 7,18 2,4 0,0 Z" fill="#F0D8A8" opacity="0.95"/>
+                    <circle cx="0" cy="3" r="2" fill="#D4A050" opacity="0.5"/>
+                  </g>
+                  <g id="lotusHangSm2">
+                    <path d="M 0,0 C -2,1.5 -7,8 -5,11 C -3.5,13 -1,10 0,6 C 1,10 3.5,13 5,11 C 7,8 2,1.5 0,0 Z" fill="#E8C896" opacity="0.7" transform="translate(-6, -1) rotate(28, 0, 0)"/>
+                    <path d="M 0,0 C -2,1.5 -7,8 -5,11 C -3.5,13 -1,10 0,6 C 1,10 3.5,13 5,11 C 7,8 2,1.5 0,0 Z" fill="#E8C896" opacity="0.7" transform="translate(6, -1) rotate(-28, 0, 0)"/>
+                    <path d="M 0,0 C -2,2 -6,10 -4,13 C -2,15.5 -0.5,12 0,8 C 0.5,12 2,15.5 4,13 C 6,10 2,2 0,0 Z" fill="#F0D8A8" opacity="0.9"/>
+                    <circle cx="0" cy="2" r="1.2" fill="#D4A050" opacity="0.5"/>
+                  </g>
+                  <g id="leafNode2">
+                    <path d="M -3,0.5 C -5,-2 -7,-6 -5,-8 C -3,-10 -1,-5 0,-2 C 1,-5 3,-10 5,-8 C 7,-6 5,-2 3,0.5" fill="#E8C896" opacity="0.8"/>
+                  </g>
+                  <g id="leafNodeHang2">
+                    <path d="M -3,-0.5 C -5,2 -7,6 -5,8 C -3,10 -1,5 0,2 C 1,5 3,10 5,8 C 7,6 5,2 3,-0.5" fill="#E8C896" opacity="0.8"/>
+                  </g>
+                </defs>
+
+                {/* TOP hanging flowers */}
+                <g>
+                  <line x1="40" y1="0" x2="40" y2="95" stroke="#D4AF85" strokeWidth="0.7" opacity="0.8"/>
+                  <use href="#lotusHangSm2" x="40" y="91"/>
+                  <use href="#leafNodeHang2" x="40" y="50"/>
+                </g>
+                <g>
+                  <line x1="65" y1="0" x2="65" y2="140" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
+                  <use href="#lotusHangLg2" x="65" y="135"/>
+                  <use href="#leafNodeHang2" x="65" y="40"/>
+                  <use href="#leafNodeHang2" x="65" y="72"/>
+                  <use href="#leafNodeHang2" x="65" y="104"/>
+                </g>
+                <g>
+                  <line x1="90" y1="0" x2="90" y2="88" stroke="#D4AF85" strokeWidth="0.65" opacity="0.75"/>
+                  <use href="#lotusHangSm2" x="90" y="84"/>
+                  <use href="#leafNodeHang2" x="90" y="45"/>
+                </g>
+                <g>
+                  <line x1="270" y1="0" x2="270" y2="88" stroke="#D4AF85" strokeWidth="0.65" opacity="0.75"/>
+                  <use href="#lotusHangSm2" x="270" y="84"/>
+                  <use href="#leafNodeHang2" x="270" y="45"/>
+                </g>
+                <g>
+                  <line x1="295" y1="0" x2="295" y2="140" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
+                  <use href="#lotusHangLg2" x="295" y="135"/>
+                  <use href="#leafNodeHang2" x="295" y="40"/>
+                  <use href="#leafNodeHang2" x="295" y="72"/>
+                  <use href="#leafNodeHang2" x="295" y="104"/>
+                </g>
+                <g>
+                  <line x1="320" y1="0" x2="320" y2="95" stroke="#D4AF85" strokeWidth="0.7" opacity="0.8"/>
+                  <use href="#lotusHangSm2" x="320" y="91"/>
+                  <use href="#leafNodeHang2" x="320" y="50"/>
+                </g>
+
+                {/* Flourish */}
+                <g transform="translate(180, 265)" opacity="0.8">
+                  <path d="M -75 -18 C -82 -24, -88 -18, -85 -12 C -82 -6, -74 -10, -75 -18" stroke="#D4AF85" strokeWidth="1.4" fill="none" strokeLinecap="round"/>
+                  <path d="M -75 -14 C -65 -8, -55 15, -30 22 C -5 29, 20 28, 40 22 C 60 16, 70 5, 55 -2 C 40 -9, 15 -5, -5 5 C -25 15, -45 22, -55 15 C -65 8, -55 -2, -40 2 C -25 6, -5 15, 20 18 C 45 21, 65 15, 75 5" stroke="#D4AF85" strokeWidth="1.4" fill="none" strokeLinecap="round"/>
+                  <path d="M 75 5 C 80 -2, 85 2, 82 8 C 79 14, 73 10, 75 5" stroke="#D4AF85" strokeWidth="1.4" fill="none" strokeLinecap="round"/>
+                </g>
+
+                {/* BOTTOM LEFT flowers */}
+                <g>
+                  <line x1="120" y1="555" x2="120" y2="360" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
+                  <use href="#lotusUpLg2" x="120" y="362"/>
+                  <use href="#leafNode2" x="120" y="520"/><use href="#leafNode2" x="120" y="475"/><use href="#leafNode2" x="120" y="430"/>
+                </g>
+                <g>
+                  <line x1="100" y1="555" x2="100" y2="385" stroke="#D4AF85" strokeWidth="0.9" opacity="0.88"/>
+                  <use href="#lotusUpMd2" x="100" y="387"/>
+                  <use href="#leafNode2" x="100" y="510"/><use href="#leafNode2" x="100" y="460"/>
+                </g>
+                <g>
+                  <line x1="78" y1="555" x2="78" y2="410" stroke="#D4AF85" strokeWidth="0.9" opacity="0.85"/>
+                  <use href="#lotusUpMd2" x="78" y="412"/>
+                  <use href="#leafNode2" x="78" y="515"/><use href="#leafNode2" x="78" y="470"/>
+                </g>
+                <g>
+                  <line x1="55" y1="555" x2="55" y2="435" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
+                  <use href="#lotusUpLg2" x="55" y="437"/>
+                  <use href="#leafNode2" x="55" y="510"/>
+                </g>
+                <g>
+                  <line x1="38" y1="555" x2="38" y2="470" stroke="#D4AF85" strokeWidth="0.7" opacity="0.8"/>
+                  <use href="#lotusUpSm2" x="38" y="472"/>
+                  <use href="#leafNode2" x="38" y="520"/>
+                </g>
+                <g>
+                  <line x1="68" y1="555" x2="68" y2="485" stroke="#D4AF85" strokeWidth="0.6" opacity="0.75"/>
+                  <use href="#lotusBud2" x="68" y="487"/>
+                </g>
+                <g>
+                  <line x1="28" y1="555" x2="28" y2="500" stroke="#D4AF85" strokeWidth="0.6" opacity="0.7"/>
+                  <use href="#lotusBud2" x="28" y="502"/>
+                </g>
+
+                {/* BOTTOM RIGHT flowers */}
+                <g>
+                  <line x1="240" y1="555" x2="240" y2="360" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
+                  <use href="#lotusUpLg2" x="240" y="362"/>
+                  <use href="#leafNode2" x="240" y="520"/><use href="#leafNode2" x="240" y="475"/><use href="#leafNode2" x="240" y="430"/>
+                </g>
+                <g>
+                  <line x1="260" y1="555" x2="260" y2="385" stroke="#D4AF85" strokeWidth="0.9" opacity="0.88"/>
+                  <use href="#lotusUpMd2" x="260" y="387"/>
+                  <use href="#leafNode2" x="260" y="510"/><use href="#leafNode2" x="260" y="460"/>
+                </g>
+                <g>
+                  <line x1="282" y1="555" x2="282" y2="410" stroke="#D4AF85" strokeWidth="0.9" opacity="0.85"/>
+                  <use href="#lotusUpMd2" x="282" y="412"/>
+                  <use href="#leafNode2" x="282" y="515"/><use href="#leafNode2" x="282" y="470"/>
+                </g>
+                <g>
+                  <line x1="305" y1="555" x2="305" y2="435" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
+                  <use href="#lotusUpLg2" x="305" y="437"/>
+                  <use href="#leafNode2" x="305" y="510"/>
+                </g>
+                <g>
+                  <line x1="322" y1="555" x2="322" y2="470" stroke="#D4AF85" strokeWidth="0.7" opacity="0.8"/>
+                  <use href="#lotusUpSm2" x="322" y="472"/>
+                  <use href="#leafNode2" x="322" y="520"/>
+                </g>
+                <g>
+                  <line x1="292" y1="555" x2="292" y2="485" stroke="#D4AF85" strokeWidth="0.6" opacity="0.75"/>
+                  <use href="#lotusBud2" x="292" y="487"/>
+                </g>
+                <g>
+                  <line x1="335" y1="555" x2="335" y2="500" stroke="#D4AF85" strokeWidth="0.6" opacity="0.7"/>
+                  <use href="#lotusBud2" x="335" y="502"/>
+                </g>
+              </svg>
+
+              {/* Center Text */}
+              <div className="absolute inset-0 flex flex-col items-center z-10" style={{ justifyContent: 'center', paddingBottom: '18%' }}>
+                <div className="text-center">
+                  <div className="text-[#E8C896] text-5xl md:text-6xl font-bold tracking-wide" style={{ fontFamily: "'Playfair Display', serif", textShadow: '0 0 15px rgba(232,200,150,0.4), 0 2px 4px rgba(0,0,0,0.2)' }}>
+                    ननिमन्त्रणा
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // Stage 1: Envelope
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] flex items-center justify-center p-4">
       <div className="w-full flex flex-col items-center justify-center gap-8">
