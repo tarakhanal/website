@@ -35,7 +35,7 @@ export default function Navigation() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-white/95 backdrop-blur shadow-md' : 'bg-transparent'
+        scrolled || isOpen ? 'bg-white/95 backdrop-blur shadow-md' : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,15 +84,16 @@ export default function Navigation() {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: isOpen ? 1 : 0, height: isOpen ? 'auto' : 0 }}
           transition={{ duration: 0.3 }}
-          className="md:hidden overflow-hidden bg-white/95 backdrop-blur"
+          className="md:hidden overflow-hidden"
         >
           <div className="px-4 py-4 space-y-3">
             {navItems.map((item) => (
               <Link key={item.href} href={item.href}>
                 <motion.div
                   onClick={() => setIsOpen(false)}
-                  whileHover={{ paddingLeft: 12 }}
-                  className="text-[#3D3D3D] py-2 font-medium text-sm uppercase tracking-wide cursor-pointer"
+                  whileHover={{ backgroundColor: 'rgba(212, 175, 133, 0.15)' }}
+                  whileTap={{ backgroundColor: 'rgba(212, 175, 133, 0.25)' }}
+                  className="text-[#3D3D3D] py-4 px-4 rounded-lg font-medium text-xl uppercase tracking-wide cursor-pointer text-center transition-colors hover:text-[#8B7355]"
                 >
                   {item.label}
                 </motion.div>

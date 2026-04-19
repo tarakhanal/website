@@ -40,26 +40,38 @@ export default function HomePage() {
         <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#FAFAF8] to-transparent z-10 pointer-events-none" />
         <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#FAFAF8] to-transparent z-10 pointer-events-none" />
         <motion.div
-          className="flex gap-6 w-max"
+          className="flex w-max"
           animate={{ x: ['0%', '-50%'] }}
-          transition={{ x: { repeat: Infinity, repeatType: 'loop', duration: 30, ease: 'linear' } }}
+          transition={{ x: { repeat: Infinity, repeatType: 'loop', duration: 60, ease: 'linear' } }}
         >
           {[...Array(2)].flatMap((_, setIndex) =>
             [
-              { src: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=280&fit=crop', alt: 'Wedding flowers' },
-              { src: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400&h=280&fit=crop', alt: 'Wedding rings' },
-              { src: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=400&h=280&fit=crop', alt: 'Vineyard' },
-              { src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=280&fit=crop', alt: 'Couple portrait' },
-              { src: 'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=400&h=280&fit=crop', alt: 'Wine country' },
-              { src: 'https://images.unsplash.com/photo-1478146059778-26028b07395a?w=400&h=280&fit=crop', alt: 'Wedding decor' },
-            ].map((img, i) => (
+              '04446EEE-0136-418E-8902-62C240512589_1_105_c.jpeg',
+              '2541030F-6D6B-4371-A4BA-3C32119F9069_1_105_c.jpeg',
+              '2A9431D3-9F4F-437A-B5C6-E17595A55B57_1_105_c.jpeg',
+              '38D3FC1B-AD16-4FDF-9F54-BB48A4A29A56_1_105_c.jpeg',
+              '3BBD37D8-1EDA-4B45-A8DA-26F5C2B40DEA_1_105_c.jpeg',
+              '41C52320-34D7-49B6-95B3-B4D49271D9B7_1_105_c.jpeg',
+              '7CD00EBC-D6FC-44D1-B8CF-21BD319CEE49_1_105_c.jpeg',
+              '8C1C35BA-2AAA-4A19-8D1F-272F7C119B69_1_105_c.jpeg',
+              '95FA751A-7DC3-497B-9912-C832408865D8_1_105_c.jpeg',
+              '9B540E62-DA4C-4F60-93CE-C4784369E726_1_105_c.jpeg',
+              'AB20A646-3F68-4945-9E85-3BE4932307FC_1_105_c.jpeg',
+              'B48CEB98-E69A-4C1E-9798-CFE315E7D9A5_1_105_c.jpeg',
+              'B7CF0A72-82A0-49D4-B451-BA5BBAA4D442_1_105_c.jpeg',
+              'DBDF2D51-A9DF-4BC1-87DC-58089D0AB3FD_1_105_c.jpeg',
+              'EDEB0BCA-CAF3-4E72-B050-9233443B7C6A_1_105_c.jpeg',
+              'EE4E2EFE-9BC4-4E66-A3E5-5D37E31898C5_1_105_c.jpeg',
+              'EEC2C875-CEA2-47C8-940C-D56522D07FE8_1_105_c.jpeg',
+              'F04BA61A-C8E5-4940-983E-FB4CFAAA77C7_1_105_c.jpeg',
+            ].map((filename, i) => (
               <div
                 key={`${setIndex}-${i}`}
-                className="flex-shrink-0 w-[280px] h-[190px] rounded-2xl overflow-hidden shadow-lg"
+                className="flex-shrink-0 w-[280px] h-[190px] overflow-hidden"
               >
                 <img
-                  src={img.src}
-                  alt={img.alt}
+                  src={`/images/${filename}`}
+                  alt={`Wedding photo ${i + 1}`}
                   className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
                 />
               </div>
@@ -92,10 +104,9 @@ export default function HomePage() {
             Tara & Bandana
           </motion.h2>
 
-          <motion.div variants={itemVariants} className="flex justify-center gap-2 mb-12 flex-wrap">
-            <span className="text-lg text-[#3D3D3D] font-light">May 8, 2027</span>
-            <span className="text-lg text-[#8B7355] font-light">•</span>
-            <span className="text-lg text-[#3D3D3D] font-light">Kenwood, California</span>
+          <motion.div variants={itemVariants} className="flex flex-col items-center gap-2 mb-12">
+            <span className="text-lg text-[#3D3D3D] font-light">May 8, 2027 📍 Pittsburgh, Pennsylvania</span>
+            <span className="text-lg text-[#3D3D3D] font-light">May 9, 2027 📍 Columbus, Ohio</span>
           </motion.div>
 
           <motion.p
@@ -167,8 +178,33 @@ export default function HomePage() {
             <p className="text-[#8B7355]">Map and directions coming soon</p>
           </motion.div>
 
-          {/* Contact */}
-          <motion.div variants={itemVariants} className="text-center md:text-left">
+          {/* Registry */}
+          <motion.div
+            variants={itemVariants}
+            className="text-center md:text-left md:col-span-2 bg-gradient-to-r from-[#8B7355] to-[#A8896C] rounded-2xl p-8 shadow-lg"
+          >
+            <h3
+              className="text-2xl font-bold text-white mb-3"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              🎁 Registry
+            </h3>
+            <p className="text-white/80 mb-5 text-lg">Your love and presence is the greatest gift — but if you'd like to celebrate us, explore our registry!</p>
+            <motion.a
+              href="/registry"
+              whileHover={{ scale: 1.05, boxShadow: '0 8px 25px rgba(0,0,0,0.2)' }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-block px-8 py-3 bg-white text-[#8B7355] rounded-full font-bold text-base uppercase tracking-wide shadow-md"
+            >
+              View Registry
+            </motion.a>
+          </motion.div>
+        </motion.div>
+
+        <div className="h-12" />
+
+        {/* Contact */}
+          <div className="max-w-4xl mx-auto text-center md:text-left">
             <h3
               className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center md:justify-start gap-2"
               style={{ fontFamily: "'Playfair Display', serif" }}
@@ -181,27 +217,7 @@ export default function HomePage() {
                 +1 (415) 555-1234
               </a>
             </p>
-          </motion.div>
-
-          {/* Registry */}
-          <motion.div variants={itemVariants} className="text-center md:text-left">
-            <h3
-              className="text-2xl font-bold text-[#8B7355] mb-4"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              Registry
-            </h3>
-            <p className="text-[#3D3D3D] mb-4">Explore our registry on Amazon</p>
-            <motion.a
-              href="/registry"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-block px-6 py-2 bg-[#D4AF85] text-white rounded-full font-semibold text-sm"
-            >
-              View Registry
-            </motion.a>
-          </motion.div>
-        </motion.div>
+          </div>
       </section>
     </main>
   );
