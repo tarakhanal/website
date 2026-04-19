@@ -369,7 +369,7 @@ export default function EnvelopeLanding() {
               </g>
             </svg>
 
-            {/* Center Text - निमन्त्रण positioned slightly above center */}
+            {/* Center Text - निमन्त्रणा positioned slightly above center */}
             <div className="absolute inset-0 flex flex-col items-center z-10" style={{ justifyContent: 'center', paddingBottom: '18%' }}>
               <motion.div
                 className="text-center"
@@ -377,7 +377,7 @@ export default function EnvelopeLanding() {
                 transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
               >
                 <div className="text-[#E8C896] text-5xl md:text-6xl font-bold tracking-wide" style={{ fontFamily: "'Playfair Display', serif", textShadow: '0 0 15px rgba(232,200,150,0.4), 0 2px 4px rgba(0,0,0,0.2)' }}>
-                  निमन्त्रण
+                  ननिमन्त्रणा
                 </div>
               </motion.div>
             </div>
