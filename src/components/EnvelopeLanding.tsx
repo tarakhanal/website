@@ -145,18 +145,13 @@ export default function EnvelopeLanding() {
             }}
           >
             <div className="w-full h-full bg-gradient-to-b from-[#FFF8F0] to-[#F5E6E0] rounded-lg shadow-xl flex flex-col items-center justify-center p-8">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 0.6 }}
-                className="text-center"
-              >
+              <div className="text-center">
                 <p className="text-[#8B7355] text-sm uppercase tracking-widest mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>Together with</p>
                 <h2 className="text-3xl md:text-4xl font-bold text-[#C41E3A] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
                   Tara & Bandana
                 </h2>
                 <p className="text-[#8B7355] text-xs tracking-wide">May 8, 2027</p>
-              </motion.div>
+              </div>
             </div>
           </motion.div>
 
