@@ -150,7 +150,7 @@ export default function HomePage() {
           className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12"
         >
           {/* Date & Time */}
-          <motion.div variants={itemVariants} className="text-center md:text-left">
+          <motion.div variants={itemVariants} className="text-center">
             <h3
               className="text-2xl font-bold text-[#8B7355] mb-4"
               style={{ fontFamily: "'Playfair Display', serif" }}
@@ -164,9 +164,9 @@ export default function HomePage() {
           </motion.div>
 
           {/* Location */}
-          <motion.div variants={itemVariants} className="text-center md:text-left">
+          <motion.div variants={itemVariants} className="text-center">
             <h3
-              className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center md:justify-start gap-2"
+              className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center gap-2"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               <MapPin className="w-6 h-6" />
@@ -181,7 +181,7 @@ export default function HomePage() {
           {/* Registry */}
           <motion.div
             variants={itemVariants}
-            className="text-center md:text-left md:col-span-2 bg-gradient-to-r from-[#8B7355] to-[#A8896C] rounded-2xl p-8 shadow-lg"
+            className="text-center md:col-span-2 bg-gradient-to-r from-[#8B7355] to-[#A8896C] rounded-2xl p-8 shadow-lg"
           >
             <h3
               className="text-2xl font-bold text-white mb-3"
@@ -204,9 +204,9 @@ export default function HomePage() {
         <div className="h-12" />
 
         {/* Contact */}
-          <div className="max-w-4xl mx-auto text-center md:text-left">
+          <div className="max-w-4xl mx-auto text-center">
             <h3
-              className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center md:justify-start gap-2"
+              className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center gap-2"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               <Phone className="w-6 h-6" />
