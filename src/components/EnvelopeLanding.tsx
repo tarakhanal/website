@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useCountdown } from '@/hooks/useCountdown';
@@ -8,6 +9,8 @@ import { useCountdown } from '@/hooks/useCountdown';
 export default function EnvelopeLanding() {
   const [isOpened, setIsOpened] = useState(false);
   const { days, hours, minutes, seconds } = useCountdown();
+  const searchParams = useSearchParams();
+  const guestName = searchParams.get('name');
 
   const handleCardClick = () => {
     setIsOpened(true);
@@ -263,6 +266,35 @@ export default function EnvelopeLanding() {
                 <use href="#lotusHangSm" x="320" y="91"/>
                 <use href="#leafNodeHang" x="320" y="50"/>
               </g>
+
+              {/* ===== JANTI BADGE (only if guest name provided) ===== */}
+              {guestName && (
+                <g transform="translate(180, 0) scale(1.3)">
+                  {/* Ribbon tails hanging down */}
+                  <path d="M -8,38 L -14,95 L -6,80 L 0,95 L 2,38" fill="#8B1A2B" opacity="0.85"/>
+                  <path d="M -2,38 L 0,95 L 6,80 L 14,95 L 8,38" fill="#A02035" opacity="0.85"/>
+                  
+                  {/* Ribbon bow - left loop */}
+                  <path d="M -2,30 C -18,22 -28,32 -20,38 C -12,44 -4,36 -2,30" fill="#8B1A2B" opacity="0.9"/>
+                  {/* Ribbon bow - right loop */}
+                  <path d="M 2,30 C 18,22 28,32 20,38 C 12,44 4,36 2,30" fill="#A02035" opacity="0.9"/>
+                  {/* Bow center knot */}
+                  <ellipse cx="0" cy="32" rx="4" ry="5" fill="#7A1525"/>
+                  
+                  {/* Badge circle - white/cream background */}
+                  <circle cx="0" cy="14" r="22" fill="#FFF8F0" stroke="#D4AF85" strokeWidth="1.2"/>
+                  {/* Scalloped/ruffled edge */}
+                  <circle cx="0" cy="14" r="24" fill="none" stroke="#C41E3A" strokeWidth="2.5" strokeDasharray="3,3" opacity="0.7"/>
+                  
+                  {/* Lines on the badge (like nepali kagaz) */}
+                  <line x1="-14" y1="8" x2="14" y2="8" stroke="#D4AF85" strokeWidth="0.4" opacity="0.5"/>
+                  <line x1="-14" y1="14" x2="14" y2="14" stroke="#D4AF85" strokeWidth="0.4" opacity="0.5"/>
+                  <line x1="-14" y1="20" x2="14" y2="20" stroke="#D4AF85" strokeWidth="0.4" opacity="0.5"/>
+                  
+                  {/* Guest name on the badge */}
+                  <text x="0" y="16" textAnchor="middle" fill="#8B1A2B" fontSize="7" fontFamily="'Playfair Display', serif" fontWeight="600">{guestName}</text>
+                </g>
+              )}
 
               {/* ===== CENTER: Entangled calligraphic flourish around text ===== */}
               {/* This starts above the first letters, swoops down and loops across the entire word */}
