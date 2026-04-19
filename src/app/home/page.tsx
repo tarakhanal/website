@@ -32,8 +32,44 @@ export default function HomePage() {
     <main className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-[#F5F1ED]">
       <Navigation />
 
+      {/* Spacer for fixed navbar */}
+      <div className="h-24" />
+
+      {/* Floating Image Marquee */}
+      <section className="relative overflow-hidden py-6 bg-gradient-to-r from-[#F5F1ED] via-white/60 to-[#F5F1ED]">
+        <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#FAFAF8] to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#FAFAF8] to-transparent z-10 pointer-events-none" />
+        <motion.div
+          className="flex gap-6 w-max"
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{ x: { repeat: Infinity, repeatType: 'loop', duration: 30, ease: 'linear' } }}
+        >
+          {[...Array(2)].flatMap((_, setIndex) =>
+            [
+              { src: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=280&fit=crop', alt: 'Wedding flowers' },
+              { src: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400&h=280&fit=crop', alt: 'Wedding rings' },
+              { src: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=400&h=280&fit=crop', alt: 'Vineyard' },
+              { src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=280&fit=crop', alt: 'Couple portrait' },
+              { src: 'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=400&h=280&fit=crop', alt: 'Wine country' },
+              { src: 'https://images.unsplash.com/photo-1478146059778-26028b07395a?w=400&h=280&fit=crop', alt: 'Wedding decor' },
+            ].map((img, i) => (
+              <div
+                key={`${setIndex}-${i}`}
+                className="flex-shrink-0 w-[280px] h-[190px] rounded-2xl overflow-hidden shadow-lg"
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                />
+              </div>
+            ))
+          )}
+        </motion.div>
+      </section>
+
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="pt-16 pb-20 px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={containerVariants}
           initial="hidden"
