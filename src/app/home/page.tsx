@@ -36,7 +36,7 @@ export default function HomePage() {
       <div className="h-24" />
 
       {/* Floating Image Marquee */}
-      <section className="relative overflow-hidden py-6 bg-gradient-to-r from-[#F5F1ED] via-white/60 to-[#F5F1ED]">
+      <section className="relative overflow-hidden min-h-[60vh] flex items-center py-12 bg-gradient-to-r from-[#F5F1ED] via-white/60 to-[#F5F1ED]">
         <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#FAFAF8] to-transparent z-10 pointer-events-none" />
         <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#FAFAF8] to-transparent z-10 pointer-events-none" />
         <motion.div
@@ -81,7 +81,7 @@ export default function HomePage() {
       </section>
            <div className="h-16" />
       {/* Hero Section */}
-      <section className="pt-16 pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="min-h-screen flex items-center px-4 sm:px-6 lg:px-8 py-24">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -109,22 +109,22 @@ export default function HomePage() {
             <span className="text-lg text-[#3D3D3D] font-light">May 9, 2027 📍 Columbus, Ohio</span>
           </motion.div> */}
 
-          <motion.div variants={itemVariants} className="flex justify-center gap-8 md:gap-12 mb-20">
+          <motion.div variants={itemVariants} className="flex justify-center gap-8 md:gap-16 mb-20">
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-[#C41E3A]">{days}</div>
-              <div className="text-sm text-[#8B7355] uppercase tracking-wider">Days</div>
+              <div className="text-5xl md:text-7xl font-bold text-[#8B7355]">{days}</div>
+              <div className="text-base text-[#8B7355] uppercase tracking-wider mt-2">Days</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-[#C41E3A]">{hours}</div>
-              <div className="text-sm text-[#8B7355] uppercase tracking-wider">Hours</div>
+              <div className="text-5xl md:text-7xl font-bold text-[#8B7355]">{hours}</div>
+              <div className="text-base text-[#8B7355] uppercase tracking-wider mt-2">Hours</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-[#C41E3A]">{minutes}</div>
-              <div className="text-sm text-[#8B7355] uppercase tracking-wider">Minutes</div>
+              <div className="text-5xl md:text-7xl font-bold text-[#8B7355]">{minutes}</div>
+              <div className="text-base text-[#8B7355] uppercase tracking-wider mt-2">Minutes</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-[#C41E3A]">{seconds}</div>
-              <div className="text-sm text-[#8B7355] uppercase tracking-wider">Seconds</div>
+              <div className="text-5xl md:text-7xl font-bold text-[#8B7355]">{seconds}</div>
+              <div className="text-base text-[#8B7355] uppercase tracking-wider mt-2">Seconds</div>
             </div>
           </motion.div>
 
@@ -147,10 +147,10 @@ export default function HomePage() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12"
+          className="max-w-4xl mx-auto grid grid-cols-1 gap-0"
         >
           {/* Date & Time */}
-          <motion.div variants={itemVariants} className="text-center">
+          <motion.div variants={itemVariants} className="min-h-screen flex flex-col items-center justify-center text-center py-24 border-b border-[#E8E0D5]">
             <h3
               className="text-2xl font-bold text-[#8B7355] mb-4"
               style={{ fontFamily: "'Playfair Display', serif" }}
@@ -173,7 +173,7 @@ export default function HomePage() {
           </motion.div>
 
           {/* Location */}
-          <motion.div variants={itemVariants} className="text-center">
+          <motion.div variants={itemVariants} className="min-h-screen flex flex-col items-center justify-center text-center py-24 border-b border-[#E8E0D5]">
             <h3
               className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center gap-2"
               style={{ fontFamily: "'Playfair Display', serif" }}
@@ -190,7 +190,7 @@ export default function HomePage() {
           {/* Registry */}
           <motion.div
             variants={itemVariants}
-            className="text-center md:col-span-2 bg-gradient-to-r from-[#8B7355] to-[#A8896C] rounded-2xl p-8 shadow-lg"
+            className="min-h-screen flex flex-col items-center justify-center text-center py-24 bg-gradient-to-r from-[#8B7355] to-[#A8896C] rounded-2xl shadow-lg my-8 px-8"
           >
             <h3
               className="text-2xl font-bold text-white mb-3"
@@ -213,7 +213,7 @@ export default function HomePage() {
         <div className="h-12" />
 
         {/* Contact */}
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="max-w-4xl mx-auto min-h-screen flex flex-col items-center justify-center text-center py-24">
             <h3
               className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center gap-2"
               style={{ fontFamily: "'Playfair Display', serif" }}
