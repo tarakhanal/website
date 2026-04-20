@@ -200,7 +200,18 @@ export default function HomePage() {
             <p className="text-lg text-[#3D3D3D] mb-2">
               <span className="font-semibold">Pittsburgh, Pennsylvania</span>
             </p>
-            <p className="text-[#8B7355]">Map and directions coming soon</p>
+            <div className="w-full mt-4 rounded-xl overflow-hidden shadow-lg" style={{ maxWidth: '600px' }}>
+              <iframe
+                title="Pittsburgh, PA"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d97877.84846116953!2d-80.07757!3d40.44062!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8834f16f48068503%3A0x8df915a15aa21b34!2sPittsburgh%2C%20PA!5e0!3m2!1sen!2sus!4v1713000000000"
+                width="100%"
+                height="350"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
           </motion.div>
         </motion.div>
       </section>
@@ -272,8 +283,8 @@ export default function HomePage() {
               Contact
             </h3>
             <p className="text-lg text-[#3D3D3D]">
-              <a href="tel:+14155551234" className="hover:text-[#D4AF85] transition-colors">
-                +1 (415) 555-1234
+              <a href="tel:+14125060479" className="hover:text-[#D4AF85] transition-colors">
+                +1 (412) 506-0479
               </a>
             </p>
           </div>
