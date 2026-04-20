@@ -6,7 +6,7 @@ import { useCountdown } from '@/hooks/useCountdown';
 import { Phone, MapPin } from 'lucide-react';
 
 export default function HomePage() {
-  const { days } = useCountdown();
+  const { days, hours, minutes, seconds } = useCountdown();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -109,12 +109,24 @@ export default function HomePage() {
             <span className="text-lg text-[#3D3D3D] font-light">May 9, 2027 📍 Columbus, Ohio</span>
           </motion.div>
 
-          <motion.p
-            variants={itemVariants}
-            className="text-xl md:text-2xl text-[#D4AF85] font-semibold mb-12"
-          >
-            {days} Days to Go!
-          </motion.p>
+          <motion.div variants={itemVariants} className="flex justify-center gap-8 md:gap-12 mb-12">
+            <div className="text-center">
+              <div className="text-3xl md:text-4xl font-bold text-[#C41E3A]">{days}</div>
+              <div className="text-sm text-[#8B7355] uppercase tracking-wider">Days</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl md:text-4xl font-bold text-[#C41E3A]">{hours}</div>
+              <div className="text-sm text-[#8B7355] uppercase tracking-wider">Hours</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl md:text-4xl font-bold text-[#C41E3A]">{minutes}</div>
+              <div className="text-sm text-[#8B7355] uppercase tracking-wider">Minutes</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl md:text-4xl font-bold text-[#C41E3A]">{seconds}</div>
+              <div className="text-sm text-[#8B7355] uppercase tracking-wider">Seconds</div>
+            </div>
+          </motion.div>
 
           <motion.div
             variants={itemVariants}
