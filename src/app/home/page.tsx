@@ -129,7 +129,7 @@ export default function HomePage() {
       </section>
            <div className="h-16" />
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center px-4 sm:px-6 lg:px-8 py-24">
+      <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-24">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -139,7 +139,7 @@ export default function HomePage() {
           <motion.h1
             variants={itemVariants}
             className="text-5xl md:text-7xl font-bold text-[#3D3D3D] mb-4"
-            style={{ fontFamily: "'Great Vibes', cursive" }}
+            style={{ fontFamily: "'Great Vibes', cursive", color: '#b39979ff' }}
           >
             Our Forever Starts In
           </motion.h1>
@@ -157,25 +157,27 @@ export default function HomePage() {
             <span className="text-lg text-[#3D3D3D] font-light">May 9, 2027 📍 Columbus, Ohio</span>
           </motion.div> */}
 
-          <motion.div variants={itemVariants} className="flex justify-center gap-8 md:gap-16 mb-20">
+          <motion.div variants={itemVariants} className="flex justify-center items-center gap-8 md:gap-16 mb-20 w-full">
             <div className="text-center">
-              <div className="text-5xl md:text-7xl font-bold text-[#8B7355]">{days}</div>
+              <div style={{ fontSize: '2rem', fontFamily: "'Great Vibes', cursive" }} className="font-bold text-[#8B7355]">{days}</div>
               <div className="text-base text-[#8B7355] uppercase tracking-wider mt-2">Days</div>
             </div>
             <div className="text-center">
-              <div className="text-5xl md:text-7xl font-bold text-[#8B7355]">{hours}</div>
+              <div style={{ fontSize: '2rem', fontFamily: "'Great Vibes', cursive" }} className="font-bold text-[#8B7355]">{hours}</div>
               <div className="text-base text-[#8B7355] uppercase tracking-wider mt-2">Hours</div>
             </div>
             <div className="text-center">
-              <div className="text-5xl md:text-7xl font-bold text-[#8B7355]">{minutes}</div>
+              <div style={{ fontSize: '2rem', fontFamily: "'Great Vibes', cursive" }} className="font-bold text-[#8B7355]">{minutes}</div>
               <div className="text-base text-[#8B7355] uppercase tracking-wider mt-2">Minutes</div>
             </div>
             <div className="text-center">
-              <div className="text-5xl md:text-7xl font-bold text-[#8B7355]">{seconds}</div>
+              <div style={{ fontSize: '2rem', fontFamily: "'Great Vibes', cursive"}} className="font-bold text-[#8B7355]">{seconds}</div>
               <div className="text-base text-[#8B7355] uppercase tracking-wider mt-2">Seconds</div>
             </div>
           </motion.div>
-
+          <p style={{ marginTop: '2rem', fontSize: '2.5rem', color: '#8B7355', fontFamily: "'Great Vibes', cursive" }}>05. 08. 2027</p>
+          {/* <p style={{ marginTop: '2rem', fontSize: '1.5rem', color: '#8B7355' }}>May 8, 2027</p> */}
+          <p style={{ marginTop: '2rem', fontSize: '2.0rem', color: '#8B7355', fontFamily: "'Great Vibes', cursive" }}>We can't wait to celebrate with you!</p>
           <div className="h-16" />
 
           <motion.div
@@ -184,6 +186,21 @@ export default function HomePage() {
           >
             
             
+          </motion.div>
+
+          {/* Location */}
+          <motion.div variants={itemVariants} className="min-h-screen flex flex-col items-center justify-center text-center py-24 border-b border-[#E8E0D5]">
+            <h3
+              className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center gap-2"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              <MapPin className="w-6 h-6" />
+              Location
+            </h3>
+            <p className="text-lg text-[#3D3D3D] mb-2">
+              <span className="font-semibold">Pittsburgh, Pennsylvania</span>
+            </p>
+            <p className="text-[#8B7355]">Map and directions coming soon</p>
           </motion.div>
         </motion.div>
       </section>
@@ -218,21 +235,6 @@ export default function HomePage() {
             >
               Suggest Songs
             </motion.a>
-          </motion.div>
-
-          {/* Location */}
-          <motion.div variants={itemVariants} className="min-h-screen flex flex-col items-center justify-center text-center py-24 border-b border-[#E8E0D5]">
-            <h3
-              className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center gap-2"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              <MapPin className="w-6 h-6" />
-              Location
-            </h3>
-            <p className="text-lg text-[#3D3D3D] mb-2">
-              <span className="font-semibold">Kenwood, California</span>
-            </p>
-            <p className="text-[#8B7355]">Map and directions coming soon</p>
           </motion.div>
 
           {/* Registry */}
