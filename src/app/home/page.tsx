@@ -67,7 +67,7 @@ export default function HomePage() {
             ].map((filename, i) => (
               <div
                 key={`${setIndex}-${i}`}
-                className="flex-shrink-0 w-[280px] h-[190px] overflow-hidden"
+                className="flex-shrink-0 w-[370px] h-[260px] overflow-hidden"
               >
                 <img
                   src={`/images/${filename}`}
