@@ -79,7 +79,7 @@ export default function HomePage() {
           )}
         </motion.div>
       </section>
-
+           <div className="h-16" />
       {/* Hero Section */}
       <section className="pt-16 pb-20 px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -91,25 +91,25 @@ export default function HomePage() {
           <motion.h1
             variants={itemVariants}
             className="text-5xl md:text-7xl font-bold text-[#3D3D3D] mb-4"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            style={{ fontFamily: "'Great Vibes', cursive" }}
           >
-            Together with
+            Our Forever Starts In
           </motion.h1>
 
-          <motion.h2
+          {/* <motion.h2
             variants={itemVariants}
             className="text-4xl md:text-6xl font-bold text-[#8B7355] mb-8"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Tara & Bandana
-          </motion.h2>
+          </motion.h2> */}
 
-          <motion.div variants={itemVariants} className="flex flex-col items-center gap-2 mb-12">
+          {/* <motion.div variants={itemVariants} className="flex flex-col items-center gap-2 mb-12">
             <span className="text-lg text-[#3D3D3D] font-light">May 8, 2027 📍 Pittsburgh, Pennsylvania</span>
             <span className="text-lg text-[#3D3D3D] font-light">May 9, 2027 📍 Columbus, Ohio</span>
-          </motion.div>
+          </motion.div> */}
 
-          <motion.div variants={itemVariants} className="flex justify-center gap-8 md:gap-12 mb-12">
+          <motion.div variants={itemVariants} className="flex justify-center gap-8 md:gap-12 mb-20">
             <div className="text-center">
               <div className="text-3xl md:text-4xl font-bold text-[#C41E3A]">{days}</div>
               <div className="text-sm text-[#8B7355] uppercase tracking-wider">Days</div>
@@ -128,26 +128,14 @@ export default function HomePage() {
             </div>
           </motion.div>
 
+          <div className="h-16" />
+
           <motion.div
             variants={itemVariants}
             className="flex flex-col sm:flex-row justify-center gap-6"
           >
-            <motion.a
-              href="#details"
-              whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(139, 115, 85, 0.3)' }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-[#8B7355] text-white rounded-full font-semibold uppercase tracking-wide text-sm transition-all"
-            >
-              Learn More
-            </motion.a>
-            <motion.a
-              href="/music"
-              whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(212, 175, 133, 0.3)' }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 border-2 border-[#D4AF85] text-[#8B7355] rounded-full font-semibold uppercase tracking-wide text-sm transition-all"
-            >
-              Suggest Songs
-            </motion.a>
+            
+            
           </motion.div>
         </motion.div>
       </section>
@@ -173,6 +161,15 @@ export default function HomePage() {
               <span className="font-semibold">May 8, 2027</span>
             </p>
             <p className="text-[#8B7355]">Details coming soon</p>
+            <p>Want your favorite songs to be played at our reception?</p>
+            <motion.a
+              href="/music"
+              whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(212, 175, 133, 0.3)' }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 border-2 border-[#D4AF85] text-[#8B7355] rounded-full font-semibold uppercase tracking-wide text-sm transition-all"
+            >
+              Suggest Songs
+            </motion.a>
           </motion.div>
 
           {/* Location */}
