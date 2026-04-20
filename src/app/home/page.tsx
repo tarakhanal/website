@@ -195,10 +195,13 @@ export default function HomePage() {
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               <MapPin className="w-6 h-6" />
-              Location
+              Wedding Ceremony Location
             </h3>
+            {/* <p className="text-lg text-[#3D3D3D] mb-2">
+              <span className="font-semibold">Wedding Ceremony</span>
+            </p> */}
             <p className="text-lg text-[#3D3D3D] mb-2">
-              <span className="font-semibold">Pittsburgh, Pennsylvania</span>
+              <span className="font-semibold">9AM to 9PM</span>
             </p>
             <div className="w-full mt-4 rounded-xl overflow-hidden shadow-lg" style={{ maxWidth: '600px' }}>
               <iframe
@@ -213,6 +216,47 @@ export default function HomePage() {
               />
             </div>
           </motion.div>
+
+          <motion.div variants={itemVariants} className="min-h-screen flex flex-col items-center justify-center text-center py-24 border-b border-[#E8E0D5]">
+            <h3
+              className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center gap-2"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              <MapPin className="w-6 h-6" />
+              Wedding Reception Location
+            </h3>
+            {/* <p className="text-lg text-[#3D3D3D] mb-2">
+              <span className="font-semibold">Wedding Ceremony</span>
+            </p> */}
+            <p className="text-lg text-[#3D3D3D] mb-2">
+              <span className="font-semibold">9AM to 9PM</span>
+            </p>
+            <div className="w-full mt-4 rounded-xl overflow-hidden shadow-lg" style={{ maxWidth: '600px' }}>
+              <iframe
+                title="Pittsburgh, PA"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d97877.84846116953!2d-80.07757!3d40.44062!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8834f16f48068503%3A0x8df915a15aa21b34!2sPittsburgh%2C%20PA!5e0!3m2!1sen!2sus!4v1713000000000"
+                width="100%"
+                height="350"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          </motion.div>
+
+          <motion.div className='song-suggestion mt-8'>
+            
+            <p>Do you want to suggest songs for our reception?</p>
+            <motion.a
+              href="/music"
+              whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(212, 175, 133, 0.3)' }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 border-2 border-[#D4AF85] text-[#8B7355] rounded-full font-semibold uppercase tracking-wide text-sm transition-all"
+            >
+              Suggest Songs
+            </motion.a>
+            </motion.div>
         </motion.div>
       </section>
 
@@ -237,15 +281,6 @@ export default function HomePage() {
               <span className="font-semibold">May 8, 2027</span>
             </p>
             <p className="text-[#8B7355]">Details coming soon</p>
-            <p>Want your favorite songs to be played at our reception?</p>
-            <motion.a
-              href="/music"
-              whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(212, 175, 133, 0.3)' }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 border-2 border-[#D4AF85] text-[#8B7355] rounded-full font-semibold uppercase tracking-wide text-sm transition-all"
-            >
-              Suggest Songs
-            </motion.a>
           </motion.div>
 
           {/* Registry */}
