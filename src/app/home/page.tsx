@@ -36,48 +36,96 @@ export default function HomePage() {
       <div className="h-24" />
 
       {/* Floating Image Marquee */}
-      <section className="relative overflow-hidden min-h-[60vh] flex items-center py-12 bg-gradient-to-r from-[#F5F1ED] via-white/60 to-[#F5F1ED]">
+      <section className="relative min-h-[60vh] flex flex-col justify-center py-12 bg-gradient-to-r from-[#F5F1ED] via-white/60 to-[#F5F1ED]" style={{ overflowX: 'hidden', overflowY: 'visible' }}>
         <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#FAFAF8] to-transparent z-10 pointer-events-none" />
         <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#FAFAF8] to-transparent z-10 pointer-events-none" />
-        <motion.div
-          className="flex w-max"
-          animate={{ x: ['0%', '-50%'] }}
-          transition={{ x: { repeat: Infinity, repeatType: 'loop', duration: 60, ease: 'linear' } }}
-        >
-          {[...Array(2)].flatMap((_, setIndex) =>
-            [
-              '04446EEE-0136-418E-8902-62C240512589_1_105_c.jpeg',
-              '2541030F-6D6B-4371-A4BA-3C32119F9069_1_105_c.jpeg',
-              '2A9431D3-9F4F-437A-B5C6-E17595A55B57_1_105_c.jpeg',
-              '38D3FC1B-AD16-4FDF-9F54-BB48A4A29A56_1_105_c.jpeg',
-              '3BBD37D8-1EDA-4B45-A8DA-26F5C2B40DEA_1_105_c.jpeg',
-              '41C52320-34D7-49B6-95B3-B4D49271D9B7_1_105_c.jpeg',
-              '7CD00EBC-D6FC-44D1-B8CF-21BD319CEE49_1_105_c.jpeg',
-              '8C1C35BA-2AAA-4A19-8D1F-272F7C119B69_1_105_c.jpeg',
-              '95FA751A-7DC3-497B-9912-C832408865D8_1_105_c.jpeg',
-              '9B540E62-DA4C-4F60-93CE-C4784369E726_1_105_c.jpeg',
-              'AB20A646-3F68-4945-9E85-3BE4932307FC_1_105_c.jpeg',
-              'B48CEB98-E69A-4C1E-9798-CFE315E7D9A5_1_105_c.jpeg',
-              'B7CF0A72-82A0-49D4-B451-BA5BBAA4D442_1_105_c.jpeg',
-              'DBDF2D51-A9DF-4BC1-87DC-58089D0AB3FD_1_105_c.jpeg',
-              'EDEB0BCA-CAF3-4E72-B050-9233443B7C6A_1_105_c.jpeg',
-              'EE4E2EFE-9BC4-4E66-A3E5-5D37E31898C5_1_105_c.jpeg',
-              'EEC2C875-CEA2-47C8-940C-D56522D07FE8_1_105_c.jpeg',
-              'F04BA61A-C8E5-4940-983E-FB4CFAAA77C7_1_105_c.jpeg',
-            ].map((filename, i) => (
-              <div
-                key={`${setIndex}-${i}`}
-                className="flex-shrink-0 w-[370px] h-[260px] overflow-hidden"
-              >
-                <img
-                  src={`/images/${filename}`}
-                  alt={`Wedding photo ${i + 1}`}
-                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
-                />
-              </div>
-            ))
-          )}
-        </motion.div>
+
+        {/* Top row: right to left */}
+        <div className="overflow-hidden w-full">
+          <motion.div
+            className="flex w-max"
+            animate={{ x: ['0%', '-50%'] }}
+            transition={{ x: { repeat: Infinity, repeatType: 'loop', duration: 60, ease: 'linear' } }}
+          >
+            {[...Array(2)].flatMap((_, setIndex) =>
+              [
+                '04446EEE-0136-418E-8902-62C240512589_1_105_c.jpeg',
+                '2541030F-6D6B-4371-A4BA-3C32119F9069_1_105_c.jpeg',
+                '2A9431D3-9F4F-437A-B5C6-E17595A55B57_1_105_c.jpeg',
+                '38D3FC1B-AD16-4FDF-9F54-BB48A4A29A56_1_105_c.jpeg',
+                '3BBD37D8-1EDA-4B45-A8DA-26F5C2B40DEA_1_105_c.jpeg',
+                '41C52320-34D7-49B6-95B3-B4D49271D9B7_1_105_c.jpeg',
+                '7CD00EBC-D6FC-44D1-B8CF-21BD319CEE49_1_105_c.jpeg',
+                '8C1C35BA-2AAA-4A19-8D1F-272F7C119B69_1_105_c.jpeg',
+                '95FA751A-7DC3-497B-9912-C832408865D8_1_105_c.jpeg',
+                '9B540E62-DA4C-4F60-93CE-C4784369E726_1_105_c.jpeg',
+                'AB20A646-3F68-4945-9E85-3BE4932307FC_1_105_c.jpeg',
+                'B48CEB98-E69A-4C1E-9798-CFE315E7D9A5_1_105_c.jpeg',
+                'B7CF0A72-82A0-49D4-B451-BA5BBAA4D442_1_105_c.jpeg',
+                'DBDF2D51-A9DF-4BC1-87DC-58089D0AB3FD_1_105_c.jpeg',
+                'EDEB0BCA-CAF3-4E72-B050-9233443B7C6A_1_105_c.jpeg',
+                'EE4E2EFE-9BC4-4E66-A3E5-5D37E31898C5_1_105_c.jpeg',
+                'EEC2C875-CEA2-47C8-940C-D56522D07FE8_1_105_c.jpeg',
+                'F04BA61A-C8E5-4940-983E-FB4CFAAA77C7_1_105_c.jpeg',
+              ].map((filename, i) => (
+                <div key={`top-${setIndex}-${i}`} className="flex-shrink-0 w-[370px] h-[260px] overflow-hidden">
+                  <img
+                    src={`/images/${filename}`}
+                    alt={`Wedding photo ${i + 1}`}
+                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                  />
+                </div>
+              ))
+            )}
+          </motion.div>
+        </div>
+
+        {/* Middle text */}
+        <div style={{ textAlign: 'center', paddingTop: '2rem', paddingBottom: '2rem', position: 'relative', zIndex: 20, width: '100%', overflow: 'visible' }}>
+          <span style={{ fontFamily: "'Great Vibes', cursive", fontSize: '5.52vw', lineHeight: 1.1, whiteSpace: 'nowrap', color: '#8B7355', display: 'block' }}>
+            Tara &amp; Bandana
+          </span>
+        </div>
+
+        {/* Bottom row: left to right */}
+        <div className="overflow-hidden w-full">
+          <motion.div
+            className="flex w-max"
+            animate={{ x: ['-50%', '0%'] }}
+            transition={{ x: { repeat: Infinity, repeatType: 'loop', duration: 60, ease: 'linear' } }}
+          >
+            {[...Array(2)].flatMap((_, setIndex) =>
+              [
+                'F04BA61A-C8E5-4940-983E-FB4CFAAA77C7_1_105_c.jpeg',
+                'EEC2C875-CEA2-47C8-940C-D56522D07FE8_1_105_c.jpeg',
+                'EE4E2EFE-9BC4-4E66-A3E5-5D37E31898C5_1_105_c.jpeg',
+                'EDEB0BCA-CAF3-4E72-B050-9233443B7C6A_1_105_c.jpeg',
+                'DBDF2D51-A9DF-4BC1-87DC-58089D0AB3FD_1_105_c.jpeg',
+                'B7CF0A72-82A0-49D4-B451-BA5BBAA4D442_1_105_c.jpeg',
+                'B48CEB98-E69A-4C1E-9798-CFE315E7D9A5_1_105_c.jpeg',
+                'AB20A646-3F68-4945-9E85-3BE4932307FC_1_105_c.jpeg',
+                '9B540E62-DA4C-4F60-93CE-C4784369E726_1_105_c.jpeg',
+                '95FA751A-7DC3-497B-9912-C832408865D8_1_105_c.jpeg',
+                '8C1C35BA-2AAA-4A19-8D1F-272F7C119B69_1_105_c.jpeg',
+                '7CD00EBC-D6FC-44D1-B8CF-21BD319CEE49_1_105_c.jpeg',
+                '41C52320-34D7-49B6-95B3-B4D49271D9B7_1_105_c.jpeg',
+                '3BBD37D8-1EDA-4B45-A8DA-26F5C2B40DEA_1_105_c.jpeg',
+                '38D3FC1B-AD16-4FDF-9F54-BB48A4A29A56_1_105_c.jpeg',
+                '2A9431D3-9F4F-437A-B5C6-E17595A55B57_1_105_c.jpeg',
+                '2541030F-6D6B-4371-A4BA-3C32119F9069_1_105_c.jpeg',
+                '04446EEE-0136-418E-8902-62C240512589_1_105_c.jpeg',
+              ].map((filename, i) => (
+                <div key={`bot-${setIndex}-${i}`} className="flex-shrink-0 w-[370px] h-[260px] overflow-hidden">
+                  <img
+                    src={`/images/${filename}`}
+                    alt={`Wedding photo ${i + 1}`}
+                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                  />
+                </div>
+              ))
+            )}
+          </motion.div>
+        </div>
       </section>
            <div className="h-16" />
       {/* Hero Section */}
