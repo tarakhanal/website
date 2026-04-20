@@ -349,6 +349,41 @@ export default function EnvelopeLanding() {
                   <line x1="335" y1="555" x2="335" y2="500" stroke="#D4AF85" strokeWidth="0.6" opacity="0.7"/>
                   <use href="#lotusBud2" x="335" y="502"/>
                 </g>
+
+                {/* BOTTOM CENTER fill flowers */}
+                <g>
+                  <line x1="145" y1="555" x2="145" y2="390" stroke="#D4AF85" strokeWidth="0.9" opacity="0.85"/>
+                  <use href="#lotusUpMd2" x="145" y="392"/>
+                  <use href="#leafNode2" x="145" y="510"/><use href="#leafNode2" x="145" y="460"/>
+                </g>
+                <g>
+                  <line x1="160" y1="555" x2="160" y2="450" stroke="#D4AF85" strokeWidth="0.7" opacity="0.8"/>
+                  <use href="#lotusUpSm2" x="160" y="452"/>
+                  <use href="#leafNode2" x="160" y="515"/>
+                </g>
+                <g>
+                  <line x1="180" y1="555" x2="180" y2="420" stroke="#D4AF85" strokeWidth="0.9" opacity="0.85"/>
+                  <use href="#lotusUpLg2" x="180" y="422"/>
+                  <use href="#leafNode2" x="180" y="510"/><use href="#leafNode2" x="180" y="475"/>
+                </g>
+                <g>
+                  <line x1="200" y1="555" x2="200" y2="450" stroke="#D4AF85" strokeWidth="0.7" opacity="0.8"/>
+                  <use href="#lotusUpSm2" x="200" y="452"/>
+                  <use href="#leafNode2" x="200" y="515"/>
+                </g>
+                <g>
+                  <line x1="215" y1="555" x2="215" y2="390" stroke="#D4AF85" strokeWidth="0.9" opacity="0.85"/>
+                  <use href="#lotusUpMd2" x="215" y="392"/>
+                  <use href="#leafNode2" x="215" y="510"/><use href="#leafNode2" x="215" y="460"/>
+                </g>
+                <g>
+                  <line x1="135" y1="555" x2="135" y2="475" stroke="#D4AF85" strokeWidth="0.6" opacity="0.75"/>
+                  <use href="#lotusBud2" x="135" y="477"/>
+                </g>
+                <g>
+                  <line x1="225" y1="555" x2="225" y2="475" stroke="#D4AF85" strokeWidth="0.6" opacity="0.75"/>
+                  <use href="#lotusBud2" x="225" y="477"/>
+                </g>
               </svg>
 
               {/* Center Text */}
@@ -661,6 +696,50 @@ export default function EnvelopeLanding() {
               <g>
                 <line x1="335" y1="555" x2="335" y2="500" stroke="#D4AF85" strokeWidth="0.6" opacity="0.7"/>
                 <use href="#lotusBud" x="335" y="502"/>
+              </g>
+
+              {/* ===== BOTTOM CENTER fill flowers ===== */}
+              {/* Center-left tall */}
+              <g>
+                <line x1="145" y1="555" x2="145" y2="390" stroke="#D4AF85" strokeWidth="0.9" opacity="0.85"/>
+                <use href="#lotusUpMd" x="145" y="392"/>
+                <use href="#leafNode" x="145" y="510"/>
+                <use href="#leafNode" x="145" y="460"/>
+              </g>
+              {/* Center-left bud */}
+              <g>
+                <line x1="160" y1="555" x2="160" y2="450" stroke="#D4AF85" strokeWidth="0.7" opacity="0.8"/>
+                <use href="#lotusUpSm" x="160" y="452"/>
+                <use href="#leafNode" x="160" y="515"/>
+              </g>
+              {/* Center */}
+              <g>
+                <line x1="180" y1="555" x2="180" y2="420" stroke="#D4AF85" strokeWidth="0.9" opacity="0.85"/>
+                <use href="#lotusUpLg" x="180" y="422"/>
+                <use href="#leafNode" x="180" y="510"/>
+                <use href="#leafNode" x="180" y="475"/>
+              </g>
+              {/* Center-right bud */}
+              <g>
+                <line x1="200" y1="555" x2="200" y2="450" stroke="#D4AF85" strokeWidth="0.7" opacity="0.8"/>
+                <use href="#lotusUpSm" x="200" y="452"/>
+                <use href="#leafNode" x="200" y="515"/>
+              </g>
+              {/* Center-right tall */}
+              <g>
+                <line x1="215" y1="555" x2="215" y2="390" stroke="#D4AF85" strokeWidth="0.9" opacity="0.85"/>
+                <use href="#lotusUpMd" x="215" y="392"/>
+                <use href="#leafNode" x="215" y="510"/>
+                <use href="#leafNode" x="215" y="460"/>
+              </g>
+              {/* Small buds to fill remaining gaps */}
+              <g>
+                <line x1="135" y1="555" x2="135" y2="475" stroke="#D4AF85" strokeWidth="0.6" opacity="0.75"/>
+                <use href="#lotusBud" x="135" y="477"/>
+              </g>
+              <g>
+                <line x1="225" y1="555" x2="225" y2="475" stroke="#D4AF85" strokeWidth="0.6" opacity="0.75"/>
+                <use href="#lotusBud" x="225" y="477"/>
               </g>
             </svg>
 
