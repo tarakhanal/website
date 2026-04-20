@@ -282,9 +282,9 @@ export default function EnvelopeLanding() {
 
                 {/* BOTTOM LEFT flowers */}
                 <g>
-                  <line x1="120" y1="555" x2="120" y2="360" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
-                  <use href="#lotusUpLg2" x="120" y="362"/>
-                  <use href="#leafNode2" x="120" y="520"/><use href="#leafNode2" x="120" y="475"/><use href="#leafNode2" x="120" y="430"/>
+                  <line x1="120" y1="555" x2="120" y2="385" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
+                  <use href="#lotusUpLg2" x="120" y="387"/>
+                  <use href="#leafNode2" x="120" y="520"/><use href="#leafNode2" x="120" y="480"/><use href="#leafNode2" x="120" y="440"/>
                 </g>
                 <g>
                   <line x1="100" y1="555" x2="100" y2="385" stroke="#D4AF85" strokeWidth="0.9" opacity="0.88"/>
@@ -317,9 +317,9 @@ export default function EnvelopeLanding() {
 
                 {/* BOTTOM RIGHT flowers */}
                 <g>
-                  <line x1="240" y1="555" x2="240" y2="360" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
-                  <use href="#lotusUpLg2" x="240" y="362"/>
-                  <use href="#leafNode2" x="240" y="520"/><use href="#leafNode2" x="240" y="475"/><use href="#leafNode2" x="240" y="430"/>
+                  <line x1="240" y1="555" x2="240" y2="385" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
+                  <use href="#lotusUpLg2" x="240" y="387"/>
+                  <use href="#leafNode2" x="240" y="520"/><use href="#leafNode2" x="240" y="480"/><use href="#leafNode2" x="240" y="440"/>
                 </g>
                 <g>
                   <line x1="260" y1="555" x2="260" y2="385" stroke="#D4AF85" strokeWidth="0.9" opacity="0.88"/>
@@ -348,6 +348,21 @@ export default function EnvelopeLanding() {
                 <g>
                   <line x1="335" y1="555" x2="335" y2="500" stroke="#D4AF85" strokeWidth="0.6" opacity="0.7"/>
                   <use href="#lotusBud2" x="335" y="502"/>
+                </g>
+
+                {/* BOTTOM CENTER fill flowers */}
+                <g>
+                  <line x1="155" y1="555" x2="155" y2="460" stroke="#D4AF85" strokeWidth="0.6" opacity="0.75"/>
+                  <use href="#lotusBud2" x="155" y="462"/>
+                </g>
+                <g>
+                  <line x1="180" y1="555" x2="180" y2="430" stroke="#D4AF85" strokeWidth="0.8" opacity="0.85"/>
+                  <use href="#lotusUpMd2" x="180" y="432"/>
+                  <use href="#leafNode2" x="180" y="510"/>
+                </g>
+                <g>
+                  <line x1="205" y1="555" x2="205" y2="460" stroke="#D4AF85" strokeWidth="0.6" opacity="0.75"/>
+                  <use href="#lotusBud2" x="205" y="462"/>
                 </g>
               </svg>
 
@@ -574,11 +589,11 @@ export default function EnvelopeLanding() {
               {/* ===== BOTTOM LEFT cluster: ~7 flowers ===== */}
               {/* Tallest - inner edge, large bloom - 3 leaf nodes */}
               <g>
-                <line x1="120" y1="555" x2="120" y2="360" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
-                <use href="#lotusUpLg" x="120" y="362"/>
+                <line x1="120" y1="555" x2="120" y2="385" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
+                <use href="#lotusUpLg" x="120" y="387"/>
                 <use href="#leafNode" x="120" y="520"/>
-                <use href="#leafNode" x="120" y="475"/>
-                <use href="#leafNode" x="120" y="430"/>
+                <use href="#leafNode" x="120" y="480"/>
+                <use href="#leafNode" x="120" y="440"/>
               </g>
               {/* Second tallest - 2 leaf nodes */}
               <g>
@@ -620,11 +635,11 @@ export default function EnvelopeLanding() {
               {/* ===== BOTTOM RIGHT cluster: ~7 flowers (mirrored) ===== */}
               {/* Tallest - inner edge - 3 leaf nodes */}
               <g>
-                <line x1="240" y1="555" x2="240" y2="360" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
-                <use href="#lotusUpLg" x="240" y="362"/>
+                <line x1="240" y1="555" x2="240" y2="385" stroke="#D4AF85" strokeWidth="1" opacity="0.9"/>
+                <use href="#lotusUpLg" x="240" y="387"/>
                 <use href="#leafNode" x="240" y="520"/>
-                <use href="#leafNode" x="240" y="475"/>
-                <use href="#leafNode" x="240" y="430"/>
+                <use href="#leafNode" x="240" y="480"/>
+                <use href="#leafNode" x="240" y="440"/>
               </g>
               {/* Second tallest - 2 leaf nodes */}
               <g>
@@ -661,6 +676,21 @@ export default function EnvelopeLanding() {
               <g>
                 <line x1="335" y1="555" x2="335" y2="500" stroke="#D4AF85" strokeWidth="0.6" opacity="0.7"/>
                 <use href="#lotusBud" x="335" y="502"/>
+              </g>
+
+              {/* ===== BOTTOM CENTER fill flowers ===== */}
+              <g>
+                <line x1="155" y1="555" x2="155" y2="460" stroke="#D4AF85" strokeWidth="0.6" opacity="0.75"/>
+                <use href="#lotusBud" x="155" y="462"/>
+              </g>
+              <g>
+                <line x1="180" y1="555" x2="180" y2="430" stroke="#D4AF85" strokeWidth="0.8" opacity="0.85"/>
+                <use href="#lotusUpMd" x="180" y="432"/>
+                <use href="#leafNode" x="180" y="510"/>
+              </g>
+              <g>
+                <line x1="205" y1="555" x2="205" y2="460" stroke="#D4AF85" strokeWidth="0.6" opacity="0.75"/>
+                <use href="#lotusBud" x="205" y="462"/>
               </g>
             </svg>
 
