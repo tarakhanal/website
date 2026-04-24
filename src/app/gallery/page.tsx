@@ -1,18 +1,41 @@
-'use client';
+ 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '@/components/Navigation';
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import Image from 'next/image';
 
-const placeholderPhotos = Array.from({ length: 24 }, (_, i) => ({
-  id: i + 1,
-  title: `Photo ${i + 1}`,
-  description: 'Your wedding photo here',
-}));
+import img1 from '@/app/images/04446EEE-0136-418E-8902-62C240512589_1_105_c.jpeg';
+import img2 from '@/app/images/2541030F-6D6B-4371-A4BA-3C32119F9069_1_105_c.jpeg';
+import img3 from '@/app/images/2A9431D3-9F4F-437A-B5C6-E17595A55B57_1_105_c.jpeg';
+import img4 from '@/app/images/38D3FC1B-AD16-4FDF-9F54-BB48A4A29A56_1_105_c.jpeg';
+import img5 from '@/app/images/3BBD37D8-1EDA-4B45-A8DA-26F5C2B40DEA_1_105_c.jpeg';
+import img6 from '@/app/images/41C52320-34D7-49B6-95B3-B4D49271D9B7_1_105_c.jpeg';
+import img7 from '@/app/images/7CD00EBC-D6FC-44D1-B8CF-21BD319CEE49_1_105_c.jpeg';
+import img8 from '@/app/images/9B540E62-DA4C-4F60-93CE-C4784369E726_1_105_c.jpeg';
+import img9 from '@/app/images/EEC2C875-CEA2-47C8-940C-D56522D07FE8_1_105_c.jpeg';
+import img10 from '@/app/images/95FA751A-7DC3-497B-9912-C832408865D8_1_105_c.jpeg';
+import img11 from '@/app/images/AB20A646-3F68-4945-9E85-3BE4932307FC_1_105_c.jpeg';
+import img12 from '@/app/images/B48CEB98-E69A-4C1E-9798-CFE315E7D9A5_1_105_c.jpeg';
+
+const galleryPhotos = [
+  img1,
+  img2,
+  img3,
+  img4,
+  img5,
+  img6,
+  img7,
+  img8,
+  img9,
+  img10,
+  img11,
+  img12,
+];
 
 export default function GalleryPage() {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -80,35 +103,31 @@ export default function GalleryPage() {
           viewport={{ once: true }}
           className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
         >
-          {placeholderPhotos.map((photo) => (
+          {galleryPhotos.map((src, i) => (
             <motion.button
-              key={photo.id}
+              key={i}
               variants={itemVariants}
-              onClick={() => setSelectedId(photo.id)}
+              onClick={() => setSelectedIndex(i)}
               className="relative w-full aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all group"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
             >
-              {/* Placeholder Image */}
-              <div className="w-full h-full bg-gradient-to-br from-[#C1A78C] to-[#D4AF85] flex items-center justify-center">
-                <div className="text-center text-white">
-                  <p className="text-sm font-light">{photo.title}</p>
-                </div>
-              </div>
+              <Image
+                src={src}
+                alt={`Gallery photo ${i + 1}`}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover w-full h-full"
+              />
 
-              {/* Overlay on hover */}
               <motion.div
                 initial={{ opacity: 0 }}
                 whileHover={{ opacity: 1 }}
-                className="absolute inset-0 bg-black/40 flex items-center justify-center"
+                className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                <motion.div
-                  initial={{ scale: 0 }}
-                  whileHover={{ scale: 1 }}
-                  className="text-white text-center"
-                >
+                <div className="text-white text-center">
                   <p className="text-lg font-semibold">View</p>
-                </motion.div>
+                </div>
               </motion.div>
             </motion.button>
           ))}
@@ -117,14 +136,14 @@ export default function GalleryPage() {
 
       {/* Lightbox Modal */}
       <AnimatePresence>
-        {selectedId !== null && (
+        {selectedIndex !== null && (
           <>
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setSelectedId(null)}
+              onClick={() => setSelectedIndex(null)}
               className="fixed inset-0 bg-black/80 z-50 backdrop-blur-sm"
             />
 
@@ -135,28 +154,31 @@ export default function GalleryPage() {
               animate="visible"
               exit="exit"
               className="fixed inset-0 z-50 flex items-center justify-center p-4"
-              onClick={() => setSelectedId(null)}
+              onClick={() => setSelectedIndex(null)}
             >
               <motion.div
                 onClick={(e) => e.stopPropagation()}
-                className="relative w-full max-w-2xl"
+                className="relative w-full max-w-4xl"
               >
                 {/* Image Container */}
                 <motion.div
-                  layoutId={`photo-${selectedId}`}
-                  className="w-full aspect-square bg-gradient-to-br from-[#C1A78C] to-[#D4AF85] rounded-lg flex items-center justify-center"
+                  layoutId={`photo-${selectedIndex}`}
+                  className="w-full rounded-lg overflow-hidden"
                 >
-                  <div className="text-center text-white">
-                    <p className="text-2xl font-light">Photo {selectedId}</p>
-                    <p className="text-sm font-light">Your photo will appear here</p>
-                  </div>
+                  <Image
+                    src={galleryPhotos[selectedIndex ?? 0]}
+                    alt={`Photo ${selectedIndex !== null ? selectedIndex + 1 : ''}`}
+                    width={1200}
+                    height={900}
+                    className="w-full h-auto object-cover rounded-lg"
+                  />
                 </motion.div>
 
                 {/* Close Button */}
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  onClick={() => setSelectedId(null)}
+                  onClick={() => setSelectedIndex(null)}
                   className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors backdrop-blur-sm"
                   aria-label="Close gallery"
                 >
@@ -169,8 +191,8 @@ export default function GalleryPage() {
                     whileHover={{ x: -4 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() =>
-                      setSelectedId(
-                        selectedId === 1 ? placeholderPhotos.length : selectedId - 1
+                      setSelectedIndex((prev) =>
+                        prev === 0 ? galleryPhotos.length - 1 : (prev ?? 0) - 1
                       )
                     }
                     className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors backdrop-blur-sm"
@@ -179,15 +201,15 @@ export default function GalleryPage() {
                   </motion.button>
 
                   <span className="text-white font-light">
-                    {selectedId} / {placeholderPhotos.length}
+                    {selectedIndex !== null ? selectedIndex + 1 : 0} / {galleryPhotos.length}
                   </span>
 
                   <motion.button
                     whileHover={{ x: 4 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() =>
-                      setSelectedId(
-                        selectedId === placeholderPhotos.length ? 1 : selectedId + 1
+                      setSelectedIndex((prev) =>
+                        prev === galleryPhotos.length - 1 ? 0 : (prev ?? 0) + 1
                       )
                     }
                     className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors backdrop-blur-sm"

@@ -7,8 +7,7 @@ import { Menu, X } from 'lucide-react';
 
 const navItems = [
   { label: 'Home', href: '/home' },
-  { label: 'Story', href: '/story' },
-  { label: 'About Us', href: '/about' },
+  { label: 'Our Story', href: '/story' },
   { label: 'Timeline', href: '/timeline' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'Registry', href: '/registry' },
@@ -45,9 +44,9 @@ export default function Navigation() {
             <motion.div
               whileHover={{ scale: 1.05 }}
               className="text-xl md:text-2xl font-bold text-[#8B7355] cursor-pointer"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              style={{ fontFamily: "'Great Vibes','Playfair Display', serif" }}
             >
-              T & B
+              T &nbsp;&nbsp;&&nbsp;&nbsp;B
             </motion.div>
           </Link>
 
