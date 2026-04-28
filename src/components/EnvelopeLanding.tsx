@@ -730,7 +730,7 @@ export default function EnvelopeLanding() {
             transition={{ duration: 2, repeat: Infinity }}
             className="text-[#C41E3A] text-sm md:text-base uppercase tracking-widest font-light"
           >
-            Click the card to begin
+            Tap the card to begin
           </motion.p>
         </motion.div>
       </div>

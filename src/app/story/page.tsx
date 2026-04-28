@@ -105,8 +105,8 @@ export default function StoryPage() {
           className="max-w-3xl mx-auto text-center"
         >
           <p
-            className="text-3xl md:text-4xl font-light mb-4 italic, text-center"
-            style={{ fontFamily: "'Lora', serif", marginTop: '2rem' }}
+            className="text-3xl md:text-4xl font-light mb-4 italic, leading-relaxed text-center"
+            style={{ fontFamily: "'Lora', serif", marginTop: '2rem', marginLeft: '0.28rem' }}
           >
             In you, I have found my best friend, my partner in crime, and the love of my life. I can&apos;t wait to spend forever with you.
           </p>

@@ -1,9 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Navigation from '@/components/Navigation';
+import DirectionsModal from '@/components/DirectionsModal';
 import { useCountdown } from '@/hooks/useCountdown';
-import { Phone, MapPin } from 'lucide-react';
+import { Phone, MapPin, CalendarPlus, Navigation as NavigationIcon } from 'lucide-react';
+
+import { ceremonyEvent, receptionEvent } from '@/lib/events';
+import { downloadICSFile, googleCalendarUrl, outlookWebUrl } from '@/lib/calendar';
+import { openMapInApp, googleMapsSearchUrl } from '@/lib/maps';
 
 export default function HomePage() {
   const { days, hours, minutes, seconds } = useCountdown();
@@ -27,6 +33,10 @@ export default function HomePage() {
       transition: { duration: 0.6 },
     },
   };
+
+  // State for direction menus
+  const [showDirectionsMenu, setShowDirectionsMenu] = useState(false);
+  const [showReceptionDirectionsMenu, setShowReceptionDirectionsMenu] = useState(false);
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-[#F5F1ED]">
@@ -83,7 +93,7 @@ export default function HomePage() {
         {/* Middle text */}
         <div style={{ textAlign: 'center', paddingTop: '2rem', paddingBottom: '2rem', position: 'relative', zIndex: 20, width: '100%', overflow: 'visible' }}>
           <span style={{ fontFamily: "'Great Vibes', cursive", fontSize: '5.52vw', lineHeight: 1.1, whiteSpace: 'nowrap', color: '#8B7355', display: 'block' }}>
-            Tara &amp; Bandana
+            Tara &amp; Bandana Ughhhhhh this is stupid
           </span>
         </div>
 
@@ -197,9 +207,6 @@ export default function HomePage() {
               <MapPin className="w-6 h-6" />
               Wedding Ceremony Location
             </h3>
-            {/* <p className="text-lg text-[#3D3D3D] mb-2">
-              <span className="font-semibold">Wedding Ceremony</span>
-            </p> */}
             <p className="text-lg text-[#3D3D3D] mb-2">
               <span className="font-semibold">9AM to 9PM</span>
             </p>
@@ -215,6 +222,71 @@ export default function HomePage() {
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
+            {/* Reception Buttons: Add to Calendar & Directions */}
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="relative">
+                <button
+                  onClick={() => downloadICSFile(receptionEvent)}
+                  className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                >
+                  <CalendarPlus className="w-5 h-5" />
+                  Add to Calendar
+                </button>
+              </div>
+
+              <div className="relative">
+                <div className="relative inline-block text-left">
+                  <button
+                    onClick={() => {
+                      setShowReceptionDirectionsMenu(true);
+                    }}
+                    className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                  >
+                    <NavigationIcon className="w-5 h-5" />
+                    Directions
+                  </button>
+                </div>
+              </div>
+
+              <DirectionsModal
+                isOpen={showReceptionDirectionsMenu}
+                onClose={() => setShowReceptionDirectionsMenu(false)}
+                onSelectApp={(app) => openMapInApp(app, receptionEvent)}
+              />
+            </div>
+
+              {/* Buttons: Add to Calendar & Directions */}
+              <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <div className="relative">
+                  <button
+                    onClick={() => downloadICSFile(ceremonyEvent)}
+                    className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                  >
+                    <CalendarPlus className="w-5 h-5" />
+                    Add to Calendar
+                  </button>
+                </div>
+
+                <div className="relative">
+                  <div className="relative inline-block text-left">
+                    <button
+                      onClick={() => {
+                        setShowDirectionsMenu(true);
+                      }}
+                      className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                    >
+                      <NavigationIcon className="w-5 h-5" />
+                      Directions
+                    </button>
+                  </div>
+                </div>
+
+                <DirectionsModal
+                  isOpen={showDirectionsMenu}
+                  onClose={() => setShowDirectionsMenu(false)}
+                  onSelectApp={(app) => openMapInApp(app, ceremonyEvent)}
+                />
+              </div>
           </motion.div>
 
           <motion.div variants={itemVariants} className="min-h-screen flex flex-col items-center justify-center text-center py-24 border-b border-[#E8E0D5]">
