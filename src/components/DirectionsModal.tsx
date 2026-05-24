@@ -32,11 +32,16 @@ export default function DirectionsModal({ isOpen, onClose, onSelectApp }: Direct
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-10"
+        className="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 px-10 pt-12 pb-14"
       >
-        <h2 className="text-3xl font-bold text-center text-[#3D3D3D] mb-10">Open in</h2>
+        {/* Header */}
+        <div className="text-center mb-10">
+          <p className="text-xs font-semibold tracking-[0.2em] uppercase text-[#B0A090] mb-1">Navigate to venue</p>
+          <h2 className="text-2xl font-bold text-[#3D3D3D]">Open in</h2>
+        </div>
 
-        <div className="space-y-4 mb-8">
+        {/* Map app buttons */}
+        <div className="flex flex-col gap-4 items-center">
           {apps.map((app) => {
             const Icon = app.icon;
             return (
@@ -46,21 +51,30 @@ export default function DirectionsModal({ isOpen, onClose, onSelectApp }: Direct
                   onSelectApp(app.id as 'google' | 'apple' | 'waze');
                   onClose();
                 }}
-                className="w-full flex items-center justify-center gap-4 px-6 py-5 border-2 border-[#3D3D3D] rounded-lg font-semibold text-[#3D3D3D] text-lg hover:bg-[#f5f5f5] transition-colors"
+                className="flex items-center justify-center gap-3 px-10 py-5 rounded-2xl border border-[#E8DDD2] bg-[#FDFAF7] hover:bg-[#FAF4EE] hover:border-[#C4A882] hover:shadow-sm active:scale-[0.98] transition-all duration-150 font-medium text-[#3D3D3D] text-base"
+                style={{ width: '220px' }}
               >
-                <Icon className="w-7 h-7 flex-shrink-0" />
+                <span className="w-8 h-8 flex items-center justify-center rounded-xl bg-white shadow-sm border border-[#EEE8E0] flex-shrink-0">
+                  <Icon className="w-4 h-4" />
+                </span>
                 <span>{app.label}</span>
               </button>
             );
           })}
         </div>
 
-        <button
-          onClick={onClose}
-          className="w-full py-4 text-center text-[#3D3D3D] font-semibold text-lg hover:text-[#8B7355] transition-colors"
-        >
-          Cancel
-        </button>
+        <div className="border-t border-[#EEE8E0]" style={{ marginTop: '24px', marginBottom: '20px' }} />
+
+        {/* Cancel */}
+        <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '8px' }}>
+          <button
+            onClick={onClose}
+            className="transition-colors rounded-2xl border border-[#EEE8E0] hover:bg-[#FAF7F4] hover:text-[#5C4A32]"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '220px', padding: '8px 24px', fontSize: '15px', fontWeight: 600, color: '#8B7355' }}
+          >
+            Cancel
+          </button>
+        </div>
       </motion.div>
     </motion.div>
   );
