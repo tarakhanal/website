@@ -229,7 +229,8 @@ export default function HomePage() {
               <div className="relative">
                 <button
                   onClick={() => downloadICSFile(ceremonyEvent)}
-                  className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                  className="inline-flex items-center gap-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                  style={{ padding: '0.85rem 2rem' }}
                 >
                   <CalendarPlus className="w-5 h-5" />
                   Add to Calendar
@@ -242,7 +243,8 @@ export default function HomePage() {
                     onClick={() => {
                       setShowDirectionsMenu(true);
                     }}
-                    className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                    className="inline-flex items-center gap-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                    style={{ padding: '0.85rem 2rem' }}
                   >
                     <NavigationIcon className="w-5 h-5" />
                     Directions
@@ -291,7 +293,8 @@ export default function HomePage() {
               <div className="relative">
                 <button
                   onClick={() => downloadICSFile(receptionEvent)}
-                  className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                  className="inline-flex items-center gap-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                  style={{ padding: '0.85rem 2rem' }}
                 >
                   <CalendarPlus className="w-5 h-5" />
                   Add to Calendar
@@ -302,7 +305,8 @@ export default function HomePage() {
                 <div className="relative inline-block text-left">
                   <button
                     onClick={() => setShowReceptionDirectionsMenu(true)}
-                    className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                    className="inline-flex items-center gap-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                    style={{ padding: '0.85rem 2rem' }}
                   >
                     <NavigationIcon className="w-5 h-5" />
                     Directions
