@@ -88,7 +88,7 @@ export default function TimelinePage() {
             Wedding Day Timeline
           </h1>
           <p className="text-xl text-[#8B7355] font-light max-w-2xl mx-auto">
-            May 8, 2027 • Pittsburgh, Pennsylvania
+            April 24, 2027 • South Park Township, PA
           </p>
         </motion.div>
       </section>

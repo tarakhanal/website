@@ -17,7 +17,7 @@ export function useCountdown(): CountdownTime {
 
   useEffect(() => {
     const calculateCountdown = () => {
-      const weddingDate = new Date('2027-05-08T00:00:00').getTime();
+      const weddingDate = new Date('2027-04-24T00:00:00').getTime();
       const now = new Date().getTime();
       const distance = weddingDate - now;
 

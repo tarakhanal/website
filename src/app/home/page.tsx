@@ -185,7 +185,7 @@ export default function HomePage() {
               <div className="text-base text-[#8B7355] uppercase tracking-wider mt-2">Seconds</div>
             </div>
           </motion.div>
-          <p style={{ marginTop: '2rem', fontSize: '2.5rem', color: '#8B7355', fontFamily: "'Great Vibes', cursive" }}>05. 08. 2027</p>
+          <p style={{ marginTop: '2rem', fontSize: '2.5rem', color: '#8B7355', fontFamily: "'Great Vibes', cursive" }}>04. 24. 2027</p>
           {/* <p style={{ marginTop: '2rem', fontSize: '1.5rem', color: '#8B7355' }}>May 8, 2027</p> */}
           <p style={{ marginTop: '2rem', fontSize: '2.0rem', color: '#8B7355', fontFamily: "'Great Vibes', cursive" }}>We can't wait to celebrate with you!</p>
           <div className="h-16" />
@@ -207,13 +207,15 @@ export default function HomePage() {
               <MapPin className="w-6 h-6" />
               Wedding Ceremony Location
             </h3>
+            <p className="text-base text-[#8B7355] mb-1">Home Economics Building</p>
+            <p className="text-sm text-[#3D3D3D] mb-2">2050 Buffalo Dr, South Park Township, PA 15129</p>
             <p className="text-lg text-[#3D3D3D] mb-2">
-              <span className="font-semibold">9AM to 9PM</span>
+              <span className="font-semibold">9:30AM to 5PM</span>
             </p>
             <div className="w-full mt-4 rounded-xl overflow-hidden shadow-lg" style={{ maxWidth: '600px' }}>
               <iframe
-                title="Pittsburgh, PA"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d97877.84846116953!2d-80.07757!3d40.44062!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8834f16f48068503%3A0x8df915a15aa21b34!2sPittsburgh%2C%20PA!5e0!3m2!1sen!2sus!4v1713000000000"
+                title="Home Economics Building, South Park"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3044.5!2d-79.9987!3d40.2894!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8834e1b0b0b0b0b1%3A0x0!2s2050+Buffalo+Dr%2C+South+Park+Township%2C+PA+15129!5e0!3m2!1sen!2sus!4v1713000000000"
                 width="100%"
                 height="350"
                 style={{ border: 0 }}
@@ -300,13 +302,15 @@ export default function HomePage() {
             {/* <p className="text-lg text-[#3D3D3D] mb-2">
               <span className="font-semibold">Wedding Ceremony</span>
             </p> */}
+            <p className="text-base text-[#8B7355] mb-1">Home Economics Building</p>
+            <p className="text-sm text-[#3D3D3D] mb-2">2050 Buffalo Dr, South Park Township, PA 15129</p>
             <p className="text-lg text-[#3D3D3D] mb-2">
               <span className="font-semibold">9AM to 9PM</span>
             </p>
             <div className="w-full mt-4 rounded-xl overflow-hidden shadow-lg" style={{ maxWidth: '600px' }}>
               <iframe
-                title="Pittsburgh, PA"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d97877.84846116953!2d-80.07757!3d40.44062!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8834f16f48068503%3A0x8df915a15aa21b34!2sPittsburgh%2C%20PA!5e0!3m2!1sen!2sus!4v1713000000000"
+                title="Home Economics Building, South Park"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3044.5!2d-79.9987!3d40.2894!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8834e1b0b0b0b0b1%3A0x0!2s2050+Buffalo+Dr%2C+South+Park+Township%2C+PA+15129!5e0!3m2!1sen!2sus!4v1713000000000"
                 width="100%"
                 height="350"
                 style={{ border: 0 }}
@@ -350,7 +354,7 @@ export default function HomePage() {
               Date & Time
             </h3>
             <p className="text-lg text-[#3D3D3D] mb-2">
-              <span className="font-semibold">May 8, 2027</span>
+              <span className="font-semibold">April 24, 2027</span>
             </p>
             <p className="text-[#8B7355]">Details coming soon</p>
           </motion.div>

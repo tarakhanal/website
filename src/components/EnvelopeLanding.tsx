@@ -72,7 +72,7 @@ export default function EnvelopeLanding() {
             transition={{ duration: 0.6, delay: 1 }}
             className="text-lg text-[#3D3D3D] mb-8 font-light"
           >
-            May 8, 2027
+            April 24, 2027
           </motion.p>
 
           <motion.div
@@ -150,7 +150,7 @@ export default function EnvelopeLanding() {
                 <h2 className="text-3xl md:text-4xl font-bold text-[#C41E3A] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
                   Tara & Bandana
                 </h2>
-                <p className="text-[#8B7355] text-xs tracking-wide">May 8, 2027</p>
+                <p className="text-[#8B7355] text-xs tracking-wide">April 24, 2027</p>
               </div>
             </div>
           </motion.div>
