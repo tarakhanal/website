@@ -67,7 +67,7 @@ export default function RegistryPage() {
           >
             {/* Amazon Registry */}
             <motion.a
-              href="https://www.amazon.com"
+              href="https://www.amazon.com/wedding/guest-view/7JBIJU9AX8H4"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.02, boxShadow: '0 15px 40px rgba(139, 115, 85, 0.2)' }}
