@@ -271,15 +271,15 @@ export default function HomePage() {
             {/* <p className="text-lg text-[#3D3D3D] mb-2">
               <span className="font-semibold">Wedding Ceremony</span>
             </p> */}
-            <p className="text-base text-[#8B7355] mb-1">Home Economics Building</p>
-            <p className="text-sm text-[#3D3D3D] mb-2">2050 Buffalo Dr, South Park Township, PA 15129</p>
+            <p className="text-base text-[#8B7355] mb-1">Star Venue LLC Party House</p>
+            <p className="text-sm text-[#3D3D3D] mb-2">4257 Eastland Square Dr Suite A, Columbus, OH 43232</p>
             <p className="text-lg text-[#3D3D3D] mb-2">
-              <span className="font-semibold">9AM to 9PM</span>
+              <span className="font-semibold">12PM to 11PM</span>
             </p>
             <div className="w-full mt-4 rounded-xl overflow-hidden shadow-lg" style={{ maxWidth: '600px' }}>
               <iframe
-                title="Home Economics Building, South Park"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3044.5!2d-79.9987!3d40.2894!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8834e1b0b0b0b0b1%3A0x0!2s2050+Buffalo+Dr%2C+South+Park+Township%2C+PA+15129!5e0!3m2!1sen!2sus!4v1713000000000"
+                title="Star Venue LLC Party House, Columbus"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3056.0!2d-82.8314!3d39.9486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s4257+Eastland+Square+Dr+Suite+A%2C+Columbus%2C+OH+43232!5e0!3m2!1sen!2sus!4v1713000000001"
                 width="100%"
                 height="350"
                 style={{ border: 0 }}
