@@ -224,11 +224,11 @@ export default function HomePage() {
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
-            {/* Reception Buttons: Add to Calendar & Directions */}
-            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+            {/* Buttons: Add to Calendar & Directions */}
+            <div style={{ marginTop: '2rem' }} className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <div className="relative">
                 <button
-                  onClick={() => downloadICSFile(receptionEvent)}
+                  onClick={() => downloadICSFile(ceremonyEvent)}
                   className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
                 >
                   <CalendarPlus className="w-5 h-5" />
@@ -240,7 +240,7 @@ export default function HomePage() {
                 <div className="relative inline-block text-left">
                   <button
                     onClick={() => {
-                      setShowReceptionDirectionsMenu(true);
+                      setShowDirectionsMenu(true);
                     }}
                     className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
                   >
@@ -251,44 +251,11 @@ export default function HomePage() {
               </div>
 
               <DirectionsModal
-                isOpen={showReceptionDirectionsMenu}
-                onClose={() => setShowReceptionDirectionsMenu(false)}
-                onSelectApp={(app) => openMapInApp(app, receptionEvent)}
+                isOpen={showDirectionsMenu}
+                onClose={() => setShowDirectionsMenu(false)}
+                onSelectApp={(app) => openMapInApp(app, ceremonyEvent)}
               />
             </div>
-
-              {/* Buttons: Add to Calendar & Directions */}
-              <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <div className="relative">
-                  <button
-                    onClick={() => downloadICSFile(ceremonyEvent)}
-                    className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
-                  >
-                    <CalendarPlus className="w-5 h-5" />
-                    Add to Calendar
-                  </button>
-                </div>
-
-                <div className="relative">
-                  <div className="relative inline-block text-left">
-                    <button
-                      onClick={() => {
-                        setShowDirectionsMenu(true);
-                      }}
-                      className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
-                    >
-                      <NavigationIcon className="w-5 h-5" />
-                      Directions
-                    </button>
-                  </div>
-                </div>
-
-                <DirectionsModal
-                  isOpen={showDirectionsMenu}
-                  onClose={() => setShowDirectionsMenu(false)}
-                  onSelectApp={(app) => openMapInApp(app, ceremonyEvent)}
-                />
-              </div>
           </motion.div>
 
           <motion.div variants={itemVariants} className="min-h-screen flex flex-col items-center justify-center text-center py-24 border-b border-[#E8E0D5]">
@@ -317,6 +284,36 @@ export default function HomePage() {
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+            {/* Reception Buttons: Add to Calendar & Directions */}
+            <div style={{ marginTop: '2rem' }} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="relative">
+                <button
+                  onClick={() => downloadICSFile(receptionEvent)}
+                  className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                >
+                  <CalendarPlus className="w-5 h-5" />
+                  Add to Calendar
+                </button>
+              </div>
+
+              <div className="relative">
+                <div className="relative inline-block text-left">
+                  <button
+                    onClick={() => setShowReceptionDirectionsMenu(true)}
+                    className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
+                  >
+                    <NavigationIcon className="w-5 h-5" />
+                    Directions
+                  </button>
+                </div>
+              </div>
+
+              <DirectionsModal
+                isOpen={showReceptionDirectionsMenu}
+                onClose={() => setShowReceptionDirectionsMenu(false)}
+                onSelectApp={(app) => openMapInApp(app, receptionEvent)}
               />
             </div>
           </motion.div>
