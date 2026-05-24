@@ -8,14 +8,14 @@ import photo2 from '@/app/images/9B540E62-DA4C-4F60-93CE-C4784369E726_1_105_c.jp
 
 export default function StoryPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-[#F5F1ED]">
+    <main className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-[#F5F1ED] overflow-x-hidden">
       <Navigation />
 
       {/* Header */}
       <section className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
           <p className="text-xl text-[#8B7355] font-light max-w-2xl mx-auto"
