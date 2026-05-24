@@ -12,7 +12,7 @@ export default function StoryPage() {
       <Navigation />
 
       {/* Header */}
-      <section className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 text-center">
+      <section className="pt-32 pb-12 flex justify-center px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -26,8 +26,8 @@ export default function StoryPage() {
       </section>
 
       {/* Content */}
-      <section className="pb-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto space-y-12">
+      <section className="pb-24 flex justify-center px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-2xl space-y-12 flex flex-col items-center">
 
           {/* First photo */}
           <motion.div
@@ -35,14 +35,14 @@ export default function StoryPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="overflow-hidden shadow-lg"
+            className="overflow-hidden shadow-lg w-full"
           >
             <Image
               src={photo1}
               alt="Tara and Bandana"
-              width={666.667}
+              width={666}
               height={500}
-              className="w-full object-cover"
+              className="w-full object-cover mx-auto block"
             />
           </motion.div>
 
@@ -52,7 +52,7 @@ export default function StoryPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="space-y-6 text-[#3D3D3D] text-lg leading-relaxed text-center"
+            className="space-y-6 text-[#3D3D3D] text-lg leading-relaxed text-center w-full"
             style={{ fontFamily: "'Lora', serif", marginTop: '2rem', marginBottom: '2rem' }}
           >
             <p>
@@ -81,14 +81,14 @@ export default function StoryPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="overflow-hidden shadow-lg"
+            className="overflow-hidden shadow-lg w-full"
           >
             <Image
               src={photo2}
               alt="Tara and Bandana"
-              width={666.667}
+              width={666}
               height={500}
-              className="w-full object-cover"
+              className="w-full object-cover mx-auto block"
             />
           </motion.div>
 
@@ -96,17 +96,17 @@ export default function StoryPage() {
       </section>
 
       {/* Quote Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 text-[#8B7355]">
+      <section className="py-20 flex justify-center px-4 sm:px-6 lg:px-8 text-[#8B7355]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-center"
+          className="w-full max-w-3xl text-center"
         >
           <p
             className="text-3xl md:text-4xl font-light mb-4 italic, leading-relaxed text-center"
-            style={{ fontFamily: "'Lora', serif", marginTop: '2rem', marginLeft: '0.28rem' }}
+            style={{ fontFamily: "'Lora', serif", marginTop: '2rem' }}
           >
             In you, I have found my best friend, my partner in crime, and the love of my life. I can&apos;t wait to spend forever with you.
           </p>
