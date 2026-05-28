@@ -419,22 +419,99 @@ export default function HomePage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingTop: '6rem', paddingBottom: '6rem', background: 'linear-gradient(to right, #8B7355, #A8896C)', borderRadius: '1rem', boxShadow: '0 4px 24px rgba(0,0,0,0.12)', margin: '2rem 0', padding: '4rem 2rem' }}
+            style={{ width: '100%', paddingTop: '4rem', paddingBottom: '4rem' }}
           >
-            <h3
-              className="text-2xl font-bold text-white mb-3"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              🎁 Registry
-            </h3>
-            <p style={{ color: 'rgba(255,255,255,0.85)', marginBottom: '1.25rem', fontSize: '1.1rem' }}>Your love and presence is the greatest gift — but if you'd like to celebrate us, explore our registry!</p>
-            <a
-              href="/registry"
-              className="inline-block px-8 py-3 bg-white text-[#8B7355] rounded-full font-bold text-base uppercase tracking-wide shadow-md transition-transform hover:scale-105 active:scale-95"
-              style={{ touchAction: 'manipulation' }}
-            >
-              View Registry
-            </a>
+            {/* Card */}
+            <div style={{
+              position: 'relative',
+              borderRadius: '1.5rem',
+              overflow: 'hidden',
+              background: '#FAF7F4',
+              border: '1px solid #E8E0D5',
+              boxShadow: '0 8px 40px rgba(139,115,85,0.13)',
+              padding: '3rem 2rem',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              gap: '0',
+            }}>
+              {/* Decorative top flourish */}
+              <div style={{
+                position: 'absolute',
+                top: 0, left: 0, right: 0,
+                height: '4px',
+                background: 'linear-gradient(to right, #C9A96E, #8B7355, #C9A96E)',
+              }} />
+
+              {/* Icon */}
+              <div style={{
+                width: '64px', height: '64px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #F5EFE6, #EDE0CF)',
+                border: '1px solid #D4C4B0',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '1.75rem',
+                marginBottom: '1.25rem',
+                boxShadow: '0 2px 12px rgba(139,115,85,0.12)',
+              }}>
+                🎁
+              </div>
+
+              <h3 style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: 'clamp(1.6rem, 5vw, 2.2rem)',
+                fontWeight: 700,
+                color: '#3D3229',
+                marginBottom: '0.75rem',
+                letterSpacing: '-0.01em',
+              }}>
+                Registry
+              </h3>
+
+              {/* Thin ornamental divider */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                <div style={{ height: '1px', width: '40px', background: 'linear-gradient(to right, transparent, #C9A96E)' }} />
+                <span style={{ color: '#C9A96E', fontSize: '0.6rem', letterSpacing: '0.15em' }}>✦</span>
+                <div style={{ height: '1px', width: '40px', background: 'linear-gradient(to left, transparent, #C9A96E)' }} />
+              </div>
+
+              <p style={{
+                fontFamily: "'Lora', serif",
+                color: '#7A6652',
+                fontSize: 'clamp(0.95rem, 3vw, 1.05rem)',
+                lineHeight: 1.75,
+                maxWidth: '420px',
+                marginBottom: '2rem',
+              }}>
+                Your love and presence is the greatest gift of all. But if you'd like to celebrate us, we've curated a few things we'd cherish.
+              </p>
+
+              <a
+                href="/registry"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.85rem 2.25rem',
+                  background: 'linear-gradient(135deg, #8B7355, #A8896C)',
+                  color: '#fff',
+                  borderRadius: '3rem',
+                  fontFamily: "'Lora', serif",
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.04em',
+                  boxShadow: '0 4px 20px rgba(139,115,85,0.35)',
+                  textDecoration: 'none',
+                  touchAction: 'manipulation',
+                  transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 28px rgba(139,115,85,0.4)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(139,115,85,0.35)'; }}
+              >
+                View Our Registry
+              </a>
+            </div>
           </motion.div>
 
           {/* Contact */}
