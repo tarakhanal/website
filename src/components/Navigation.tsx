@@ -40,7 +40,7 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link href="/">
+          <Link href="/home">
             <div
               className="text-xl md:text-2xl font-bold text-[#8B7355] cursor-pointer transition-transform hover:scale-105"
               style={{ fontFamily: "'Great Vibes','Playfair Display', serif" }}
