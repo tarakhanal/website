@@ -35,6 +35,29 @@ export default function HomePage() {
   // State for direction menus
   const [showDirectionsMenu, setShowDirectionsMenu] = useState(false);
   const [showReceptionDirectionsMenu, setShowReceptionDirectionsMenu] = useState(false);
+  const [ceremonyCopied, setCeremonyCopied] = useState(false);
+  const [receptionCopied, setReceptionCopied] = useState(false);
+
+  const copyToClipboard = (text: string) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => copyFallback(text));
+    } else {
+      copyFallback(text);
+    }
+  };
+
+  const copyFallback = (text: string) => {
+    const el = document.createElement('textarea');
+    el.value = text;
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+    document.body.appendChild(el);
+    el.select();
+    el.setSelectionRange(0, 99999); // iOS requires this
+    document.execCommand('copy');
+    document.body.removeChild(el);
+  };
 
   // Scratch the date state
   // `scratchMounted` keeps the scratch section out of the pre-rendered HTML (no hydration mismatch).
@@ -240,7 +263,17 @@ export default function HomePage() {
               Wedding Ceremony Location
             </h3>
             <p className="text-base text-[#8B7355] mb-1">Home Economics Building</p>
-            <p className="text-sm text-[#3D3D3D] mb-2">2050 Buffalo Dr, South Park Township, PA 15129</p>
+            <p
+              className="text-sm text-[#3D3D3D] mb-2 cursor-pointer hover:text-[#8B7355] transition-colors group inline-flex items-center gap-1"
+              title="Click to copy address"
+              onClick={() => {
+                copyToClipboard('2050 Buffalo Dr, South Park Township, PA 15129');
+                setCeremonyCopied(true);
+                setTimeout(() => setCeremonyCopied(false), 2000);
+              }}
+            >
+              {ceremonyCopied ? '✓ Copied!' : '2050 Buffalo Dr, South Park Township, PA 15129'}
+            </p>
             <p className="text-lg text-[#3D3D3D] mb-2">
               <span className="font-semibold">9:30AM to 5PM</span>
             </p>
@@ -304,7 +337,17 @@ export default function HomePage() {
               <span className="font-semibold">Wedding Ceremony</span>
             </p> */}
             <p className="text-base text-[#8B7355] mb-1">Star Venue LLC Party House</p>
-            <p className="text-sm text-[#3D3D3D] mb-2">4257 Eastland Square Dr Suite A, Columbus, OH 43232</p>
+            <p
+              className="text-sm text-[#3D3D3D] mb-2 cursor-pointer hover:text-[#8B7355] transition-colors inline-flex items-center gap-1"
+              title="Click to copy address"
+              onClick={() => {
+                copyToClipboard('4257 Eastland Square Dr Suite A, Columbus, OH 43232');
+                setReceptionCopied(true);
+                setTimeout(() => setReceptionCopied(false), 2000);
+              }}
+            >
+              {receptionCopied ? '✓ Copied!' : '4257 Eastland Square Dr Suite A, Columbus, OH 43232'}
+            </p>
             <p className="text-lg text-[#3D3D3D] mb-2">
               <span className="font-semibold">12PM to 11PM</span>
             </p>
