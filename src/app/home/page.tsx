@@ -241,12 +241,12 @@ export default function HomePage() {
       ))}
 
       {/* Main content */}
-      <section className="px-4 sm:px-6 lg:px-8">
+      <section style={{ width: '100%', boxSizing: 'border-box', padding: '0 1rem' }}>
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="max-w-4xl mx-auto text-center"
+          style={{ width: '100%', maxWidth: '700px', margin: '0 auto' }}
         >
           <motion.div
             variants={itemVariants}
@@ -254,7 +254,7 @@ export default function HomePage() {
           />
 
           {/* Location */}
-          <motion.div variants={itemVariants} className="min-h-screen flex flex-col items-center justify-center text-center py-24 border-b border-[#E8E0D5]">
+          <motion.div variants={itemVariants} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingTop: '6rem', paddingBottom: '6rem' }}>
             <h3
               className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center gap-2"
               style={{ fontFamily: "'Playfair Display', serif" }}
@@ -277,20 +277,22 @@ export default function HomePage() {
             <p className="text-lg text-[#3D3D3D] mb-2">
               <span className="font-semibold">9:30AM to 5PM</span>
             </p>
-            <div className="w-full mt-4 rounded-xl overflow-hidden shadow-lg" style={{ maxWidth: '600px' }}>
-              <iframe
-                title="Home Economics Building, South Park"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3044.5!2d-79.9987!3d40.2894!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8834e1b0b0b0b0b1%3A0x0!2s2050+Buffalo+Dr%2C+South+Park+Township%2C+PA+15129!5e0!3m2!1sen!2sus!4v1713000000000"
-                width="100%"
-                height="350"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+              <div style={{ width: '100%', maxWidth: '600px', borderRadius: '0.75rem', overflow: 'hidden', boxShadow: '0 4px 24px rgba(0,0,0,0.12)' }}>
+                <iframe
+                  title="Home Economics Building, South Park"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3044.5!2d-79.9987!3d40.2894!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8834e1b0b0b0b0b1%3A0x0!2s2050+Buffalo+Dr%2C+South+Park+Township%2C+PA+15129!5e0!3m2!1sen!2sus!4v1713000000000"
+                  width="100%"
+                  height="350"
+                  style={{ border: 0, display: 'block' }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
             </div>
             {/* Buttons: Add to Calendar & Directions */}
-            <div style={{ marginTop: '2rem' }} className="flex flex-row items-center justify-center gap-3">
+            <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
               <div className="relative">
                 <button
                   onClick={() => downloadICSFile(ceremonyEvent)}
@@ -325,7 +327,7 @@ export default function HomePage() {
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="min-h-screen flex flex-col items-center justify-center text-center py-24 border-b border-[#E8E0D5]">
+          <motion.div variants={itemVariants} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingTop: '6rem', paddingBottom: '6rem' }}>
             <h3
               className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center gap-2"
               style={{ fontFamily: "'Playfair Display', serif" }}
@@ -351,20 +353,22 @@ export default function HomePage() {
             <p className="text-lg text-[#3D3D3D] mb-2">
               <span className="font-semibold">12PM to 11PM</span>
             </p>
-            <div className="w-full mt-4 rounded-xl overflow-hidden shadow-lg" style={{ maxWidth: '600px' }}>
-              <iframe
-                title="Star Venue LLC Party House, Columbus"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3056.0!2d-82.8314!3d39.9486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s4257+Eastland+Square+Dr+Suite+A%2C+Columbus%2C+OH+43232!5e0!3m2!1sen!2sus!4v1713000000001"
-                width="100%"
-                height="350"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+              <div style={{ width: '100%', maxWidth: '600px', borderRadius: '0.75rem', overflow: 'hidden', boxShadow: '0 4px 24px rgba(0,0,0,0.12)' }}>
+                <iframe
+                  title="Star Venue LLC Party House, Columbus"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3056.0!2d-82.8314!3d39.9486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s4257+Eastland+Square+Dr+Suite+A%2C+Columbus%2C+OH+43232!5e0!3m2!1sen!2sus!4v1713000000001"
+                  width="100%"
+                  height="350"
+                  style={{ border: 0, display: 'block' }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
             </div>
             {/* Reception Buttons: Add to Calendar & Directions */}
-            <div style={{ marginTop: '2rem' }} className="flex flex-row items-center justify-center gap-3">
+            <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
               <div className="relative">
                 <button
                   onClick={() => downloadICSFile(receptionEvent)}
@@ -397,7 +401,7 @@ export default function HomePage() {
             </div>
           </motion.div>
 
-          <motion.div className='song-suggestion mt-8'>
+          <motion.div className='song-suggestion max-w-4xl mx-auto w-full text-center mt-8 py-12'>
             
             <p>Do you want to suggest songs for our reception?</p>
             <a
@@ -408,19 +412,15 @@ export default function HomePage() {
               Suggest Songs
             </a>
             </motion.div>
-        </motion.div>
-      </section>
 
-      <section id="details" className="py-20 px-4 sm:px-6 lg:px-8 bg-white/30">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="max-w-4xl mx-auto grid grid-cols-1 gap-0"
-        >
           {/* Date & Time */}
-          <motion.div variants={itemVariants} className="min-h-screen flex flex-col items-center justify-center text-center py-24 border-b border-[#E8E0D5]">
+          <motion.div
+            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch', textAlign: 'center', paddingTop: '6rem', paddingBottom: '6rem' }}
+          >
             <h3
               className="text-2xl font-bold text-[#8B7355] mb-4"
               style={{ fontFamily: "'Playfair Display', serif" }}
@@ -436,7 +436,10 @@ export default function HomePage() {
           {/* Registry */}
           <motion.div
             variants={itemVariants}
-            className="min-h-screen flex flex-col items-center justify-center text-center py-24 bg-gradient-to-r from-[#8B7355] to-[#A8896C] rounded-2xl shadow-lg my-8 px-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingTop: '6rem', paddingBottom: '6rem', background: 'linear-gradient(to right, #8B7355, #A8896C)', borderRadius: '1rem', boxShadow: '0 4px 24px rgba(0,0,0,0.12)', margin: '2rem 0', padding: '4rem 2rem' }}
           >
             <h3
               className="text-2xl font-bold text-white mb-3"
@@ -444,7 +447,7 @@ export default function HomePage() {
             >
               🎁 Registry
             </h3>
-            <p className="text-white/80 mb-5 text-lg">Your love and presence is the greatest gift — but if you'd like to celebrate us, explore our registry!</p>
+            <p style={{ color: 'rgba(255,255,255,0.85)', marginBottom: '1.25rem', fontSize: '1.1rem' }}>Your love and presence is the greatest gift — but if you'd like to celebrate us, explore our registry!</p>
             <a
               href="/registry"
               className="inline-block px-8 py-3 bg-white text-[#8B7355] rounded-full font-bold text-base uppercase tracking-wide shadow-md transition-transform hover:scale-105 active:scale-95"
@@ -453,12 +456,15 @@ export default function HomePage() {
               View Registry
             </a>
           </motion.div>
-        </motion.div>
 
-        <div className="h-12" />
-
-        {/* Contact */}
-          <div className="max-w-4xl mx-auto min-h-screen flex flex-col items-center justify-center text-center py-24">
+          {/* Contact */}
+          <motion.div
+            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch', textAlign: 'center', paddingTop: '6rem', paddingBottom: '6rem' }}
+          >
             <h3
               className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center gap-2"
               style={{ fontFamily: "'Playfair Display', serif" }}
@@ -471,7 +477,9 @@ export default function HomePage() {
                 +1 (412) 506-0479
               </a>
             </p>
-          </div>
+          </motion.div>
+
+        </motion.div>
       </section>
     </main>
   );
