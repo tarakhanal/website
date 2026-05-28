@@ -1,19 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Navigation from '@/components/Navigation';
 import DirectionsModal from '@/components/DirectionsModal';
-import { useCountdown } from '@/hooks/useCountdown';
+import ScratchTheDate from '@/components/ScratchTheDate';
 import { Phone, MapPin, CalendarPlus, Navigation as NavigationIcon } from 'lucide-react';
 
 import { ceremonyEvent, receptionEvent } from '@/lib/events';
-import { downloadICSFile, googleCalendarUrl, outlookWebUrl } from '@/lib/calendar';
-import { openMapInApp, googleMapsSearchUrl } from '@/lib/maps';
+import { downloadICSFile } from '@/lib/calendar';
+import { openMapInApp } from '@/lib/maps';
 
 export default function HomePage() {
-  const { days, hours, minutes, seconds } = useCountdown();
-
   const containerVariants = {
     hidden: { opacity: 1 },
     visible: {
@@ -37,6 +35,75 @@ export default function HomePage() {
   // State for direction menus
   const [showDirectionsMenu, setShowDirectionsMenu] = useState(false);
   const [showReceptionDirectionsMenu, setShowReceptionDirectionsMenu] = useState(false);
+
+  // Scratch the date state
+  // `scratchMounted` keeps the scratch section out of the pre-rendered HTML (no hydration mismatch).
+  // We use useLayoutEffect (fires before paint) so there is zero visible delay — the scratch section
+  // appears on the very first frame the browser draws, not a frame later like useEffect would.
+  // The `typeof window` fallback to useEffect is only for `next build`'s server-side pass.
+  const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+  const [scratchMounted, setScratchMounted] = useState(false);
+  const [alreadyScratched, setAlreadyScratched] = useState(false);
+  const [scratchComplete, setScratchComplete] = useState(false);
+
+  useIsomorphicLayoutEffect(() => {
+    try {
+      setAlreadyScratched(localStorage.getItem('weddingScratched') === 'true');
+    } catch { /* Safari private browsing — treat as first visit */ }
+    setScratchMounted(true);
+  }, []);
+  const scratchSectionRef = useRef<HTMLElement>(null);
+  const scratchCardsRef = useRef<HTMLDivElement>(null);
+  const savedScrollY = useRef(0);
+  const lockFired = useRef(false);
+
+  // Lock scroll (iOS-safe: body position:fixed trick keeps viewport exactly where it is)
+  const lockScroll = useCallback(() => {
+    if (lockFired.current) return;
+    lockFired.current = true;
+    savedScrollY.current = window.scrollY;
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.top = `-${savedScrollY.current}px`;
+  }, []);
+
+  // Unlock scroll
+  const unlockScroll = useCallback(() => {
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
+    document.body.style.top = '';
+    window.scrollTo(0, savedScrollY.current);
+  }, []);
+
+  // Lock when scratch cards are centered in the viewport
+  // rootMargin '-20% 0px -60% 0px' = fires when the cards row is in the upper 20-40% band
+  // (user scrolls 20% more than before, so more content below the cards is visible when locked)
+  useEffect(() => {
+    // Only lock for first-time visitors who haven't scratched yet
+    if (!scratchMounted || alreadyScratched !== false || scratchComplete) return;
+    const cards = scratchCardsRef.current;
+    if (!cards) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          lockScroll();
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '-20% 0px -60% 0px', threshold: 0 }
+    );
+    observer.observe(cards);
+    return () => observer.disconnect();
+  }, [scratchMounted, alreadyScratched, scratchComplete, lockScroll]);
+
+  const handleScratchComplete = useCallback(() => {
+    try { localStorage.setItem('weddingScratched', 'true'); } catch { /* ITP/private mode */ }
+    setScratchComplete(true);
+    setTimeout(() => unlockScroll(), 600);
+  }, [unlockScroll]);
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-[#F5F1ED]">
@@ -129,66 +196,39 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-           <div className="h-16" />
-      {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-24">
+
+      {/* Scratch the Date Section
+          Not rendered during pre-build (scratchMounted=false) — eliminates Safari hydration mismatch.
+          After first paint, useEffect sets scratchMounted=true and the correct alreadyScratched value.
+          - alreadyScratched=true:  returning visitor → revealed state, no scroll lock
+          - alreadyScratched=false: first visit → full scratch + scroll lock experience */}
+      {scratchMounted && (alreadyScratched ? (
+        /* Returning visitor: show revealed content */
+        <section className="bg-transparent">
+          <ScratchTheDate onComplete={handleScratchComplete} cardsRef={scratchCardsRef} revealed={true} />
+        </section>
+      ) : (
+        <>
+          {/* Spacer: gives breathing room so the scratch heading/cards peek in from the bottom */}
+          <div style={{ height: '26vh' }} />
+          <section ref={scratchSectionRef} className="bg-transparent">
+            <ScratchTheDate onComplete={handleScratchComplete} cardsRef={scratchCardsRef} />
+          </section>
+        </>
+      ))}
+
+      {/* Main content */}
+      <section className="px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           className="max-w-4xl mx-auto text-center"
         >
-          <motion.h1
-            variants={itemVariants}
-            className="text-5xl md:text-7xl font-bold text-[#3D3D3D] mb-4"
-            style={{ fontFamily: "'Great Vibes', cursive", color: '#b39979ff' }}
-          >
-            Our Forever Starts In
-          </motion.h1>
-
-          {/* <motion.h2
-            variants={itemVariants}
-            className="text-4xl md:text-6xl font-bold text-[#8B7355] mb-8"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            Tara & Bandana
-          </motion.h2> */}
-
-          {/* <motion.div variants={itemVariants} className="flex flex-col items-center gap-2 mb-12">
-            <span className="text-lg text-[#3D3D3D] font-light">May 8, 2027 📍 Pittsburgh, Pennsylvania</span>
-            <span className="text-lg text-[#3D3D3D] font-light">May 9, 2027 📍 Columbus, Ohio</span>
-          </motion.div> */}
-
-          <motion.div variants={itemVariants} className="flex justify-center items-center gap-8 md:gap-16 mb-20 w-full">
-            <div className="text-center">
-              <div style={{ fontSize: '2rem', fontFamily: "'Great Vibes', cursive" }} className="font-bold text-[#8B7355]">{days}</div>
-              <div className="text-base text-[#8B7355] uppercase tracking-wider mt-2">Days</div>
-            </div>
-            <div className="text-center">
-              <div style={{ fontSize: '2rem', fontFamily: "'Great Vibes', cursive" }} className="font-bold text-[#8B7355]">{hours}</div>
-              <div className="text-base text-[#8B7355] uppercase tracking-wider mt-2">Hours</div>
-            </div>
-            <div className="text-center">
-              <div style={{ fontSize: '2rem', fontFamily: "'Great Vibes', cursive" }} className="font-bold text-[#8B7355]">{minutes}</div>
-              <div className="text-base text-[#8B7355] uppercase tracking-wider mt-2">Minutes</div>
-            </div>
-            <div className="text-center">
-              <div style={{ fontSize: '2rem', fontFamily: "'Great Vibes', cursive"}} className="font-bold text-[#8B7355]">{seconds}</div>
-              <div className="text-base text-[#8B7355] uppercase tracking-wider mt-2">Seconds</div>
-            </div>
-          </motion.div>
-          <p style={{ marginTop: '2rem', fontSize: '2.5rem', color: '#8B7355', fontFamily: "'Great Vibes', cursive" }}>04. 24. 2027</p>
-          {/* <p style={{ marginTop: '2rem', fontSize: '1.5rem', color: '#8B7355' }}>May 8, 2027</p> */}
-          <p style={{ marginTop: '2rem', fontSize: '2.0rem', color: '#8B7355', fontFamily: "'Great Vibes', cursive" }}>We can't wait to celebrate with you!</p>
-          <div className="h-16" />
-
           <motion.div
             variants={itemVariants}
             className="flex flex-col sm:flex-row justify-center gap-6"
-          >
-            
-            
-          </motion.div>
+          />
 
           {/* Location */}
           <motion.div variants={itemVariants} className="min-h-screen flex flex-col items-center justify-center text-center py-24 border-b border-[#E8E0D5]">
@@ -328,7 +368,6 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* Quick Info */}
       <section id="details" className="py-20 px-4 sm:px-6 lg:px-8 bg-white/30">
         <motion.div
           variants={containerVariants}

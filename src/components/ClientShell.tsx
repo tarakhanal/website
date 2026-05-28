@@ -1,19 +1,11 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
 
-// Renders children client-side only — eliminates ALL hydration mismatches
-// caused by framer-motion, localStorage, and other browser-only APIs.
-// The loading fallback matches the page background so there is no visible flash.
-const ClientOnly = dynamic(
-  () => Promise.resolve(({ children }: { children: ReactNode }) => <>{children}</>),
-  {
-    ssr: false,
-    loading: () => <div style={{ minHeight: '100vh', background: '#FAFAF8' }} />,
-  }
-);
-
+// Pure pass-through — no blank-div wrapper needed.
+// All pages are 'use client' and handle their own state via useEffect.
+// The site uses output:'export' (static), so any server-render blanking causes
+// a visible flash on Safari. Just render children directly.
 export default function ClientShell({ children }: { children: ReactNode }) {
-  return <ClientOnly>{children}</ClientOnly>;
+  return <>{children}</>;
 }

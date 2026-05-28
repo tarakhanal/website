@@ -31,6 +31,12 @@ export default function EnvelopeLanding() {
     }
   };
 
+  // Safari iOS fires touchend before click — attach both so the first tap always works
+  const handleCardTouch = (e: React.TouchEvent) => {
+    e.preventDefault(); // prevent the ghost click 300ms later
+    handleCardClick();
+  };
+
   // Stage 3: Fully opened - show the invitation content
   if (stage === 'opened') {
     return (
@@ -394,6 +400,7 @@ export default function EnvelopeLanding() {
           {/* Card Front */}
           <button
             onClick={handleCardClick}
+            onTouchEnd={handleCardTouch}
             style={{ touchAction: 'manipulation', aspectRatio: '9/14', minHeight: '420px', display: 'block' }}
             className="relative w-full bg-[#B81A2D] rounded-lg shadow-2xl overflow-hidden focus:outline-none cursor-pointer"
           >
