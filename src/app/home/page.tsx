@@ -413,26 +413,6 @@ export default function HomePage() {
             </a>
             </motion.div>
 
-          {/* Date & Time */}
-          <motion.div
-            variants={itemVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch', textAlign: 'center', paddingTop: '6rem', paddingBottom: '6rem' }}
-          >
-            <h3
-              className="text-2xl font-bold text-[#8B7355] mb-4"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              Date & Time
-            </h3>
-            <p className="text-lg text-[#3D3D3D] mb-2">
-              <span className="font-semibold">April 24, 2027</span>
-            </p>
-            <p className="text-[#8B7355]">Details coming soon</p>
-          </motion.div>
-
           {/* Registry */}
           <motion.div
             variants={itemVariants}
