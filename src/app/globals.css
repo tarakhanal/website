@@ -108,6 +108,20 @@ p {
   to   { transform: translateX(0); }
 }
 
+.marquee-rtl {
+  animation: marquee-rtl 60s linear infinite !important;
+}
+.marquee-ltr {
+  animation: marquee-ltr 60s linear infinite !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-rtl, .marquee-ltr {
+    animation-duration: 60s !important;
+    animation-play-state: running !important;
+  }
+}
+
 @keyframes nimantrana-pulse {
   0%, 100% { transform: scale(1); }
   50%       { transform: scale(1.015); }

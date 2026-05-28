@@ -142,7 +142,7 @@ export default function HomePage() {
 
         {/* Top row: right to left */}
         <div className="overflow-hidden w-full">
-          <div style={{ display: 'flex', width: '7920px', animation: 'marquee-rtl 60s linear infinite' }}>
+          <div style={{ display: 'flex', width: '7920px' }} className="marquee-rtl">
             {[...Array(2)].flatMap((_, setIndex) =>
               [
                 '04446EEE-0136-418E-8902-62C240512589_1_105_c.jpeg',
@@ -185,7 +185,7 @@ export default function HomePage() {
 
         {/* Bottom row: left to right */}
         <div className="overflow-hidden w-full">
-          <div style={{ display: 'flex', width: '7920px', animation: 'marquee-ltr 60s linear infinite' }}>
+          <div style={{ display: 'flex', width: '7920px' }} className="marquee-ltr">
             {[...Array(2)].flatMap((_, setIndex) =>
               [
                 'F04BA61A-C8E5-4940-983E-FB4CFAAA77C7_1_105_c.jpeg',
