@@ -105,7 +105,7 @@ export default function EnvelopeLanding() {
             transition={{ duration: 0.6, delay: 1.4 }}
             className="flex flex-col sm:flex-row justify-center gap-4"
           >
-            <Link href="/home">
+            <Link href="/home" onClick={() => localStorage.setItem('wedding_music_started', 'true')}>
               <motion.button
                 whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(196, 30, 58, 0.3)' }}
                 whileTap={{ scale: 0.95 }}

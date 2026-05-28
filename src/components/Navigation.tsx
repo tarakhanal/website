@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Volume2, VolumeX } from 'lucide-react';
+import { useAudioStore } from '@/store/audioStore';
 
 const navItems = [
   { label: 'Home', href: '/home' },
@@ -18,6 +19,7 @@ const navItems = [
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { isMuted, hasStarted, toggle } = useAudioStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,20 +64,46 @@ export default function Navigation() {
                 </motion.span>
               </Link>
             ))}
+            {/* Music toggle — only visible after music has started */}
+            {hasStarted && (
+              <motion.button
+                onClick={toggle}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                aria-label={isMuted ? 'Unmute music' : 'Mute music'}
+                title={isMuted ? 'Unmute music' : 'Mute music'}
+                className="text-[#8B7355] hover:text-[#D4AF85] transition-colors"
+              >
+                {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+              </motion.button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="md:hidden"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            {isOpen ? (
-              <X className="w-6 h-6 text-[#8B7355]" />
-            ) : (
-              <Menu className="w-6 h-6 text-[#8B7355]" />
+          <div className="md:hidden flex items-center gap-3">
+            {hasStarted && (
+              <motion.button
+                onClick={toggle}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                aria-label={isMuted ? 'Unmute music' : 'Mute music'}
+                className="text-[#8B7355]"
+              >
+                {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+              </motion.button>
             )}
-          </button>
+            <button
+              className=""
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle menu"
+            >
+              {isOpen ? (
+                <X className="w-6 h-6 text-[#8B7355]" />
+              ) : (
+                <Menu className="w-6 h-6 text-[#8B7355]" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
