@@ -200,72 +200,94 @@ function GalleryScroller() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const wheelBuffer = useRef(0);
   const touchStartY = useRef(0);
+  const touchActive = useRef(false);
   const lastAdvance = useRef(0); // timestamp of last advance/retreat
-  const WHEEL_THRESHOLD = 280;
-  const TOUCH_THRESHOLD = 55;
-  const COOLDOWN_MS = 600; // min ms between photo changes
+  const WHEEL_THRESHOLD = 340;
+  const TOUCH_THRESHOLD = 65;
+  const COOLDOWN_MS = 800; // min ms between photo changes
 
   const advance = useCallback(() => setStackIndex((i) => Math.min(i + 1, N - 1)), []);
   const retreat = useCallback(() => setStackIndex((i) => Math.max(i - 1, 0)), []);
 
+  // Lock body scroll for the entire gallery page — iOS Safari requires this at
+  // the document level (not just the element) to reliably block native scroll.
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    const prevPosition = document.body.style.position;
+    const prevWidth = document.body.style.width;
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.body.style.position = prevPosition;
+      document.body.style.width = prevWidth;
+    };
+  }, []);
+
   useEffect(() => {
     const onWheel = (e: WheelEvent) => {
-      const rect = sectionRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const inView = rect.top <= window.innerHeight * 0.3 && rect.bottom >= window.innerHeight * 0.7;
-      if (!inView) return;
+      e.preventDefault();
       if (e.deltaY > 0 && stackIndex < N - 1) {
-        e.preventDefault();
         wheelBuffer.current += e.deltaY;
         if (wheelBuffer.current >= WHEEL_THRESHOLD && Date.now() - lastAdvance.current >= COOLDOWN_MS) {
           wheelBuffer.current = 0; lastAdvance.current = Date.now(); advance();
         }
-        return;
-      }
-      if (e.deltaY < 0 && stackIndex > 0) {
-        e.preventDefault();
+      } else if (e.deltaY < 0 && stackIndex > 0) {
         wheelBuffer.current += e.deltaY;
         if (wheelBuffer.current <= -WHEEL_THRESHOLD && Date.now() - lastAdvance.current >= COOLDOWN_MS) {
           wheelBuffer.current = 0; lastAdvance.current = Date.now(); retreat();
         }
+      } else {
+        wheelBuffer.current = 0;
       }
     };
 
     const onTouchStart = (e: TouchEvent) => {
       touchStartY.current = e.touches[0].clientY;
-      // If the stack is engaged, prevent the browser from committing to native scroll
-      if (stackIndex > 0) e.preventDefault();
+      touchActive.current = true;
+      // Don't preventDefault here — it kills click events on the nav bar.
+      // The body position:fixed lock already prevents iOS native scroll.
+      // Only skip tracking if the touch is on the nav itself.
+      const target = e.target as Element;
+      if (target.closest('nav')) {
+        touchActive.current = false;
+      }
     };
 
     const onTouchMove = (e: TouchEvent) => {
-      // Always allow retreat (swipe down) if we have stacked photos
-      // Only gate advance (swipe up) by inView
+      if (!touchActive.current) return;
+      e.preventDefault();
       const deltaY = touchStartY.current - e.touches[0].clientY;
       if (Math.abs(deltaY) < TOUCH_THRESHOLD) return;
-
-      if (deltaY < 0 && stackIndex > 0) {
-        // Swipe down → retreat, always works
-        e.preventDefault(); retreat(); lastAdvance.current = Date.now(); touchStartY.current = e.touches[0].clientY;
-        return;
-      }
-
-      const rect = sectionRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const inView = rect.top < window.innerHeight && rect.bottom > 0;
-      if (!inView) return;
+      if (Date.now() - lastAdvance.current < COOLDOWN_MS) return;
 
       if (deltaY > 0 && stackIndex < N - 1) {
-        e.preventDefault(); advance(); lastAdvance.current = Date.now(); touchStartY.current = e.touches[0].clientY;
+        // Swipe up → advance
+        touchActive.current = false;
+        lastAdvance.current = Date.now();
+        touchStartY.current = e.touches[0].clientY;
+        advance();
+      } else if (deltaY < 0 && stackIndex > 0) {
+        // Swipe down → retreat
+        touchActive.current = false;
+        lastAdvance.current = Date.now();
+        touchStartY.current = e.touches[0].clientY;
+        retreat();
       }
     };
+
+    const onTouchEnd = () => { touchActive.current = false; };
 
     window.addEventListener('wheel', onWheel, { passive: false });
     window.addEventListener('touchstart', onTouchStart, { passive: false });
     window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd);
     return () => {
       window.removeEventListener('wheel', onWheel);
       window.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
     };
   }, [stackIndex, advance, retreat]);
 
@@ -279,7 +301,7 @@ function GalleryScroller() {
         style={{
           minHeight: '100svh',
           paddingTop: 'clamp(1.5rem, 6vw, 5rem)',
-          touchAction: stackIndex > 0 ? 'none' : 'auto',
+          touchAction: 'none',
         }}
       >
         {/* Mobile: chapter label above stack — sticky so it stays visible */}
