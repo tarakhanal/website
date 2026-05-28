@@ -79,6 +79,26 @@ p {
   }
 }
 
+/* 18 images × 2 sets × 220px each = 7920px total; animate half (3960px) for seamless loop */
+@keyframes marquee-rtl {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-3960px); }
+}
+@keyframes marquee-ltr {
+  from { transform: translateX(-3960px); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes nimantrana-pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.015); }
+}
+
+@keyframes tap-blink {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+
 @keyframes float {
   0%, 100% {
     transform: translateY(0px);

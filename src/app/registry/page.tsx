@@ -6,7 +6,7 @@ import { Gift, ExternalLink } from 'lucide-react';
 
 export default function RegistryPage() {
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 1 },
     visible: {
       opacity: 1,
       transition: {
@@ -17,7 +17,7 @@ export default function RegistryPage() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 1, y: 0 },
     visible: {
       opacity: 1,
       y: 0,
@@ -32,7 +32,7 @@ export default function RegistryPage() {
       {/* Header */}
       <section className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
@@ -66,13 +66,12 @@ export default function RegistryPage() {
             className="grid grid-cols-1 md:grid-cols-1 gap-8 mb-12"
           >
             {/* Amazon Registry */}
-            <motion.a
+            <a
               href="https://www.amazon.com/wedding/guest-view/7JBIJU9AX8H4"
               target="_blank"
               rel="noopener noreferrer"
-              whileHover={{ scale: 1.02, boxShadow: '0 15px 40px rgba(139, 115, 85, 0.2)' }}
-              whileTap={{ scale: 0.98 }}
-              className="relative overflow-hidden rounded-lg shadow-lg"
+              className="relative overflow-hidden rounded-lg shadow-lg block transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              style={{ touchAction: 'manipulation' }}
             >
               <div className="bg-gradient-to-r from-[#8B7355] to-[#A8886A] p-8 md:p-12 text-white relative z-10">
                 <div className="flex items-start justify-between mb-4">
@@ -92,22 +91,15 @@ export default function RegistryPage() {
                   <ExternalLink className="w-8 h-8 flex-shrink-0" />
                 </div>
 
-                <motion.div
-                  whileHover={{ x: 4 }}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 hover:bg-white/30 rounded-lg font-semibold text-sm backdrop-blur-sm transition-all"
-                >
+                <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 hover:bg-white/30 rounded-lg font-semibold text-sm backdrop-blur-sm transition-all hover:translate-x-1">
                   View Registry
                   <ExternalLink className="w-4 h-4" />
-                </motion.div>
+                </div>
               </div>
 
               {/* Decorative Background */}
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -mr-20 -mt-20"
-              />
-            </motion.a>
+              <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -mr-20 -mt-20 animate-spin" style={{ animationDuration: '20s' }} />
+            </a>
           </motion.div>
 
           {/* Info Cards */}
@@ -184,7 +176,7 @@ export default function RegistryPage() {
       {/* Thank You Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#8B7355]/10">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}

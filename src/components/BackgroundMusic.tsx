@@ -12,7 +12,10 @@ const STORAGE_PART     = 'wedding_music_part';
 
 export default function BackgroundMusic() {
   const pathname = usePathname();
-  const { isMuted, hasStarted, setStarted } = useAudioStore();
+  const { isMuted, hasStarted, setStarted, hydrate } = useAudioStore();
+
+  // Hydrate store from localStorage after mount (avoids SSR hydration mismatch)
+  useEffect(() => { hydrate(); }, []);
 
   // Index of the currently active Audio object (0 or 1)
   const partRef      = useRef<number>(0);
@@ -112,10 +115,25 @@ export default function BackgroundMusic() {
       tryPlay(activeAudio);
     }
 
+    // ── First-play trigger from EnvelopeLanding's "View Details" tap ──────
+    // The custom event is dispatched synchronously within the user gesture,
+    // so audio.play() here IS within the trusted activation window on iOS Safari.
+    const handleMusicStart = () => {
+      const a = audioRefs.current[partRef.current];
+      if (!a) return;
+      const nowMuted = localStorage.getItem(STORAGE_MUTED) === 'true';
+      if (!nowMuted) {
+        a.play().catch(() => {});
+      }
+      setStarted(true);
+    };
+    document.addEventListener('wedding-music-start', handleMusicStart, { once: true });
+
     return () => {
       if (saveIntervalRef.current) clearInterval(saveIntervalRef.current);
       savePosition();
       cancelInteraction();
+      document.removeEventListener('wedding-music-start', handleMusicStart);
       audioRefs.current.forEach(a => { a?.removeEventListener('ended', handlePartEnded); a?.pause(); });
       audioRefs.current = [null, null];
     };

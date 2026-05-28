@@ -40,7 +40,7 @@ export default function MusicPage() {
   const sortedSongs = getSortedSongs();
 
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 1 },
     visible: {
       opacity: 1,
       transition: {
@@ -51,7 +51,7 @@ export default function MusicPage() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 1, y: 0 },
     visible: {
       opacity: 1,
       y: 0,
@@ -76,7 +76,7 @@ export default function MusicPage() {
       {/* Header */}
       <section className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
@@ -99,26 +99,25 @@ export default function MusicPage() {
       {/* Add Song Form */}
       <section className="py-8 px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="max-w-2xl mx-auto"
         >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <button
             onClick={() => setIsFormVisible(!isFormVisible)}
-            className="w-full mb-6 px-6 py-3 bg-[#D4AF85] text-white rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-[#C1A78C] transition-colors"
+            className="w-full mb-6 px-6 py-3 bg-[#D4AF85] text-white rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-[#C1A78C] transition-colors hover:scale-105 active:scale-95"
+            style={{ touchAction: 'manipulation' }}
           >
             <Plus className="w-5 h-5" />
             Suggest a Song
-          </motion.button>
+          </button>
 
           <AnimatePresence>
             {isFormVisible && (
               <motion.form
-                initial={{ opacity: 0, height: 0 }}
+                initial={{ opacity: 1, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
@@ -153,23 +152,21 @@ export default function MusicPage() {
                     />
                   </div>
                   <div className="flex gap-3 pt-2">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                    <button
                       type="submit"
-                      className="flex-1 px-4 py-2 bg-[#8B7355] text-white rounded-lg font-semibold hover:bg-[#6B5345] transition-colors"
+                      className="flex-1 px-4 py-2 bg-[#8B7355] text-white rounded-lg font-semibold hover:bg-[#6B5345] transition-colors hover:scale-105 active:scale-95"
+                      style={{ touchAction: 'manipulation' }}
                     >
                       Add Song
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                    </button>
+                    <button
                       type="button"
                       onClick={() => setIsFormVisible(false)}
-                      className="flex-1 px-4 py-2 border border-[#D4AF85] text-[#8B7355] rounded-lg font-semibold hover:bg-[#F5F1ED] transition-colors"
+                      className="flex-1 px-4 py-2 border border-[#D4AF85] text-[#8B7355] rounded-lg font-semibold hover:bg-[#F5F1ED] transition-colors hover:scale-105 active:scale-95"
+                      style={{ touchAction: 'manipulation' }}
                     >
                       Cancel
-                    </motion.button>
+                    </button>
                   </div>
                 </div>
               </motion.form>
@@ -233,20 +230,19 @@ export default function MusicPage() {
                           </div>
                         </div>
 
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
+                        <button
                           onClick={() => handleVote(song.id)}
                           disabled={hasVoted}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all flex-shrink-0 ${
+                          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all flex-shrink-0 hover:scale-110 active:scale-90 ${
                             hasVoted
                               ? 'bg-[#D4AF85]/30 text-[#8B7355] cursor-not-allowed'
                               : 'bg-[#D4AF85] text-white hover:bg-[#C1A78C]'
                           }`}
+                          style={{ touchAction: 'manipulation' }}
                         >
                           <ThumbsUp className="w-4 h-4" />
                           <span className="font-bold">{song.votes}</span>
-                        </motion.button>
+                        </button>
                       </div>
                     </motion.div>
                   );
@@ -260,7 +256,7 @@ export default function MusicPage() {
       {/* Info Section */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-[#8B7355]/10">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}

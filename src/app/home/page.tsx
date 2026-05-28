@@ -15,7 +15,7 @@ export default function HomePage() {
   const { days, hours, minutes, seconds } = useCountdown();
 
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 1 },
     visible: {
       opacity: 1,
       transition: {
@@ -26,7 +26,7 @@ export default function HomePage() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 1, y: 0 },
     visible: {
       opacity: 1,
       y: 0,
@@ -52,11 +52,7 @@ export default function HomePage() {
 
         {/* Top row: right to left */}
         <div className="overflow-hidden w-full">
-          <motion.div
-            className="flex w-max"
-            animate={{ x: ['0%', '-50%'] }}
-            transition={{ x: { repeat: Infinity, repeatType: 'loop', duration: 60, ease: 'linear' } }}
-          >
+          <div style={{ display: 'flex', width: '7920px', animation: 'marquee-rtl 60s linear infinite' }}>
             {[...Array(2)].flatMap((_, setIndex) =>
               [
                 '04446EEE-0136-418E-8902-62C240512589_1_105_c.jpeg',
@@ -78,16 +74,16 @@ export default function HomePage() {
                 'EEC2C875-CEA2-47C8-940C-D56522D07FE8_1_105_c.jpeg',
                 'F04BA61A-C8E5-4940-983E-FB4CFAAA77C7_1_105_c.jpeg',
               ].map((filename, i) => (
-                <div key={`top-${setIndex}-${i}`} className="flex-shrink-0 w-[370px] h-[260px] overflow-hidden">
+                <div key={`top-${setIndex}-${i}`} style={{ flexShrink: 0, width: '220px', height: '180px', overflow: 'hidden' }}>
                   <img
                     src={`/images/${filename}`}
                     alt={`Wedding photo ${i + 1}`}
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 </div>
               ))
             )}
-          </motion.div>
+          </div>
         </div>
 
         {/* Middle text */}
@@ -99,11 +95,7 @@ export default function HomePage() {
 
         {/* Bottom row: left to right */}
         <div className="overflow-hidden w-full">
-          <motion.div
-            className="flex w-max"
-            animate={{ x: ['-50%', '0%'] }}
-            transition={{ x: { repeat: Infinity, repeatType: 'loop', duration: 60, ease: 'linear' } }}
-          >
+          <div style={{ display: 'flex', width: '7920px', animation: 'marquee-ltr 60s linear infinite' }}>
             {[...Array(2)].flatMap((_, setIndex) =>
               [
                 'F04BA61A-C8E5-4940-983E-FB4CFAAA77C7_1_105_c.jpeg',
@@ -125,16 +117,16 @@ export default function HomePage() {
                 '2541030F-6D6B-4371-A4BA-3C32119F9069_1_105_c.jpeg',
                 '04446EEE-0136-418E-8902-62C240512589_1_105_c.jpeg',
               ].map((filename, i) => (
-                <div key={`bot-${setIndex}-${i}`} className="flex-shrink-0 w-[370px] h-[260px] overflow-hidden">
+                <div key={`bot-${setIndex}-${i}`} style={{ flexShrink: 0, width: '220px', height: '180px', overflow: 'hidden' }}>
                   <img
                     src={`/images/${filename}`}
                     alt={`Wedding photo ${i + 1}`}
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 </div>
               ))
             )}
-          </motion.div>
+          </div>
         </div>
       </section>
            <div className="h-16" />
@@ -325,14 +317,13 @@ export default function HomePage() {
           <motion.div className='song-suggestion mt-8'>
             
             <p>Do you want to suggest songs for our reception?</p>
-            <motion.a
+            <a
               href="/music"
-              whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(212, 175, 133, 0.3)' }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 border-2 border-[#D4AF85] text-[#8B7355] rounded-full font-semibold uppercase tracking-wide text-sm transition-all"
+              className="px-8 py-4 border-2 border-[#D4AF85] text-[#8B7355] rounded-full font-semibold uppercase tracking-wide text-sm transition-all inline-block hover:scale-105 active:scale-95"
+              style={{ touchAction: 'manipulation' }}
             >
               Suggest Songs
-            </motion.a>
+            </a>
             </motion.div>
         </motion.div>
       </section>
@@ -372,14 +363,13 @@ export default function HomePage() {
               🎁 Registry
             </h3>
             <p className="text-white/80 mb-5 text-lg">Your love and presence is the greatest gift — but if you'd like to celebrate us, explore our registry!</p>
-            <motion.a
+            <a
               href="/registry"
-              whileHover={{ scale: 1.05, boxShadow: '0 8px 25px rgba(0,0,0,0.2)' }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-block px-8 py-3 bg-white text-[#8B7355] rounded-full font-bold text-base uppercase tracking-wide shadow-md"
+              className="inline-block px-8 py-3 bg-white text-[#8B7355] rounded-full font-bold text-base uppercase tracking-wide shadow-md transition-transform hover:scale-105 active:scale-95"
+              style={{ touchAction: 'manipulation' }}
             >
               View Registry
-            </motion.a>
+            </a>
           </motion.div>
         </motion.div>
 

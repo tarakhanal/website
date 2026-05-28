@@ -38,7 +38,7 @@ export default function GalleryPage() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 1 },
     visible: {
       opacity: 1,
       transition: {
@@ -78,7 +78,7 @@ export default function GalleryPage() {
       {/* Header */}
       <section className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
@@ -104,13 +104,11 @@ export default function GalleryPage() {
           className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
         >
           {galleryPhotos.map((src, i) => (
-            <motion.button
+            <button
               key={i}
-              variants={itemVariants}
               onClick={() => setSelectedIndex(i)}
-              className="relative w-full aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all group"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+              className="relative w-full aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all group hover:scale-[1.03] active:scale-[0.97]"
+              style={{ touchAction: 'manipulation' }}
             >
               <Image
                 src={src}
@@ -121,7 +119,7 @@ export default function GalleryPage() {
               />
 
               <motion.div
-                initial={{ opacity: 0 }}
+                initial={{ opacity: 1 }}
                 whileHover={{ opacity: 1 }}
                 className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
               >
@@ -129,7 +127,7 @@ export default function GalleryPage() {
                   <p className="text-lg font-semibold">View</p>
                 </div>
               </motion.div>
-            </motion.button>
+            </button>
           ))}
         </motion.div>
       </section>
@@ -140,7 +138,7 @@ export default function GalleryPage() {
           <>
             {/* Backdrop */}
             <motion.div
-              initial={{ opacity: 0 }}
+              initial={{ opacity: 1 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedIndex(null)}
@@ -175,47 +173,44 @@ export default function GalleryPage() {
                 </motion.div>
 
                 {/* Close Button */}
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                <button
                   onClick={() => setSelectedIndex(null)}
-                  className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors backdrop-blur-sm"
+                  className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors backdrop-blur-sm hover:scale-110 active:scale-90"
                   aria-label="Close gallery"
+                  style={{ touchAction: 'manipulation' }}
                 >
                   <X className="w-6 h-6" />
-                </motion.button>
+                </button>
 
                 {/* Navigation */}
                 <div className="flex justify-between items-center mt-6">
-                  <motion.button
-                    whileHover={{ x: -4 }}
-                    whileTap={{ scale: 0.9 }}
+                  <button
                     onClick={() =>
                       setSelectedIndex((prev) =>
                         prev === 0 ? galleryPhotos.length - 1 : (prev ?? 0) - 1
                       )
                     }
-                    className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors backdrop-blur-sm"
+                    className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors backdrop-blur-sm hover:-translate-x-1 active:scale-90"
+                    style={{ touchAction: 'manipulation' }}
                   >
                     ← Previous
-                  </motion.button>
+                  </button>
 
                   <span className="text-white font-light">
                     {selectedIndex !== null ? selectedIndex + 1 : 0} / {galleryPhotos.length}
                   </span>
 
-                  <motion.button
-                    whileHover={{ x: 4 }}
-                    whileTap={{ scale: 0.9 }}
+                  <button
                     onClick={() =>
                       setSelectedIndex((prev) =>
                         prev === galleryPhotos.length - 1 ? 0 : (prev ?? 0) + 1
                       )
                     }
-                    className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors backdrop-blur-sm"
+                    className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors backdrop-blur-sm hover:translate-x-1 active:scale-90"
+                    style={{ touchAction: 'manipulation' }}
                   >
                     Next →
-                  </motion.button>
+                  </button>
                 </div>
               </motion.div>
             </motion.div>
@@ -226,7 +221,7 @@ export default function GalleryPage() {
       {/* Info Section */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-[#8B7355]/10">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}

@@ -14,7 +14,7 @@ export default function StoryPage() {
       {/* Header */}
       <section className="pt-32 pb-12 flex justify-center px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
@@ -31,7 +31,7 @@ export default function StoryPage() {
 
           {/* First photo */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
@@ -48,7 +48,7 @@ export default function StoryPage() {
 
           {/* Story paragraphs */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
@@ -77,7 +77,7 @@ export default function StoryPage() {
 
           {/* Second photo */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
@@ -98,7 +98,7 @@ export default function StoryPage() {
       {/* Quote Section */}
       <section className="py-20 flex justify-center px-4 sm:px-6 lg:px-8 text-[#8B7355]">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}

@@ -35,19 +35,19 @@ export default function EnvelopeLanding() {
   if (stage === 'opened') {
     return (
       <motion.div
-        initial={{ opacity: 0 }}
+        initial={{ opacity: 1 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
         className="min-h-screen bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] flex flex-col items-center justify-center p-4"
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
+          initial={{ opacity: 1, scale: 1 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
           className="text-center max-w-2xl"
         >
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
             className="text-5xl md:text-6xl font-bold text-[#3D3D3D] mb-4"
@@ -57,7 +57,7 @@ export default function EnvelopeLanding() {
           </motion.h1>
 
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
             className="text-4xl md:text-5xl font-bold text-[#C41E3A] mb-6"
@@ -67,7 +67,7 @@ export default function EnvelopeLanding() {
           </motion.h2>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1 }}
             className="text-lg text-[#3D3D3D] mb-8 font-light"
@@ -76,7 +76,7 @@ export default function EnvelopeLanding() {
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.2 }}
             className="flex justify-center gap-8 md:gap-12 mb-12"
@@ -100,19 +100,23 @@ export default function EnvelopeLanding() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.4 }}
             className="flex flex-col sm:flex-row justify-center gap-4"
           >
-            <Link href="/home" onClick={() => localStorage.setItem('wedding_music_started', 'true')}>
-              <motion.button
-                whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(196, 30, 58, 0.3)' }}
-                whileTap={{ scale: 0.95 }}
-                className="px-12 py-3 bg-[#C41E3A] text-white rounded-full font-semibold uppercase tracking-wide text-sm transition-all"
+            <Link href="/home" onClick={() => {
+                localStorage.setItem('wedding_music_started', 'true');
+                // Dispatch synchronously so BackgroundMusic can call audio.play()
+                // within this trusted user-gesture stack (required for iOS Safari autoplay)
+                document.dispatchEvent(new Event('wedding-music-start'));
+              }}>
+              <button
+                style={{ touchAction: 'manipulation' }}
+                className="px-12 py-3 bg-[#C41E3A] text-white rounded-full font-semibold uppercase tracking-wide text-sm transition-all hover:scale-105 active:scale-95"
               >
                 View Details
-              </motion.button>
+              </button>
             </Link>
           </motion.div>
         </motion.div>
@@ -386,19 +390,12 @@ export default function EnvelopeLanding() {
     <div className="min-h-screen bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] flex items-center justify-center p-4">
       <div className="w-full flex flex-col items-center justify-center gap-8">
         {/* Wedding Card Container */}
-        <motion.div
-          className="w-full max-w-sm"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="w-full max-w-sm">
           {/* Card Front */}
-          <motion.button
+          <button
             onClick={handleCardClick}
-            className="relative w-full bg-[#B81A2D] rounded-lg shadow-2xl overflow-hidden focus:outline-none"
-            style={{ aspectRatio: '9/14' }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            style={{ touchAction: 'manipulation', aspectRatio: '9/14', minHeight: '420px', display: 'block' }}
+            className="relative w-full bg-[#B81A2D] rounded-lg shadow-2xl overflow-hidden focus:outline-none cursor-pointer"
           >
             {/* Textured paper background */}
             <div className="absolute inset-0 opacity-15">
@@ -695,44 +692,30 @@ export default function EnvelopeLanding() {
             </svg>
 
             {/* Center Text - निमन्त्रणा positioned slightly above center */}
-            <div className="absolute inset-0 flex flex-col items-center z-10" style={{ justifyContent: 'center', paddingBottom: '18%' }}>
-              <motion.div
-                className="text-center"
-                animate={{ scale: [1, 1.015, 1] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-              >
+            <div className="absolute inset-0 flex flex-col items-center z-10" style={{ justifyContent: 'center', paddingBottom: '18%', pointerEvents: 'none' }}>
+              <div className="text-center" style={{ animation: 'nimantrana-pulse 3.5s ease-in-out infinite' }}>
                 <div className="text-[#E8C896] text-5xl md:text-6xl font-bold tracking-wide" style={{ fontFamily: "'Playfair Display', serif", textShadow: '0 0 15px rgba(232,200,150,0.4), 0 2px 4px rgba(0,0,0,0.2)' }}>
                   निमन्त्रणा
                 </div>
-              </motion.div>
+              </div>
             </div>
 
             {/* Tap indicator */}
-            <motion.div
+            <div
               className="absolute bottom-4 left-0 right-0 text-center z-20"
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              style={{ animation: 'tap-blink 2s ease-in-out infinite', pointerEvents: 'none' }}
             >
               <span className="text-[#D4AF85] text-xs uppercase tracking-widest font-light">Tap to open</span>
-            </motion.div>
-          </motion.button>
-        </motion.div>
+            </div>
+          </button>
+        </div>
 
         {/* Instructions below card */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-          className="text-center"
-        >
-          <motion.p
-            animate={{ opacity: [1, 0.6, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="text-[#C41E3A] text-sm md:text-base uppercase tracking-widest font-light"
-          >
+        <div className="text-center">
+          <p className="text-[#C41E3A] text-sm md:text-base uppercase tracking-widest font-light animate-pulse">
             Tap the card to begin
-          </motion.p>
-        </motion.div>
+          </p>
+        </div>
       </div>
     </div>
   );

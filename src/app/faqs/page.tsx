@@ -72,7 +72,7 @@ export default function FAQPage() {
   const [expandedId, setExpandedId] = useState<number | null>(0);
 
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 1 },
     visible: {
       opacity: 1,
       transition: {
@@ -83,7 +83,7 @@ export default function FAQPage() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 1, y: 0 },
     visible: {
       opacity: 1,
       y: 0,
@@ -107,7 +107,7 @@ export default function FAQPage() {
       {/* Header */}
       <section className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
@@ -138,12 +138,12 @@ export default function FAQPage() {
               variants={itemVariants}
               className="overflow-hidden"
             >
-              <motion.button
+              <button
                 onClick={() =>
                   setExpandedId(expandedId === index ? null : index)
                 }
-                className="w-full text-left"
-                whileHover={{ x: 5 }}
+                className="w-full text-left transition-transform hover:translate-x-1"
+                style={{ touchAction: 'manipulation' }}
               >
                 <div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-[#D4AF85] cursor-pointer">
                   <div className="flex items-center justify-between">
@@ -163,7 +163,7 @@ export default function FAQPage() {
                     </motion.div>
                   </div>
                 </div>
-              </motion.button>
+              </button>
 
               <motion.div
                 variants={expandVariants}
@@ -183,7 +183,7 @@ export default function FAQPage() {
       {/* Contact Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#8B7355]/10">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
@@ -199,14 +199,13 @@ export default function FAQPage() {
             Don't hesitate to reach out! We're happy to help with any questions or
             concerns.
           </p>
-          <motion.a
+          <a
             href="tel:+14155551234"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-block px-8 py-3 bg-[#8B7355] text-white rounded-full font-semibold hover:bg-[#6B5345] transition-colors"
+            className="inline-block px-8 py-3 bg-[#8B7355] text-white rounded-full font-semibold hover:bg-[#6B5345] transition-colors hover:scale-105 active:scale-95"
+            style={{ touchAction: 'manipulation' }}
           >
             Contact Us
-          </motion.a>
+          </a>
         </motion.div>
       </section>
     </main>
