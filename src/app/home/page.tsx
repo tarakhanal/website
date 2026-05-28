@@ -217,14 +217,14 @@ export default function HomePage() {
               />
             </div>
             {/* Buttons: Add to Calendar & Directions */}
-            <div style={{ marginTop: '2rem' }} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div style={{ marginTop: '2rem' }} className="flex flex-row items-center justify-center gap-3">
               <div className="relative">
                 <button
                   onClick={() => downloadICSFile(ceremonyEvent)}
-                  className="inline-flex items-center gap-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
-                  style={{ padding: '0.85rem 2rem' }}
+                  className="inline-flex items-center gap-2 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow text-sm"
+                  style={{ padding: '0.65rem 1.1rem' }}
                 >
-                  <CalendarPlus className="w-5 h-5" />
+                  <CalendarPlus className="w-4 h-4 shrink-0" />
                   Add to Calendar
                 </button>
               </div>
@@ -235,10 +235,10 @@ export default function HomePage() {
                     onClick={() => {
                       setShowDirectionsMenu(true);
                     }}
-                    className="inline-flex items-center gap-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
-                    style={{ padding: '0.85rem 2rem' }}
+                    className="inline-flex items-center gap-2 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow text-sm"
+                    style={{ padding: '0.65rem 1.1rem' }}
                   >
-                    <NavigationIcon className="w-5 h-5" />
+                    <NavigationIcon className="w-4 h-4 shrink-0" />
                     Directions
                   </button>
                 </div>
@@ -281,14 +281,14 @@ export default function HomePage() {
               />
             </div>
             {/* Reception Buttons: Add to Calendar & Directions */}
-            <div style={{ marginTop: '2rem' }} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div style={{ marginTop: '2rem' }} className="flex flex-row items-center justify-center gap-3">
               <div className="relative">
                 <button
                   onClick={() => downloadICSFile(receptionEvent)}
-                  className="inline-flex items-center gap-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
-                  style={{ padding: '0.85rem 2rem' }}
+                  className="inline-flex items-center gap-2 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow text-sm"
+                  style={{ padding: '0.65rem 1.1rem' }}
                 >
-                  <CalendarPlus className="w-5 h-5" />
+                  <CalendarPlus className="w-4 h-4 shrink-0" />
                   Add to Calendar
                 </button>
               </div>
@@ -297,10 +297,10 @@ export default function HomePage() {
                 <div className="relative inline-block text-left">
                   <button
                     onClick={() => setShowReceptionDirectionsMenu(true)}
-                    className="inline-flex items-center gap-3 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow"
-                    style={{ padding: '0.85rem 2rem' }}
+                    className="inline-flex items-center gap-2 border-2 border-[#8B7355] text-[#8B7355] rounded-full font-semibold bg-white hover:bg-[#f7f8f7] transition-shadow text-sm"
+                    style={{ padding: '0.65rem 1.1rem' }}
                   >
-                    <NavigationIcon className="w-5 h-5" />
+                    <NavigationIcon className="w-4 h-4 shrink-0" />
                     Directions
                   </button>
                 </div>
