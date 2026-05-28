@@ -1,245 +1,355 @@
- 'use client';
+'use client';
 
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '@/components/Navigation';
-import { useState } from 'react';
-import { X } from 'lucide-react';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-import img1 from '@/app/images/04446EEE-0136-418E-8902-62C240512589_1_105_c.jpeg';
-import img2 from '@/app/images/2541030F-6D6B-4371-A4BA-3C32119F9069_1_105_c.jpeg';
-import img3 from '@/app/images/2A9431D3-9F4F-437A-B5C6-E17595A55B57_1_105_c.jpeg';
-import img4 from '@/app/images/38D3FC1B-AD16-4FDF-9F54-BB48A4A29A56_1_105_c.jpeg';
-import img5 from '@/app/images/3BBD37D8-1EDA-4B45-A8DA-26F5C2B40DEA_1_105_c.jpeg';
-import img6 from '@/app/images/41C52320-34D7-49B6-95B3-B4D49271D9B7_1_105_c.jpeg';
-import img7 from '@/app/images/7CD00EBC-D6FC-44D1-B8CF-21BD319CEE49_1_105_c.jpeg';
-import img8 from '@/app/images/9B540E62-DA4C-4F60-93CE-C4784369E726_1_105_c.jpeg';
-import img9 from '@/app/images/EEC2C875-CEA2-47C8-940C-D56522D07FE8_1_105_c.jpeg';
+import img1  from '@/app/images/04446EEE-0136-418E-8902-62C240512589_1_105_c.jpeg';
+import img2  from '@/app/images/2541030F-6D6B-4371-A4BA-3C32119F9069_1_105_c.jpeg';
+import img3  from '@/app/images/2A9431D3-9F4F-437A-B5C6-E17595A55B57_1_105_c.jpeg';
+import img4  from '@/app/images/38D3FC1B-AD16-4FDF-9F54-BB48A4A29A56_1_105_c.jpeg';
+import img5  from '@/app/images/3BBD37D8-1EDA-4B45-A8DA-26F5C2B40DEA_1_105_c.jpeg';
+import img6  from '@/app/images/41C52320-34D7-49B6-95B3-B4D49271D9B7_1_105_c.jpeg';
+import img7  from '@/app/images/7CD00EBC-D6FC-44D1-B8CF-21BD319CEE49_1_105_c.jpeg';
+import img8  from '@/app/images/9B540E62-DA4C-4F60-93CE-C4784369E726_1_105_c.jpeg';
+import img9  from '@/app/images/EEC2C875-CEA2-47C8-940C-D56522D07FE8_1_105_c.jpeg';
 import img10 from '@/app/images/95FA751A-7DC3-497B-9912-C832408865D8_1_105_c.jpeg';
 import img11 from '@/app/images/AB20A646-3F68-4945-9E85-3BE4932307FC_1_105_c.jpeg';
 import img12 from '@/app/images/B48CEB98-E69A-4C1E-9798-CFE315E7D9A5_1_105_c.jpeg';
 
-const galleryPhotos = [
-  img1,
-  img2,
-  img3,
-  img4,
-  img5,
-  img6,
-  img7,
-  img8,
-  img9,
-  img10,
-  img11,
-  img12,
+interface PhotoEntry {
+  src: StaticImageData;
+  caption: string;
+  chapter: number;
+}
+
+const chapterLabels = [
+  { label: 'chapter one',   subtitle: 'how we met' },
+  { label: 'chapter two',   subtitle: 'falling in love' },
+  { label: 'chapter three', subtitle: 'the next step' },
 ];
 
-export default function GalleryPage() {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+const allPhotos: PhotoEntry[] = [
+  { src: img1,  caption: 'The beginning',      chapter: 0 },
+  { src: img2,  caption: 'Growing closer',      chapter: 0 },
+  { src: img3,  caption: 'Side by side',        chapter: 0 },
+  { src: img4,  caption: 'Finding each other',  chapter: 0 },
+  { src: img5,  caption: 'Adventures together', chapter: 1 },
+  { src: img6,  caption: 'Our favorite places', chapter: 1 },
+  { src: img7,  caption: 'Always smiling',      chapter: 1 },
+  { src: img8,  caption: 'Wherever we go',      chapter: 1 },
+  { src: img9,  caption: 'A trip to remember',  chapter: 2 },
+  { src: img10, caption: 'The question',        chapter: 2 },
+  { src: img11, caption: 'She said yes',        chapter: 2 },
+  { src: img12, caption: 'Forever starts now',  chapter: 2 },
+];
 
-  const containerVariants = {
-    hidden: { opacity: 1 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-        delayChildren: 0.1,
-      },
-    },
-  };
+const N = allPhotos.length;
 
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.4 },
-    },
-  };
+const scatter = [
+  { rot: -2,   x:  0  },
+  { rot:  3.5, x:  14 },
+  { rot: -4.5, x: -12 },
+  { rot:  1.5, x:  8  },
+  { rot: -3,   x: -6  },
+  { rot:  2.5, x:  16 },
+  { rot: -1.5, x: -10 },
+  { rot:  4,   x:  6  },
+  { rot: -2.5, x: -16 },
+  { rot:  1,   x:  10 },
+  { rot: -3.5, x: -4  },
+  { rot:  2,   x:  12 },
+];
 
-  const modalVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.3 },
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.8,
-      transition: { duration: 0.2 },
-    },
-  };
+// ─── Polaroid Stack ───────────────────────────────────────────────────────────
+function PolaroidStack({ stackIndex, onOpen, sizes }: { stackIndex: number; onOpen: (i: number) => void; sizes: string }) {
+  return (
+    <div className="relative w-full" style={{ height: 'min(460px, 88vw)' }}>
+      {allPhotos.map((photo, i) => {
+        const { rot, x } = scatter[i];
+        const stacked   = i <= stackIndex;
+        const isPeek    = i === stackIndex + 1;
+        const isHidden  = i > stackIndex + 1;
+        // Keep peek card elevated so it animates OUT on top when scrolling back,
+        // not from behind the pile. Hidden cards go to 0.
+        const zIndex    = stacked ? i + 1 : isPeek ? stackIndex + 2 : 0;
+        const yVal      = stacked ? '0%' : isPeek ? '110%' : '300%';
+        const xVal      = stacked ? x : 0;
+        const rotVal    = stacked ? rot : 0;
+        const clickable = stacked || isPeek;
+
+        return (
+          <motion.div
+            key={i}
+            animate={{ y: yVal, x: xVal }}
+            transition={{ type: 'spring', stiffness: 120, damping: 22 }}
+            style={{ zIndex, position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', visibility: isHidden ? 'hidden' : 'visible' }}
+          >
+            <motion.div
+              whileHover={clickable ? { scale: 1.04, rotate: 0, x: 0 } : {}}
+              transition={{ duration: 0.2 }}
+              onClick={() => clickable && onOpen(i)}
+              className="bg-white shadow-2xl flex flex-col"
+              style={{ padding: '12px 12px 52px 12px', width: 'min(400px, 88vw)', rotate: `${rotVal}deg`, cursor: clickable ? 'pointer' : 'default' }}
+            >
+              <div className="relative overflow-hidden" style={{ aspectRatio: '4/3' }}>
+                <Image src={photo.src} alt={photo.caption} fill sizes={sizes} className="object-cover" />
+              </div>
+              <p className="text-center text-sm mt-3 text-[#6B5B4E]" style={{ fontFamily: "'Lora', serif" }}>
+                {photo.caption}
+              </p>
+            </motion.div>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Lightbox ────────────────────────────────────────────────────────────────
+function Lightbox({ index, onClose, onPrev, onNext }: { index: number; onClose: () => void; onPrev: () => void; onNext: () => void }) {
+  const photo = allPhotos[index];
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') onPrev();
+      if (e.key === 'ArrowRight') onNext();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [onClose, onPrev, onNext]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-[#F5F1ED]">
-      <Navigation />
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/85 backdrop-blur-sm p-6"
+      style={{ minHeight: '100dvh' }}
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ duration: 0.25 }}
+        onClick={(e) => e.stopPropagation()}
+        className="flex flex-col items-center w-full max-w-lg"
+        style={{ maxHeight: 'calc(100dvh - 80px)' }}
+      >
+        <div className="bg-white shadow-2xl w-full flex flex-col" style={{ padding: '12px 12px 24px 12px', minHeight: 0 }}>
+          {/* Close button */}
+          <div className="flex justify-end mb-2 flex-shrink-0">
+            <button onClick={onClose} className="text-[#8B7355]/60 hover:text-[#3D3229] transition-colors">
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+          <div className="flex-1 flex items-center justify-center" style={{ minHeight: 0 }}>
+            <Image
+              src={photo.src}
+              alt={photo.caption}
+              style={{ maxWidth: '100%', maxHeight: '45vh', width: 'auto', height: 'auto', objectFit: 'contain', display: 'block' }}
+              sizes="(max-width: 768px) 92vw, 600px"
+            />
+          </div>
+          <p className="text-center text-base mt-4 flex-shrink-0 text-[#6B5B4E]" style={{ fontFamily: "'Lora', serif" }}>{photo.caption}</p>
+        </div>
+        <div className="flex items-center justify-between w-full mt-4 px-1 flex-shrink-0">
+          <button onClick={onPrev} className="flex items-center gap-1 text-white/70 hover:text-white transition-colors text-sm">
+            <ChevronLeft className="w-5 h-5" /> Prev
+          </button>
+          <span className="text-white/40 text-sm">{index + 1} / {N}</span>
+          <button onClick={onNext} className="flex items-center gap-1 text-white/70 hover:text-white transition-colors text-sm">
+            Next <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
 
-      {/* Header */}
-      <section className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 text-center">
-        <motion.div
-          initial={{ opacity: 1, y: 0 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1
-            className="text-5xl md:text-6xl font-bold text-[#3D3D3D] mb-4"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            Gallery
-          </h1>
-          <p className="text-xl text-[#8B7355] font-light max-w-2xl mx-auto">
-            Moments from our journey together
+// ─── Chapter Label ────────────────────────────────────────────────────────────
+function ChapterLabel({ stackIndex, mobile }: { stackIndex: number; mobile?: boolean }) {
+  const activeChapter = allPhotos[stackIndex].chapter;
+  return (
+    <div className={`flex flex-col gap-3 ${mobile ? 'items-center text-center' : 'items-start text-left'}`}>
+      <AnimatePresence mode="wait">
+        <motion.div key={activeChapter} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35 }}>
+          <p className="text-sm sm:text-base font-bold text-[#3D3229] leading-snug" style={{ fontFamily: "'Playfair Display', serif" }}>
+            {chapterLabels[activeChapter].label}:{' '}
+            <span className="font-normal italic">{chapterLabels[activeChapter].subtitle}</span>
           </p>
         </motion.div>
-      </section>
+      </AnimatePresence>
+      <div className="flex gap-1.5">
+        {allPhotos.map((_, i) => (
+          <div key={i} className="rounded-full transition-all duration-300"
+            style={{ width: i <= stackIndex ? 7 : 5, height: i <= stackIndex ? 7 : 5, backgroundColor: i <= stackIndex ? '#8B7355' : '#D4C4B0' }} />
+        ))}
+      </div>
+      <p className="text-xs text-[#8B7355]/50">
+        {stackIndex < N - 1
+          ? (mobile ? 'swipe up to reveal more' : 'scroll to reveal more')
+          : (mobile ? 'tap a photo to view' : 'click a photo to view')}
+      </p>
+    </div>
+  );
+}
 
-      {/* Gallery Grid */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 pb-20">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-        >
-          {galleryPhotos.map((src, i) => (
-            <button
-              key={i}
-              onClick={() => setSelectedIndex(i)}
-              className="relative w-full aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all group hover:scale-[1.03] active:scale-[0.97]"
-              style={{ touchAction: 'manipulation' }}
-            >
-              <Image
-                src={src}
-                alt={`Gallery photo ${i + 1}`}
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="object-cover w-full h-full"
-              />
+// ─── Gallery Scroller ─────────────────────────────────────────────────────────
+function GalleryScroller() {
+  const sectionRef  = useRef<HTMLDivElement>(null);
+  const [stackIndex, setStackIndex] = useState(0);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const wheelBuffer = useRef(0);
+  const touchStartY = useRef(0);
+  const lastAdvance = useRef(0); // timestamp of last advance/retreat
+  const WHEEL_THRESHOLD = 280;
+  const TOUCH_THRESHOLD = 55;
+  const COOLDOWN_MS = 600; // min ms between photo changes
 
-              <motion.div
-                initial={{ opacity: 1 }}
-                whileHover={{ opacity: 1 }}
-                className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <div className="text-white text-center">
-                  <p className="text-lg font-semibold">View</p>
-                </div>
-              </motion.div>
-            </button>
-          ))}
-        </motion.div>
-      </section>
+  const advance = useCallback(() => setStackIndex((i) => Math.min(i + 1, N - 1)), []);
+  const retreat = useCallback(() => setStackIndex((i) => Math.max(i - 1, 0)), []);
 
-      {/* Lightbox Modal */}
+  useEffect(() => {
+    const onWheel = (e: WheelEvent) => {
+      const rect = sectionRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const inView = rect.top <= window.innerHeight * 0.3 && rect.bottom >= window.innerHeight * 0.7;
+      if (!inView) return;
+      if (e.deltaY > 0 && stackIndex < N - 1) {
+        e.preventDefault();
+        wheelBuffer.current += e.deltaY;
+        if (wheelBuffer.current >= WHEEL_THRESHOLD && Date.now() - lastAdvance.current >= COOLDOWN_MS) {
+          wheelBuffer.current = 0; lastAdvance.current = Date.now(); advance();
+        }
+        return;
+      }
+      if (e.deltaY < 0 && stackIndex > 0) {
+        e.preventDefault();
+        wheelBuffer.current += e.deltaY;
+        if (wheelBuffer.current <= -WHEEL_THRESHOLD && Date.now() - lastAdvance.current >= COOLDOWN_MS) {
+          wheelBuffer.current = 0; lastAdvance.current = Date.now(); retreat();
+        }
+      }
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartY.current = e.touches[0].clientY;
+      // If the stack is engaged, prevent the browser from committing to native scroll
+      if (stackIndex > 0) e.preventDefault();
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      // Always allow retreat (swipe down) if we have stacked photos
+      // Only gate advance (swipe up) by inView
+      const deltaY = touchStartY.current - e.touches[0].clientY;
+      if (Math.abs(deltaY) < TOUCH_THRESHOLD) return;
+
+      if (deltaY < 0 && stackIndex > 0) {
+        // Swipe down → retreat, always works
+        e.preventDefault(); retreat(); lastAdvance.current = Date.now(); touchStartY.current = e.touches[0].clientY;
+        return;
+      }
+
+      const rect = sectionRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      if (!inView) return;
+
+      if (deltaY > 0 && stackIndex < N - 1) {
+        e.preventDefault(); advance(); lastAdvance.current = Date.now(); touchStartY.current = e.touches[0].clientY;
+      }
+    };
+
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: false });
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    return () => {
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+    };
+  }, [stackIndex, advance, retreat]);
+
+  const openLightbox = useCallback((i: number) => setLightboxIndex(i), []);
+
+  return (
+    <>
+      <div
+        ref={sectionRef}
+        className="flex flex-col items-center px-6 sm:px-12"
+        style={{
+          minHeight: '100svh',
+          paddingTop: 'clamp(1.5rem, 6vw, 5rem)',
+          touchAction: stackIndex > 0 ? 'none' : 'auto',
+        }}
+      >
+        {/* Mobile: chapter label above stack — sticky so it stays visible */}
+        <div className="sm:hidden w-full max-w-lg mb-6 sticky top-20 z-20 bg-[#F7F3EE] py-2">
+          <ChapterLabel stackIndex={stackIndex} mobile />
+        </div>
+
+        {/* Desktop: side-by-side */}
+        <div className="hidden sm:flex w-full max-w-4xl flex-row gap-16 items-center justify-center">
+          <div className="w-52 flex-shrink-0">
+            <ChapterLabel stackIndex={stackIndex} />
+          </div>
+          <div className="flex-1" style={{ minWidth: 0 }}>
+            <PolaroidStack stackIndex={stackIndex} onOpen={openLightbox} sizes="(max-width: 640px) 88vw, 400px" />
+          </div>
+        </div>
+
+        {/* Mobile: stack centered */}
+        <div className="sm:hidden w-full" style={{ marginTop: stackIndex === N - 1 ? 'min(100px, 18vw)' : 0, transition: 'margin-top 0.4s ease' }}>
+          <PolaroidStack stackIndex={stackIndex} onOpen={openLightbox} sizes="88vw" />
+        </div>
+
+        {/* Spacer so peek card shows fully on mobile — hidden when all stacked */}
+        {stackIndex < N - 1 && (
+          <div className="sm:hidden" style={{ height: 'min(480px, 92vw)' }} />
+        )}
+      </div>
+
       <AnimatePresence>
-        {selectedIndex !== null && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 1 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedIndex(null)}
-              className="fixed inset-0 bg-black/80 z-50 backdrop-blur-sm"
-            />
-
-            {/* Modal */}
-            <motion.div
-              variants={modalVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="fixed inset-0 z-50 flex items-center justify-center p-4"
-              onClick={() => setSelectedIndex(null)}
-            >
-              <motion.div
-                onClick={(e) => e.stopPropagation()}
-                className="relative w-full max-w-4xl"
-              >
-                {/* Image Container */}
-                <motion.div
-                  layoutId={`photo-${selectedIndex}`}
-                  className="w-full rounded-lg overflow-hidden"
-                >
-                  <Image
-                    src={galleryPhotos[selectedIndex ?? 0]}
-                    alt={`Photo ${selectedIndex !== null ? selectedIndex + 1 : ''}`}
-                    width={1200}
-                    height={900}
-                    className="w-full h-auto object-cover rounded-lg"
-                  />
-                </motion.div>
-
-                {/* Close Button */}
-                <button
-                  onClick={() => setSelectedIndex(null)}
-                  className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors backdrop-blur-sm hover:scale-110 active:scale-90"
-                  aria-label="Close gallery"
-                  style={{ touchAction: 'manipulation' }}
-                >
-                  <X className="w-6 h-6" />
-                </button>
-
-                {/* Navigation */}
-                <div className="flex justify-between items-center mt-6">
-                  <button
-                    onClick={() =>
-                      setSelectedIndex((prev) =>
-                        prev === 0 ? galleryPhotos.length - 1 : (prev ?? 0) - 1
-                      )
-                    }
-                    className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors backdrop-blur-sm hover:-translate-x-1 active:scale-90"
-                    style={{ touchAction: 'manipulation' }}
-                  >
-                    ← Previous
-                  </button>
-
-                  <span className="text-white font-light">
-                    {selectedIndex !== null ? selectedIndex + 1 : 0} / {galleryPhotos.length}
-                  </span>
-
-                  <button
-                    onClick={() =>
-                      setSelectedIndex((prev) =>
-                        prev === galleryPhotos.length - 1 ? 0 : (prev ?? 0) + 1
-                      )
-                    }
-                    className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors backdrop-blur-sm hover:translate-x-1 active:scale-90"
-                    style={{ touchAction: 'manipulation' }}
-                  >
-                    Next →
-                  </button>
-                </div>
-              </motion.div>
-            </motion.div>
-          </>
+        {lightboxIndex !== null && (
+          <Lightbox
+            index={lightboxIndex}
+            onClose={() => setLightboxIndex(null)}
+            onPrev={() => setLightboxIndex((p) => ((p ?? 0) - 1 + N) % N)}
+            onNext={() => setLightboxIndex((p) => ((p ?? 0) + 1) % N)}
+          />
         )}
       </AnimatePresence>
+    </>
+  );
+}
 
-      {/* Info Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-[#8B7355]/10">
-        <motion.div
-          initial={{ opacity: 1, y: 0 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+// ─── Page ─────────────────────────────────────────────────────────────────────
+export default function GalleryPage() {
+  return (
+    <main className="bg-[#F7F3EE] min-h-screen overflow-x-hidden">
+      <Navigation />
+
+      <section className="pt-40 pb-8 px-4 text-center">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-2xl mx-auto text-center"
+          className="text-[clamp(4rem,12vw,9rem)] leading-none text-[#3D3229] font-bold"
+          style={{ fontFamily: "'Playfair Display', serif" }}
         >
-          <h2
-            className="text-2xl font-bold text-[#8B7355] mb-4"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            Help Us Capture More Moments!
-          </h2>
-          <p className="text-[#3D3D3D] mb-4">
-            We'll be sharing photos from our wedding day here. Feel free to tag us
-            and use our wedding hashtag to be featured!
-          </p>
-          <p className="text-lg font-semibold text-[#8B7355]">#TaraAndBandana2027</p>
-        </motion.div>
+          gallery
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-[#8B7355] mt-4 text-lg"
+          style={{ fontFamily: "'Lora', serif" }}
+        >
+          Moments from our journey together
+        </motion.p>
       </section>
+
+      <GalleryScroller />
     </main>
   );
 }

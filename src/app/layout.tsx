@@ -27,8 +27,12 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
+        <style>{`
+          html, body { scrollbar-width: none; -ms-overflow-style: none; }
+          html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; }
+        `}</style>
       </head>
-      <body className="min-h-screen bg-[#FAFAF8]">
+      <body className="min-h-screen bg-[#F7F3EE] overflow-x-hidden">
         <HeartClickEffect />
         <BackgroundMusic />
         <ClientShell>{children}</ClientShell>
