@@ -4,14 +4,12 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useCountdown } from '@/hooks/useCountdown';
 
 const GUEST_NAME_KEY = 'wedding_guest_name';
 
 export default function EnvelopeLanding() {
   const [stage, setStage] = useState<'envelope' | 'animating' | 'opened'>('envelope');
   const [guestName, setGuestName] = useState<string | null>(null);
-  const { days, hours, minutes, seconds } = useCountdown();
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -37,91 +35,76 @@ export default function EnvelopeLanding() {
     handleCardClick();
   };
 
-  // Stage 3: Fully opened - show the invitation content
+  // Stage 3: Fully opened - childhood photo reveal
   if (stage === 'opened') {
     return (
       <motion.div
-        initial={{ opacity: 1 }}
+        initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="min-h-screen bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] flex flex-col items-center justify-center p-4"
+        transition={{ duration: 0.6 }}
+        className="min-h-screen bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] flex flex-col items-center justify-center p-6"
       >
         <motion.div
-          initial={{ opacity: 1, scale: 1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-center max-w-2xl"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="flex flex-col items-center max-w-sm w-full"
         >
-          <motion.h1
-            initial={{ opacity: 1, y: 0 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-5xl md:text-6xl font-bold text-[#3D3D3D] mb-4"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+          {/* Polaroid-style photo frame */}
+          <div
+            className="bg-white shadow-2xl w-full"
+            style={{
+              padding: '12px 12px 48px 12px',
+              transform: 'rotate(-1.5deg)',
+              boxShadow: '0 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)',
+            }}
           >
-            Together with
-          </motion.h1>
+            <div className="w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/childhood.jpg"
+                alt="Tara and Bandana as kids"
+                className="w-full h-full object-cover"
+                style={{ display: 'block' }}
+              />
+            </div>
+          </div>
 
-          <motion.h2
-            initial={{ opacity: 1, y: 0 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-4xl md:text-5xl font-bold text-[#C41E3A] mb-6"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            Tara & Bandana
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 1, y: 0 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1 }}
-            className="text-lg text-[#3D3D3D] mb-8 font-light"
-          >
-            April 24, 2027
-          </motion.p>
-
+          {/* Caption below the photo */}
           <motion.div
-            initial={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.2 }}
-            className="flex justify-center gap-8 md:gap-12 mb-12"
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="mt-8 text-center px-2"
           >
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-[#C41E3A]">{days}</div>
-              <div className="text-sm text-[#8B7355] uppercase tracking-wider">Days</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-[#C41E3A]">{hours}</div>
-              <div className="text-sm text-[#8B7355] uppercase tracking-wider">Hours</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-[#C41E3A]">{minutes}</div>
-              <div className="text-sm text-[#8B7355] uppercase tracking-wider">Minutes</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-[#C41E3A]">{seconds}</div>
-              <div className="text-sm text-[#8B7355] uppercase tracking-wider">Seconds</div>
-            </div>
+            <p
+              className="text-[#C41E3A] text-2xl md:text-3xl leading-snug"
+              style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic' }}
+            >
+              these kids are getting married
+            </p>
+            <p className="mt-2 text-[#8B7355] text-2xl">🥹✨</p>
           </motion.div>
 
+          {/* Enter button */}
           <motion.div
-            initial={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.4 }}
-            className="flex flex-col sm:flex-row justify-center gap-4"
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="mt-8"
           >
-            <Link href="/home" onClick={() => {
+            <Link
+              href="/home"
+              onClick={() => {
                 localStorage.setItem('wedding_music_started', 'true');
-                // Dispatch synchronously so BackgroundMusic can call audio.play()
-                // within this trusted user-gesture stack (required for iOS Safari autoplay)
                 document.dispatchEvent(new Event('wedding-music-start'));
-              }}>
+              }}
+            >
               <button
                 style={{ touchAction: 'manipulation' }}
-                className="px-12 py-3 bg-[#C41E3A] text-white rounded-full font-semibold uppercase tracking-wide text-sm transition-all hover:scale-105 active:scale-95"
+                className="px-10 py-3 bg-[#C41E3A] text-white rounded-full font-semibold uppercase tracking-widest text-xs transition-all hover:scale-105 active:scale-95 shadow-md"
               >
-                View Details
+                Open Invitation
               </button>
             </Link>
           </motion.div>
@@ -154,14 +137,32 @@ export default function EnvelopeLanding() {
               ease: 'easeInOut',
             }}
           >
-            <div className="w-full h-full bg-gradient-to-b from-[#FFF8F0] to-[#F5E6E0] rounded-lg shadow-xl flex flex-col items-center justify-center p-8">
-              <div className="text-center">
-                <p className="text-[#8B7355] text-sm uppercase tracking-widest mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>Together with</p>
-                <h2 className="text-3xl md:text-4xl font-bold text-[#C41E3A] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Tara & Bandana
-                </h2>
-                <p className="text-[#8B7355] text-xs tracking-wide">April 24, 2027</p>
+            {/* Polaroid card – matches the opened stage */}
+            <div className="w-full h-full bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] rounded-lg flex flex-col items-center justify-center p-4">
+              <div
+                className="bg-white w-[80%]"
+                style={{
+                  padding: '6px 6px 24px 6px',
+                  transform: 'rotate(-1.5deg)',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                }}
+              >
+                <div className="w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/images/childhood.jpg"
+                    alt="Tara and Bandana as kids"
+                    className="w-full h-full object-cover"
+                    style={{ display: 'block' }}
+                  />
+                </div>
               </div>
+              <p
+                className="mt-3 text-[#C41E3A] text-center text-sm leading-snug"
+                style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic' }}
+              >
+                these kids are getting married 🥹
+              </p>
             </div>
           </motion.div>
 
