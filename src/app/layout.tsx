@@ -26,7 +26,7 @@ export default function RootLayout({
         <meta charSet="UTF-8" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Caveat:wght@400;600&display=swap" rel="stylesheet" />
         <style>{`
           html, body { scrollbar-width: none; -ms-overflow-style: none; }
           html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; }

@@ -41,57 +41,125 @@ export default function EnvelopeLanding() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="min-h-screen bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] flex flex-col items-center justify-center p-6"
+        transition={{ duration: 0.8 }}
+        className="min-h-screen flex flex-col items-center justify-center overflow-hidden relative"
+        style={{ background: 'linear-gradient(160deg, #fdf6f0 0%, #f5e6de 40%, #ede0d4 100%)' }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="flex flex-col items-center max-w-sm w-full"
-        >
-          {/* Polaroid-style photo frame */}
-          <div
-            className="bg-white shadow-2xl w-full"
+        {/* Soft decorative blobs */}
+        <div className="absolute top-0 left-0 w-64 h-64 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(196,30,58,0.07) 0%, transparent 70%)', transform: 'translate(-30%, -30%)' }} />
+        <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(212,175,133,0.12) 0%, transparent 70%)', transform: 'translate(30%, 30%)' }} />
+
+        {/* Floating petals */}
+        {[
+          { top: '8%',  left: '6%',  rot: '-20deg', delay: 0.3, size: 22 },
+          { top: '14%', right: '8%', rot: '15deg',  delay: 0.5, size: 18 },
+          { top: '72%', left: '4%',  rot: '30deg',  delay: 0.7, size: 16 },
+          { top: '80%', right: '6%', rot: '-12deg', delay: 0.4, size: 20 },
+          { top: '45%', left: '2%',  rot: '8deg',   delay: 0.9, size: 14 },
+          { top: '55%', right: '3%', rot: '-25deg', delay: 0.6, size: 16 },
+        ].map((p, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 0.55, y: 0 }}
+            transition={{ duration: 1, delay: p.delay }}
+            className="absolute pointer-events-none"
+            style={{ top: p.top, left: (p as {left?: string}).left, right: (p as {right?: string}).right, transform: `rotate(${p.rot})` }}
+          >
+            <svg width={p.size} height={p.size * 1.4} viewBox="0 0 20 28" fill="none">
+              <path d="M10 28 C4 20, 0 14, 2 7 C4 1, 16 1, 18 7 C20 14, 16 20, 10 28Z" fill="#C41E3A" opacity="0.35"/>
+            </svg>
+          </motion.div>
+        ))}
+
+        <div className="relative z-10 flex flex-col items-center w-full px-6" style={{ maxWidth: '360px' }}>
+
+          {/* Small decorative line above */}
+          <motion.div
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="flex items-center gap-3 mb-5"
+          >
+            <div style={{ width: 40, height: 1, background: 'linear-gradient(to right, transparent, #C41E3A)' }} />
+            <svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 0 L7.5 4.5 L12 6 L7.5 7.5 L6 12 L4.5 7.5 L0 6 L4.5 4.5Z" fill="#C41E3A" opacity="0.6"/></svg>
+            <div style={{ width: 40, height: 1, background: 'linear-gradient(to left, transparent, #C41E3A)' }} />
+          </motion.div>
+
+          {/* Polaroid frame */}
+          <motion.div
+            initial={{ opacity: 0, y: 40, rotate: -3 }}
+            animate={{ opacity: 1, y: 0, rotate: -1.5 }}
+            transition={{ duration: 0.85, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full relative"
             style={{
-              padding: '12px 12px 48px 12px',
-              transform: 'rotate(-1.5deg)',
-              boxShadow: '0 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)',
+              background: '#ffffff',
+              padding: '10px 10px 52px 10px',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.08)',
             }}
           >
+            {/* Photo */}
             <div className="w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/childhood.jpg"
                 alt="Tara and Bandana as kids"
                 className="w-full h-full object-cover"
-                style={{ display: 'block' }}
+                style={{ display: 'block', filter: 'sepia(8%) contrast(1.04)' }}
               />
             </div>
-          </div>
 
-          {/* Caption below the photo */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="mt-8 text-center px-2"
-          >
-            <p
-              className="text-[#C41E3A] text-2xl md:text-3xl leading-snug"
-              style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic' }}
-            >
-              these kids are getting married
-            </p>
-            <p className="mt-2 text-[#8B7355] text-2xl">🥹✨</p>
+            {/* Polaroid bottom label */}
+            <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center pb-3">
+              <p
+                className="text-[#5a4030] text-sm text-center leading-none tracking-wide"
+                style={{ fontFamily: "'Caveat', 'Brush Script MT', cursive", fontSize: '1.35rem' }}
+              >
+                ✨ These kids are getting married ✨
+              </p>
+            </div>
+
+            {/* Tape strips */}
+            <div
+              className="absolute pointer-events-none"
+              style={{ top: -10, left: '50%', transform: 'translateX(-50%) rotate(-2deg)', width: 52, height: 20, background: 'rgba(255,240,200,0.75)', borderRadius: 2, boxShadow: '0 1px 4px rgba(0,0,0,0.10)' }}
+            />
           </motion.div>
 
-          {/* Enter button */}
+          {/* Caption */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="mt-8"
+            transition={{ duration: 0.7, delay: 0.55 }}
+            className="mt-7 text-center px-4"
+          >
+            {/* <p
+              className="text-[#C41E3A] leading-snug"
+              style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 'clamp(1.35rem, 5vw, 1.65rem)' }}
+            >
+              these kids are getting married
+            </p> */}
+            {/* <p className="mt-1 text-xl">🥹</p> */}
+          </motion.div>
+
+          {/* Decorative divider */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.75 }}
+            className="flex items-center gap-2 mt-5"
+          >
+            <div style={{ width: 28, height: 1, background: 'rgba(139,115,85,0.4)' }} />
+            <span style={{ color: '#C41E3A', fontSize: '0.5rem', letterSpacing: '0.2em', opacity: 0.6 }}>♥ ♥ ♥</span>
+            <div style={{ width: 28, height: 1, background: 'rgba(139,115,85,0.4)' }} />
+          </motion.div>
+
+          {/* CTA button */}
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.9 }}
+            className="mt-6 mb-2"
           >
             <Link
               href="/home"
@@ -101,14 +169,15 @@ export default function EnvelopeLanding() {
               }}
             >
               <button
-                style={{ touchAction: 'manipulation' }}
-                className="px-10 py-3 bg-[#C41E3A] text-white rounded-full font-semibold uppercase tracking-widest text-xs transition-all hover:scale-105 active:scale-95 shadow-md"
+                style={{ touchAction: 'manipulation', background: 'linear-gradient(135deg, #C41E3A 0%, #a01830 100%)', letterSpacing: '0.18em' }}
+                className="px-11 py-3.5 text-white rounded-full font-semibold uppercase text-xs transition-all hover:scale-105 active:scale-95 shadow-lg"
               >
                 Open Invitation
               </button>
             </Link>
           </motion.div>
-        </motion.div>
+
+        </div>
       </motion.div>
     );
   }
@@ -138,13 +207,21 @@ export default function EnvelopeLanding() {
             }}
           >
             {/* Polaroid card – matches the opened stage */}
-            <div className="w-full h-full bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] rounded-lg flex flex-col items-center justify-center p-4">
+            <div
+              className="w-full h-full flex flex-col items-center justify-center relative"
+              style={{ background: 'linear-gradient(160deg, #fdf6f0 0%, #f5e6de 40%, #ede0d4 100%)' }}
+            >
+              {/* Soft blob */}
+              <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 20%, rgba(196,30,58,0.06) 0%, transparent 60%)' }} />
+
               <div
-                className="bg-white w-[80%]"
+                className="relative"
                 style={{
-                  padding: '6px 6px 24px 6px',
+                  background: '#fff',
+                  padding: '5px 5px 22px 5px',
                   transform: 'rotate(-1.5deg)',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                  boxShadow: '0 8px 30px rgba(0,0,0,0.14)',
+                  width: '72%',
                 }}
               >
                 <div className="w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
@@ -153,13 +230,19 @@ export default function EnvelopeLanding() {
                     src="/images/childhood.jpg"
                     alt="Tara and Bandana as kids"
                     className="w-full h-full object-cover"
-                    style={{ display: 'block' }}
+                    style={{ display: 'block', filter: 'sepia(8%) contrast(1.04)' }}
                   />
                 </div>
+                {/* Tape strip */}
+                <div
+                  className="absolute pointer-events-none"
+                  style={{ top: -7, left: '50%', transform: 'translateX(-50%) rotate(-2deg)', width: 36, height: 14, background: 'rgba(255,240,200,0.75)', borderRadius: 2 }}
+                />
               </div>
+
               <p
-                className="mt-3 text-[#C41E3A] text-center text-sm leading-snug"
-                style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic' }}
+                className="mt-2 text-[#C41E3A] text-center leading-tight"
+                style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: '0.72rem' }}
               >
                 these kids are getting married 🥹
               </p>
