@@ -93,11 +93,13 @@ export default function HomePage() {
 
   // Unlock scroll
   const unlockScroll = useCallback(() => {
+    const y = savedScrollY.current;
     document.body.style.overflow = '';
     document.body.style.position = '';
     document.body.style.width = '';
     document.body.style.top = '';
-    window.scrollTo(0, savedScrollY.current);
+    // Use 'instant' so there is zero animation — the restore is a single synchronous paint
+    window.scrollTo({ top: y, behavior: 'instant' });
   }, []);
 
   // Lock when scratch cards are centered in the viewport
@@ -125,7 +127,8 @@ export default function HomePage() {
   const handleScratchComplete = useCallback(() => {
     try { localStorage.setItem('weddingScratched', 'true'); } catch { /* ITP/private mode */ }
     setScratchComplete(true);
-    setTimeout(() => unlockScroll(), 600);
+    // Unlock immediately — animations are already finished, the timeout caused a jarring flash
+    unlockScroll();
   }, [unlockScroll]);
 
   return (
