@@ -517,28 +517,6 @@ export default function HomePage() {
             </div>
           </motion.div>
 
-          {/* Contact */}
-          <motion.div
-            variants={itemVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch', textAlign: 'center', paddingTop: '6rem', paddingBottom: '6rem' }}
-          >
-            <h3
-              className="text-2xl font-bold text-[#8B7355] mb-4 flex items-center justify-center gap-2"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              <Phone className="w-6 h-6" />
-              Contact
-            </h3>
-            <p className="text-lg text-[#3D3D3D]">
-              <a href="tel:+14125060479" className="hover:text-[#D4AF85] transition-colors">
-                +1 (412) 506-0479
-              </a>
-            </p>
-          </motion.div>
-
         </motion.div>
       </section>
     </main>
