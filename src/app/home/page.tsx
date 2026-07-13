@@ -182,7 +182,7 @@ export default function HomePage() {
         {/* Middle text */}
         <div style={{ textAlign: 'center', paddingTop: '2rem', paddingBottom: '2rem', position: 'relative', zIndex: 20, width: '100%', overflow: 'visible' }}>
           <span style={{ fontFamily: "'Great Vibes', cursive", fontSize: '7.552vw', lineHeight: 1.1, whiteSpace: 'nowrap', color: '#8B7355', display: 'block' }}>
-            Tara &amp; Bandana
+            Bandana &amp; Tara
           </span>
         </div>
 

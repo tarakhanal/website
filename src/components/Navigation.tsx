@@ -45,7 +45,7 @@ export default function Navigation() {
               className="text-xl md:text-2xl font-bold text-[#8B7355] cursor-pointer transition-transform hover:scale-105"
               style={{ fontFamily: "'Great Vibes','Playfair Display', serif" }}
             >
-              T &nbsp;&nbsp;&&nbsp;&nbsp;B
+              B &nbsp;&nbsp;&&nbsp;&nbsp;T
             </div>
           </Link>
 

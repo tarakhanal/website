@@ -61,7 +61,7 @@ export default function Footer() {
           transition={{ duration: 0.7, delay: 0.4 }}
           className="text-white/40 text-sm"
         >
-          Tara &amp; Bandana · April 24, 2027
+          Bandana &amp; Tara · April 24, 2027
         </motion.p>
       </div>
     </footer>

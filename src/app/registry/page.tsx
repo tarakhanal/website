@@ -303,7 +303,7 @@ export default function RegistryPage() {
             &ldquo;Whether you bring a gift or simply bring yourself, you&apos;ve already given us the greatest joy.&rdquo;
           </p>
           <p style={{ fontFamily: "'Lora', serif", color: '#B0967E', fontSize: '0.9rem', letterSpacing: '0.05em' }}>
-            — Tara &amp; Bandana
+            — Bandana &amp; Tara
           </p>
         </motion.div>
       </section>
