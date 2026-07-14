@@ -26,8 +26,8 @@ interface PhotoEntry {
 }
 
 const chapterLabels = [
-  { label: 'year one',   subtitle: '2019' },
-  { label: 'year two',   subtitle: '2020' },
+  { label: 'Year one',   subtitle: '2019' },
+  { label: 'Year Two',   subtitle: '2020' },
   { label: 'year three', subtitle: '2021' },
   { label: 'year four', subtitle: '2022' },
   { label: 'year five', subtitle: '2023' },
