@@ -26,9 +26,14 @@ interface PhotoEntry {
 }
 
 const chapterLabels = [
-  { label: 'chapter one',   subtitle: 'how we met' },
-  { label: 'chapter two',   subtitle: 'falling in love' },
-  { label: 'chapter three', subtitle: 'the next step' },
+  { label: 'year one',   subtitle: '2019' },
+  { label: 'year two',   subtitle: '2020' },
+  { label: 'year three', subtitle: '2021' },
+  { label: 'year four', subtitle: '2022' },
+  { label: 'year five', subtitle: '2023' },
+  { label: 'year six', subtitle: '2024' },
+  { label: 'year seven', subtitle: '2025' },
+  { label: 'year eight', subtitle: '2026' },
 ];
 
 const allPhotos: PhotoEntry[] = [
@@ -351,15 +356,6 @@ export default function GalleryPage() {
       <Navigation />
 
       <section className="pt-40 pb-8 px-4 text-center">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-[clamp(4rem,12vw,9rem)] leading-none text-[#3D3229] font-bold"
-          style={{ fontFamily: "'Playfair Display', serif" }}
-        >
-          gallery
-        </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
