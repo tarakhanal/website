@@ -38,17 +38,17 @@ const chapterLabels = [
 
 const allPhotos: PhotoEntry[] = [
   { src: img1,  caption: 'The beginning',      chapter: 0 },
-  { src: img2,  caption: 'Growing closer',      chapter: 0 },
-  { src: img3,  caption: 'Side by side',        chapter: 0 },
-  { src: img4,  caption: 'Finding each other',  chapter: 0 },
-  { src: img5,  caption: 'Adventures together', chapter: 1 },
-  { src: img6,  caption: 'Our favorite places', chapter: 1 },
-  { src: img7,  caption: 'Always smiling',      chapter: 1 },
-  { src: img8,  caption: 'Wherever we go',      chapter: 1 },
-  { src: img9,  caption: 'A trip to remember',  chapter: 2 },
-  { src: img10, caption: 'The question',        chapter: 2 },
-  { src: img11, caption: 'She said yes',        chapter: 2 },
-  { src: img12, caption: 'Forever starts now',  chapter: 2 },
+  { src: img2,  caption: 'Growing closer',      chapter: 1 },
+  { src: img3,  caption: 'Side by side',        chapter: 2 },
+  { src: img4,  caption: 'Finding each other',  chapter: 3 },
+  { src: img5,  caption: 'Adventures together', chapter: 4 },
+  { src: img6,  caption: 'Our favorite places', chapter: 5 },
+  { src: img7,  caption: 'Always smiling',      chapter: 6 },
+  { src: img8,  caption: 'Wherever we go',      chapter: 6 },
+  { src: img9,  caption: 'A trip to remember',  chapter: 6 },
+  { src: img10, caption: 'The question',        chapter: 7 },
+  { src: img11, caption: 'She said yes',        chapter: 7 },
+  { src: img12, caption: 'Forever starts now',  chapter: 8 },
 ];
 
 const N = allPhotos.length;
