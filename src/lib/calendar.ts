@@ -10,6 +10,7 @@ export type EventData = {
   uid?: string;
   priority?: number;
   reminderMinutes?: number;
+  reminderMinutes2?: number;
   allDay?: boolean;
   lat?: number;
   lng?: number;
@@ -61,14 +62,23 @@ export function generateICS(ev: EventData) {
     lines.push(`DTEND:${formatDateTimeToICS(ev.end)}`);
   }
 
+  const locationFull = ev.address ? `${ev.location} - ${ev.address}` : ev.location;
   lines.push(`SUMMARY:${escapeText(ev.title)}`);
-  lines.push(`LOCATION:${escapeText(ev.location)}`);
+  lines.push(`LOCATION:${escapeText(locationFull)}`);
   lines.push(`DESCRIPTION:${escapeText(ev.description || '')}`);
   lines.push(`PRIORITY:${ev.priority || 5}`);
 
   if (ev.reminderMinutes) {
     lines.push('BEGIN:VALARM');
     lines.push(`TRIGGER:-PT${Number(ev.reminderMinutes)}M`);
+    lines.push('ACTION:DISPLAY');
+    lines.push('DESCRIPTION:Reminder');
+    lines.push('END:VALARM');
+  }
+
+  if (ev.reminderMinutes2) {
+    lines.push('BEGIN:VALARM');
+    lines.push(`TRIGGER:-PT${Number(ev.reminderMinutes2)}M`);
     lines.push('ACTION:DISPLAY');
     lines.push('DESCRIPTION:Reminder');
     lines.push('END:VALARM');
@@ -94,7 +104,8 @@ export function downloadICSFile(ev: EventData) {
 }
 
 export function googleCalendarUrl(ev: EventData) {
-  const params: any = { action: 'TEMPLATE', text: ev.title, details: ev.description || '', location: ev.location };
+  const locationFull = ev.address ? `${ev.location} - ${ev.address}` : ev.location;
+  const params: any = { action: 'TEMPLATE', text: ev.title, details: ev.description || '', location: locationFull };
   if (ev.allDay && ev.startDate && ev.endDate) {
     params.dates = `${formatDateOnly(ev.startDate)}/${formatDateOnly(ev.endDate)}`;
   } else if (ev.start && ev.end) {
@@ -104,11 +115,12 @@ export function googleCalendarUrl(ev: EventData) {
 }
 
 export function outlookWebUrl(ev: EventData) {
+  const locationFull = ev.address ? `${ev.location} - ${ev.address}` : ev.location;
   const params = new URLSearchParams({
     path: '/calendar/action/compose',
     subject: ev.title,
     body: ev.description || '',
-    location: ev.location || '',
+    location: locationFull,
   });
   if (ev.allDay && ev.startDate && ev.endDate) {
     params.set('startdt', new Date(ev.startDate).toISOString());
