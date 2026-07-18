@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import DirectionsModal from '@/components/DirectionsModal';
 import ScratchTheDate from '@/components/ScratchTheDate';
@@ -407,13 +408,13 @@ export default function HomePage() {
           <motion.div className='song-suggestion max-w-4xl mx-auto w-full text-center mt-8 py-12'>
             
             <p>Do you want to suggest songs for our reception?</p>
-            <a
+            <Link
               href="/music"
               className="px-8 py-4 border-2 border-[#D4AF85] text-[#8B7355] rounded-full font-semibold uppercase tracking-wide text-sm transition-all inline-block hover:scale-105 active:scale-95"
               style={{ touchAction: 'manipulation' }}
             >
               Suggest Songs
-            </a>
+            </Link>
             </motion.div>
 
           {/* Registry */}
@@ -490,7 +491,7 @@ export default function HomePage() {
                 Your love and presence is the greatest gift of all. But if you'd like to celebrate us, we've curated a few things we'd cherish.
               </p>
 
-              <a
+              <Link
                 href="/registry"
                 style={{
                   display: 'inline-flex',
@@ -513,7 +514,7 @@ export default function HomePage() {
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(139,115,85,0.35)'; }}
               >
                 View Our Registry
-              </a>
+              </Link>
             </div>
           </motion.div>
 
