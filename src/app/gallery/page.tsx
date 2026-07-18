@@ -34,6 +34,7 @@ const chapterLabels = [
   { label: 'Year six', subtitle: '2024' },
   { label: 'Year seven', subtitle: '2025' },
   { label: 'Year eight', subtitle: '2026' },
+  { label: 'Year nine', subtitle: '2027' },
 ];
 
 const allPhotos: PhotoEntry[] = [
