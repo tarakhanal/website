@@ -14,27 +14,22 @@ const faqItems = [
   {
     question: 'Is there parking available?',
     answer:
-      'Yes! Free parking will be available on-site. A member of our team will be available to help direct you upon arrival. If you have accessibility needs, please let us know in advance.',
+      'Guests will have access to a spacious parking area located directly in front of the reception hall for easy and convenient access.',
   },
   {
     question: 'What is the dress code?',
     answer:
-      'The dress code is elegant casual to formal. We recommend wearing colors from our wedding palette: earth tones, golds, sage greens, or neutral colors. Please avoid wearing all white or all black.',
+      'Dress to impress! Whether you choose a sharp suit, an elegant gown, or traditional attire, we can\'t wait to celebrate with you in style.✨',
   },
   {
     question: 'Can I bring a date?',
     answer:
-      'Each invitation specifies the number of plus-ones allowed. If you have questions about bringing an additional guest, please contact us directly.',
-  },
-  {
-    question: 'Will there be vegetarian/vegan options?',
-    answer:
-      'Yes! We are providing vegetarian and vegan meal options. Please indicate your dietary preferences when you RSVP or contact us if you have specific dietary requirements.',
+      'Guests are welcome to bring a plus one to the reception. We look forward to celebrating our big day with everyone!',
   },
   {
     question: 'Will the ceremony be indoors or outdoors?',
     answer:
-      'The ceremony and reception will be held outdoors at our venue in Kenwood. In case of inclement weather, we have an indoor backup location. We will send updates if weather changes are anticipated.',
+      'The ceremony and reception will both be held indoors.',
   },
   {
     question: 'Can I take photos during the ceremony?',
@@ -59,7 +54,7 @@ const faqItems = [
   {
     question: 'Will children be welcome?',
     answer:
-      'We would love to celebrate with families! If you have children, please let us know in your RSVP. We will have activities and refreshments suitable for kids.',
+      'We are delighted to welcome children to our reception! We kindly ask that parents keep a watchful eye on their little ones throughout the celebration so everyone can enjoy the evening safely.',
   },
   {
     question: 'How can I help or contribute?',
