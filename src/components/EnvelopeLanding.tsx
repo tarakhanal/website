@@ -4,27 +4,54 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { getGuestByCode } from '@/lib/supabase';
+import guestCodesData from '@/data/guestCodes.json';
 
-const GUEST_NAME_KEY = 'wedding_guest_name';
+const GUEST_CODE_KEY = 'wedding_guest_code';
 
 export default function EnvelopeLanding() {
   const [stage, setStage] = useState<'envelope' | 'animating' | 'opened'>('envelope');
   const [guestName, setGuestName] = useState<string | null>(null);
   const searchParams = useSearchParams();
 
-  useEffect(() => {
-    const urlName = searchParams.get('name');
-    if (urlName) {
-      localStorage.setItem(GUEST_NAME_KEY, urlName);
-      setGuestName(urlName);
-      
-      // Hide the query parameter from the URL
-      if (typeof window !== 'undefined') {
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-    } else {
-      setGuestName(localStorage.getItem(GUEST_NAME_KEY));
+  // Helper function to get name from code (checks Supabase first, then fallback)
+  const getNameFromCode = async (code: string): Promise<string | null> => {
+    // Try Supabase first
+    const guestFromDb = await getGuestByCode(code);
+    if (guestFromDb) {
+      return guestFromDb.name;
     }
+
+    // Fallback to local guestCodes.json
+    const codes = guestCodesData.codes as Record<string, string>;
+    return codes[code.toUpperCase()] || null;
+  };
+
+  useEffect(() => {
+    const loadGuestName = async () => {
+      const urlCode = searchParams.get('code');
+
+      if (urlCode) {
+        // Store the code so we can look up fresh on each visit
+        localStorage.setItem(GUEST_CODE_KEY, urlCode.toUpperCase());
+
+        // Hide the query parameter from the URL
+        if (typeof window !== 'undefined') {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      }
+
+      // Always look up the current name from the stored code (or URL code)
+      const codeToUse = urlCode || localStorage.getItem(GUEST_CODE_KEY);
+      if (codeToUse) {
+        const name = await getNameFromCode(codeToUse);
+        if (name) {
+          setGuestName(name);
+        }
+      }
+    };
+
+    loadGuestName();
   }, [searchParams]);
 
   const handleCardClick = () => {
