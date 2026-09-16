@@ -17,6 +17,11 @@ export default function EnvelopeLanding() {
     if (urlName) {
       localStorage.setItem(GUEST_NAME_KEY, urlName);
       setGuestName(urlName);
+      
+      // Hide the query parameter from the URL
+      if (typeof window !== 'undefined') {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
     } else {
       setGuestName(localStorage.getItem(GUEST_NAME_KEY));
     }
