@@ -496,48 +496,55 @@ export default function EnvelopeLanding() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] flex items-center justify-center p-4 relative overflow-hidden">
       {/* Animated Name Banner */}
-      {guestName && (
+      {(guestName || true) && (
         <motion.div
-          initial={{ y: -120, opacity: 0 }}
-          animate={{ y: 20, opacity: 1 }}
+          initial={{ y: -60, opacity: 0 }}
+          animate={{ y: 120, opacity: 1 }}
           transition={{ duration: 1.2, delay: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-          className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6"
+          className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-32"
           style={{ pointerEvents: 'none' }}
         >
-          <div
-            className="px-8 py-4 rounded-xl shadow-2xl backdrop-blur-sm"
-            style={{
-              background: 'linear-gradient(135deg, #8B1A2B 0%, #C41E3A 100%)',
-              border: '2px solid #D4AF85',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1)',
-              maxWidth: '90vw',
-            }}
-          >
-            {/* Top decorative line */}
-            <div className="flex items-center justify-center gap-2.5 mb-1.5">
-              <div style={{ width: 20, height: 0.5, background: 'linear-gradient(90deg, transparent, #D4AF85, transparent)', opacity: 0.8 }} />
-              <span style={{ color: '#E8C896', fontSize: '0.45rem', letterSpacing: '0.35em', opacity: 0.85, fontWeight: 300 }}>✦ ✦ ✦</span>
-              <div style={{ width: 20, height: 0.5, background: 'linear-gradient(90deg, transparent, #D4AF85, transparent)', opacity: 0.8 }} />
-            </div>
+          {/* Text Banner */}
+          <div className="relative flex justify-center items-center">
+            {/* Guest name text */}
+            <div className="flex flex-col items-center justify-center">
+              {/* Decorative top flourish */}
+              <div className="mb-2" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: 20, height: 0.5, background: 'linear-gradient(90deg, transparent, #E8C896)', opacity: 0.8 }} />
+                <span style={{ color: '#E8C896', fontSize: '0.5rem', letterSpacing: '0.2em', opacity: 0.9, fontWeight: 300 }}>✦</span>
+                <div style={{ width: 20, height: 0.5, background: 'linear-gradient(90deg, #E8C896, transparent)', opacity: 0.8 }} />
+              </div>
 
-            {/* Guest name */}
-            <h2
-              className="text-white text-center font-semibold tracking-wide"
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: 'clamp(0.85rem, 3.5vw, 1.25rem)',
-                textShadow: '0 3px 12px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.2)',
-                letterSpacing: '0.05em',
-              }}
-            >
-              {guestName}
-            </h2>
+              {/* Guest name with elegant styling */}
+              <h2
+                className="text-center font-semibold tracking-widest px-4"
+                style={{
+                  fontFamily: "'Caveat', cursive",
+                  fontSize: 'clamp(0.9rem, 2.8vw, 1.2rem)',
+                  color: '#D4AF85',
+                  letterSpacing: '0.08em',
+                  lineHeight: '1.4',
+                  fontWeight: 700,
+                  textShadow: '0 1px 2px rgba(255,255,255,0.5)',
+                  maxWidth: '80vw',
+                  wordBreak: 'break-word',
+                }}
+              >
+                Welcome
+                {guestName && (
+                  <>
+                    <br />
+                    {guestName?.replace(/\band\b/gi, '&')}!
+                  </>
+                )}
+              </h2>
 
-            {/* Bottom decorative line */}
-            <div className="flex items-center justify-center gap-2.5 mt-1.5">
-              <div style={{ width: 20, height: 0.5, background: 'linear-gradient(90deg, transparent, #D4AF85, transparent)', opacity: 0.8 }} />
-              <span style={{ color: '#E8C896', fontSize: '0.45rem', letterSpacing: '0.35em', opacity: 0.85, fontWeight: 300 }}>✦ ✦ ✦</span>
-              <div style={{ width: 20, height: 0.5, background: 'linear-gradient(90deg, transparent, #D4AF85, transparent)', opacity: 0.8 }} />
+              {/* Decorative bottom flourish */}
+              <div className="mt-2" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: 20, height: 0.5, background: 'linear-gradient(90deg, transparent, #E8C896)', opacity: 0.8 }} />
+                <span style={{ color: '#E8C896', fontSize: '0.5rem', letterSpacing: '0.2em', opacity: 0.9, fontWeight: 300 }}>✦</span>
+                <div style={{ width: 20, height: 0.5, background: 'linear-gradient(90deg, #E8C896, transparent)', opacity: 0.8 }} />
+              </div>
             </div>
           </div>
         </motion.div>
