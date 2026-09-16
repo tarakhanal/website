@@ -4,44 +4,33 @@ export interface Song {
   id: string;
   title: string;
   artist: string;
+  suggestedBy: string;
   votes: number;
   votedBy: Set<string>; // Track who voted to prevent duplicate votes
 }
 
 interface SongStore {
   songs: Song[];
-  addSong: (title: string, artist: string) => void;
+  addSong: (title: string, artist: string, suggestedBy: string) => void;
   voteSong: (songId: string, userId: string) => void;
   getSortedSongs: () => Song[];
   hasUserVoted: (songId: string, userId: string) => boolean;
+  setSongs: (songs: Song[]) => void;
+  resetVotes: () => void;
+  updateSongVotes: (songId: string) => void;
 }
 
 export const useSongStore = create<SongStore>((set, get) => ({
-  songs: [
-    {
-      id: '1',
-      title: 'Can\'t Help Falling in Love',
-      artist: 'Elvis Presley',
-      votes: 5,
-      votedBy: new Set(),
-    },
-    {
-      id: '2',
-      title: 'Perfect',
-      artist: 'Ed Sheeran',
-      votes: 3,
-      votedBy: new Set(),
-    },
-    {
-      id: '3',
-      title: 'All of Me',
-      artist: 'John Legend',
-      votes: 4,
-      votedBy: new Set(),
-    },
-  ],
+  songs: [],
   
-  addSong: (title: string, artist: string) => {
+  setSongs: (songs: Song[]) => {
+    console.log('🏪 STORE: setSongs called with', songs.length, 'songs');
+    console.log('🏪 STORE: Songs to set:', songs);
+    set({ songs });
+    console.log('🏪 STORE: setSongs complete, store state is now:', get().songs);
+  },
+  
+  addSong: (title: string, artist: string, suggestedBy: string) => {
     set((state) => ({
       songs: [
         ...state.songs,
@@ -49,6 +38,7 @@ export const useSongStore = create<SongStore>((set, get) => ({
           id: Date.now().toString(),
           title,
           artist,
+          suggestedBy,
           votes: 0,
           votedBy: new Set(),
         },
@@ -79,5 +69,30 @@ export const useSongStore = create<SongStore>((set, get) => ({
   hasUserVoted: (songId: string, userId: string) => {
     const song = get().songs.find((s) => s.id === songId);
     return song ? song.votedBy.has(userId) : false;
+  },
+  
+  updateSongVotes: (songId: string) => {
+    set((state) => {
+      const updatedSongs = state.songs.map((song) => {
+        if (song.id === songId) {
+          return {
+            ...song,
+            votes: song.votes + 1,
+          };
+        }
+        return song;
+      });
+      return { songs: updatedSongs };
+    });
+  },
+  
+  resetVotes: () => {
+    set((state) => ({
+      songs: state.songs.map((song) => ({
+        ...song,
+        votes: 0,
+        votedBy: new Set(),
+      })),
+    }));
   },
 }));

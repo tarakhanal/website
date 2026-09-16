@@ -13,6 +13,14 @@ export interface GuestCode {
   updated_at?: string;
 }
 
+export interface MusicUsageStats {
+  songs_count: number;
+  song_votes_count: number;
+  songs_table_bytes: number;
+  song_votes_table_bytes: number;
+  total_music_bytes: number;
+}
+
 // Fetch all guest codes
 export async function getAllGuestCodes(): Promise<GuestCode[]> {
   const { data, error } = await supabase
@@ -109,4 +117,36 @@ export async function deleteGuestCode(code: string): Promise<boolean> {
   }
 
   return true;
+}
+
+// Fetch music data usage stats for admin dashboard
+export async function getMusicUsageStats(): Promise<MusicUsageStats | null> {
+  const { data, error } = await supabase.rpc('get_music_usage_stats');
+
+  if (error) {
+    const message = (error.message || '').toLowerCase();
+    const details = (error.details || '').toLowerCase();
+    const setupRequired =
+      message.includes('get_music_usage_stats') ||
+      details.includes('get_music_usage_stats') ||
+      message.includes('function') ||
+      message.includes('does not exist');
+
+    if (!setupRequired) {
+      console.error('Error fetching music usage stats:', error);
+    }
+    return null;
+  }
+
+  if (!data || typeof data !== 'object') return null;
+
+  const payload = data as Partial<MusicUsageStats>;
+
+  return {
+    songs_count: Number(payload.songs_count || 0),
+    song_votes_count: Number(payload.song_votes_count || 0),
+    songs_table_bytes: Number(payload.songs_table_bytes || 0),
+    song_votes_table_bytes: Number(payload.song_votes_table_bytes || 0),
+    total_music_bytes: Number(payload.total_music_bytes || 0),
+  };
 }
