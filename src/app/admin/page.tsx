@@ -10,6 +10,9 @@ import {
   type GuestCode,
 } from '@/lib/supabase';
 
+const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'wedding2024';
+const AUTH_KEY = 'admin_auth';
+
 export default function AdminPage() {
   const [guestCodes, setGuestCodes] = useState<GuestCode[]>([]);
   const [newCode, setNewCode] = useState('');
@@ -19,11 +22,49 @@ export default function AdminPage() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  // Check if already authenticated
+  useEffect(() => {
+    const stored = localStorage.getItem(AUTH_KEY);
+    if (stored === 'true') {
+      setIsAuthenticated(true);
+      loadCodes();
+    } else {
+      setIsLoaded(true);
+    }
+  }, []);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+
+    if (password === ADMIN_PASSWORD) {
+      localStorage.setItem(AUTH_KEY, 'true');
+      setIsAuthenticated(true);
+      setPassword('');
+      loadCodes();
+    } else {
+      setLoginError('Incorrect password');
+      setPassword('');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem(AUTH_KEY);
+    setIsAuthenticated(false);
+    setPassword('');
+    setGuestCodes([]);
+  };
 
   // Load codes from Supabase
   useEffect(() => {
-    loadCodes();
-  }, []);
+    if (isAuthenticated) {
+      loadCodes();
+    }
+  }, [isAuthenticated]);
 
   const loadCodes = async () => {
     setIsLoading(true);
@@ -119,6 +160,54 @@ export default function AdminPage() {
     alert('Invite link copied to clipboard!');
   };
 
+  // Login screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-[#D4AF85]">
+          <h1 className="text-3xl font-bold text-center text-[#C41E3A] mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Admin Login
+          </h1>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-gray-700 font-semibold mb-2">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter admin password"
+                className="w-full px-4 py-2 border-2 border-[#D4AF85] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C41E3A]"
+                autoFocus
+              />
+            </div>
+
+            {loginError && (
+              <div className="p-3 bg-red-100 border-2 border-red-500 rounded-lg text-red-800 text-sm">
+                {loginError}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="w-full px-4 py-3 bg-[#C41E3A] text-white rounded-lg font-semibold hover:bg-[#8B1A2B] transition"
+            >
+              Login
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <Link href="/">
+              <button className="text-[#C41E3A] hover:underline font-semibold">
+                Back to Invitation
+              </button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] p-8">
       <div className="max-w-4xl mx-auto">
@@ -126,11 +215,19 @@ export default function AdminPage() {
           <h1 className="text-4xl font-bold text-[#C41E3A]" style={{ fontFamily: "'Playfair Display', serif" }}>
             Guest Codes Admin
           </h1>
-          <Link href="/">
-            <button className="px-4 py-2 bg-[#C41E3A] text-white rounded-lg hover:bg-[#8B1A2B] transition">
-              Back to Invitation
+          <div className="flex gap-4">
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
+            >
+              Logout
             </button>
-          </Link>
+            <Link href="/">
+              <button className="px-4 py-2 bg-[#C41E3A] text-white rounded-lg hover:bg-[#8B1A2B] transition">
+                Back to Invitation
+              </button>
+            </Link>
+          </div>
         </div>
 
         {/* Error Message */}

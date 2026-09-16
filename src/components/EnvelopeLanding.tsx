@@ -16,15 +16,28 @@ export default function EnvelopeLanding() {
 
   // Helper function to get name from code (checks Supabase first, then fallback)
   const getNameFromCode = async (code: string): Promise<string | null> => {
-    // Try Supabase first
-    const guestFromDb = await getGuestByCode(code);
-    if (guestFromDb) {
-      return guestFromDb.name;
+    if (!code || code.trim().length === 0) {
+      return null;
+    }
+
+    try {
+      // Try Supabase first
+      const guestFromDb = await getGuestByCode(code);
+      if (guestFromDb) {
+        return guestFromDb.name;
+      }
+    } catch (err) {
+      console.error('Error fetching from Supabase, falling back to local data:', err);
     }
 
     // Fallback to local guestCodes.json
-    const codes = guestCodesData.codes as Record<string, string>;
-    return codes[code.toUpperCase()] || null;
+    try {
+      const codes = guestCodesData.codes as Record<string, string>;
+      return codes[code.toUpperCase()] || null;
+    } catch (err) {
+      console.error('Error reading local guest codes:', err);
+      return null;
+    }
   };
 
   useEffect(() => {

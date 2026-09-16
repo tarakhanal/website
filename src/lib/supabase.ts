@@ -30,18 +30,27 @@ export async function getAllGuestCodes(): Promise<GuestCode[]> {
 
 // Get a guest by code
 export async function getGuestByCode(code: string): Promise<GuestCode | null> {
-  const { data, error } = await supabase
-    .from('guest_codes')
-    .select('*')
-    .eq('code', code.toUpperCase())
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('guest_codes')
+      .select('*')
+      .eq('code', code.toUpperCase())
+      .single();
 
-  if (error) {
-    console.error('Error fetching guest code:', error);
+    if (error) {
+      // .single() throws PGRST116 when no rows found, this is expected
+      if (error.code === 'PGRST116') {
+        return null;
+      }
+      console.error('Error fetching guest code:', error);
+      return null;
+    }
+
+    return data;
+  } catch (err) {
+    console.error('Exception fetching guest code:', err);
     return null;
   }
-
-  return data;
 }
 
 // Add a new guest code
