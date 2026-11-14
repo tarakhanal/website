@@ -128,6 +128,12 @@ This adds a secure RPC (`submit_song_vote`) that applies:
 
 After running it, the music page will show clear messages when a guest hits either limit.
 
+> **Important (Supabase):** also run `MUSIC_VOTE_FIX.sql` afterwards (or instead).
+> The original script pinned the functions to the `public` schema, but Supabase
+> installs pgcrypto's `digest()` in the `extensions` schema, so every vote failed
+> with `function digest(text, unknown) does not exist`. The fix script is safe to
+> re-run and keeps the same vote rules.
+
 ## Database Functions
 
 Updated functions in `/src/lib/songs.ts`:

@@ -7,7 +7,7 @@ import NameModal from '@/components/NameModal';
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Music, ThumbsUp, Plus, Sparkles, X, Search } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { getAllSongs, addSongToDb, submitSongVote, getRemainingVoteCredits, getSongVotersBySongIds, type SongData } from '@/lib/songs';
+import { getAllSongs, addSongToDb, submitSongVote, getRemainingVoteCredits, getSongVotersBySongIds, normalizeText, type SongData } from '@/lib/songs';
 
 type LocalSong = {
   id: string;
@@ -55,31 +55,65 @@ type ItunesTrack = {
 const getHighResArtwork = (url: string): string =>
   url.replace(/\d+x\d+bb/, '300x300bb');
 
+// NOTE: do not add `media=music` here. With an iPhone/iPad user agent Apple answers
+// `media=music` searches with a 301 redirect to `musics://…` (the Music app), which
+// fetch() cannot follow — so the song search silently returned nothing on iOS.
+const buildItunesSearchUrl = (term: string, limit: number): string =>
+  `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=song&limit=${limit}`;
+
+// Safari (Private Browsing, "Block All Cookies", some in-app browsers) can throw on
+// localStorage access. Never let storage errors break the page.
+const safeStorageGet = (key: string): string | null => {
+  try {
+    return typeof window === 'undefined' ? null : window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+const safeStorageSet = (key: string, value: string) => {
+  try {
+    window.localStorage.setItem(key, value);
+  } catch (error) {
+    console.warn(`[music] Could not save "${key}" to localStorage:`, error);
+  }
+};
+
 const VOTER_ID_KEY = 'userId';
 const VOTER_ID_COOKIE = 'wedding_voter_id';
 
 const getCookieValue = (name: string): string | null => {
   if (typeof document === 'undefined') return null;
+  let cookies = '';
+  try {
+    cookies = document.cookie;
+  } catch {
+    return null;
+  }
   const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const match = document.cookie.match(new RegExp(`(?:^|; )${escapedName}=([^;]*)`));
+  const match = cookies.match(new RegExp(`(?:^|; )${escapedName}=([^;]*)`));
   return match ? decodeURIComponent(match[1]) : null;
 };
 
 const setCookieValue = (name: string, value: string) => {
   if (typeof document === 'undefined') return;
-  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=31536000; SameSite=Lax`;
+  try {
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=31536000; SameSite=Lax`;
+  } catch {
+    // ignore — cookies blocked
+  }
 };
 
 const getOrCreateVoterId = (): string => {
   if (typeof window === 'undefined') return '';
 
-  const fromLocalStorage = localStorage.getItem(VOTER_ID_KEY);
+  const fromLocalStorage = safeStorageGet(VOTER_ID_KEY);
   const fromCookie = getCookieValue(VOTER_ID_COOKIE);
   const resolved = fromCookie || fromLocalStorage;
 
   if (resolved) {
     if (fromLocalStorage !== resolved) {
-      localStorage.setItem(VOTER_ID_KEY, resolved);
+      safeStorageSet(VOTER_ID_KEY, resolved);
     }
     if (fromCookie !== resolved) {
       setCookieValue(VOTER_ID_COOKIE, resolved);
@@ -88,7 +122,7 @@ const getOrCreateVoterId = (): string => {
   }
 
   const generated = `user_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
-  localStorage.setItem(VOTER_ID_KEY, generated);
+  safeStorageSet(VOTER_ID_KEY, generated);
   setCookieValue(VOTER_ID_COOKIE, generated);
   return generated;
 };
@@ -98,9 +132,7 @@ const fetchSongMetadata = async (title: string, artist: string): Promise<SongMet
   if (!query) return null;
 
   try {
-    const response = await fetch(
-      `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=1`
-    );
+    const response = await fetch(buildItunesSearchUrl(query, 1));
 
     if (!response.ok) return null;
 
@@ -125,18 +157,19 @@ export default function MusicPage() {
   const [newArtist, setNewArtist] = useState('');
   const [userId] = useState(() => getOrCreateVoterId());
   const [guestName, setGuestName] = useState(() => {
-    if (typeof window === 'undefined') return '';
-    return localStorage.getItem('guest_name') || '';
+    return safeStorageGet('guest_name') || '';
   });
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showNameModal, setShowNameModal] = useState(false);
+  const [isAddingSong, setIsAddingSong] = useState(false);
   const [votingStates, setVotingStates] = useState<Record<string, boolean>>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [songSuggestions, setSongSuggestions] = useState<SongSuggestion[]>([]);
   const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestionsUnavailable, setSuggestionsUnavailable] = useState(false);
   const [selectedArtworkUrl, setSelectedArtworkUrl] = useState<string | null>(null);
   const [selectedAlbumName, setSelectedAlbumName] = useState<string | null>(null);
   const [songMetadataById, setSongMetadataById] = useState<Record<string, SongMetadata | null>>({});
@@ -203,10 +236,7 @@ export default function MusicPage() {
       try {
         setIsFetchingSuggestions(true);
 
-        const response = await fetch(
-          `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=8`,
-          { signal: controller.signal }
-        );
+        const response = await fetch(buildItunesSearchUrl(query, 8), { signal: controller.signal });
 
         if (!response.ok) {
           throw new Error(`Suggestion request failed with status ${response.status}`);
@@ -222,10 +252,12 @@ export default function MusicPage() {
         }));
 
         setSongSuggestions(suggestions.filter((item) => item.trackName && item.artistName));
+        setSuggestionsUnavailable(false);
       } catch (error) {
         if ((error as Error).name !== 'AbortError') {
-          console.error('Failed to fetch song suggestions:', error);
+          console.error('[music] Song search failed:', error);
           setSongSuggestions([]);
+          setSuggestionsUnavailable(true);
         }
       } finally {
         setIsFetchingSuggestions(false);
@@ -370,7 +402,7 @@ export default function MusicPage() {
 
   const handleNameModalSubmit = (name: string) => {
     setGuestName(name);
-    localStorage.setItem('guest_name', name);
+    safeStorageSet('guest_name', name);
     setShowNameModal(false);
 
     if (pendingVoteSongId) {
@@ -394,15 +426,32 @@ export default function MusicPage() {
 
   const handleAddSong = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newTitle.trim() && newArtist.trim() && guestName) {
-      const normalizedTitle = newTitle.trim();
-      const normalizedArtist = newArtist.trim();
+    if (isAddingSong) return;
+
+    const normalizedTitle = normalizeText(newTitle);
+    const normalizedArtist = normalizeText(newArtist);
+
+    if (!normalizedTitle || !normalizedArtist) {
+      setErrorMessage(
+        !normalizedTitle ? 'Please enter the song title.' : 'Please enter the artist name.'
+      );
+      return;
+    }
+
+    if (!guestName) {
+      // Name was lost (e.g. Safari Private Browsing) — ask again instead of failing silently.
+      setPendingVoteSongId(null);
+      setShowNameModal(true);
+      return;
+    }
+
+    {
 
       // Check for duplicate song (same title and artist, case-insensitive)
       const isDuplicate = localSongs.some(
         (song) =>
-          song.title.toLowerCase() === normalizedTitle.toLowerCase() &&
-          song.artist.toLowerCase() === normalizedArtist.toLowerCase()
+          normalizeText(song.title).toLowerCase() === normalizedTitle.toLowerCase() &&
+          normalizeText(song.artist).toLowerCase() === normalizedArtist.toLowerCase()
       );
 
       if (isDuplicate) {
@@ -416,14 +465,15 @@ export default function MusicPage() {
 
       try {
         setErrorMessage(null);
+        setIsAddingSong(true);
 
         // Save to Supabase with guest name
-  const newSong = await addSongToDb(normalizedTitle, normalizedArtist, guestName, {
+        const result = await addSongToDb(normalizedTitle, normalizedArtist, guestName, {
           albumName: selectedAlbumName,
           artworkUrl: selectedArtworkUrl,
         });
-        
-        if (newSong) {
+
+        if (result.ok) {
           await refreshSongsFromDb();
           setSuccessMessage('Song added to the playlist ✨');
           
@@ -434,12 +484,18 @@ export default function MusicPage() {
           setSongSuggestions([]);
           setShowSuggestions(false);
           setIsFormVisible(false);
+        } else if (result.reason === 'duplicate') {
+          setSongSearchDraft(normalizedTitle);
+          setSongSearchQuery(normalizedTitle);
+          setErrorMessage('This song has already been suggested — find it in the list below and vote for it.');
         } else {
-          setErrorMessage('Could not add this song. It may already be suggested.');
+          setErrorMessage('Could not add your song — please check your connection and try again.');
         }
       } catch (error) {
-        console.error('Failed to add song:', error);
-        setErrorMessage('Could not add song right now. Please try again.');
+        console.error('[music] Failed to add song:', error);
+        setErrorMessage('Could not add your song — please check your connection and try again.');
+      } finally {
+        setIsAddingSong(false);
       }
     }
   };
@@ -494,15 +550,18 @@ export default function MusicPage() {
           setErrorMessage('You have used all 5 votes.');
         } else if (voteResult.reason === 'duplicate_user' || voteResult.reason === 'duplicate_name') {
           setErrorMessage('You already voted for this song.');
+        } else if (voteResult.reason === 'song_not_found') {
+          setErrorMessage('That song was removed from the playlist.');
+          void refreshSongsFromDb();
         } else if (voteResult.reason === 'setup_required') {
-          setErrorMessage('Vote limits are not fully configured yet. Please run the latest Supabase SQL setup.');
+          setErrorMessage('Voting is temporarily unavailable — we are fixing it. Please try again later.');
         } else {
-          setErrorMessage('Could not register your vote. Please try again.');
+          setErrorMessage('Could not register your vote — please check your connection and try again.');
         }
       }
     } catch (error) {
-      console.error('Failed to vote for song:', error);
-      setErrorMessage('Could not register your vote. Please try again.');
+      console.error('[music] Failed to vote for song:', error);
+      setErrorMessage('Could not register your vote — please check your connection and try again.');
     } finally {
       setVotingStates((prev) => ({ ...prev, [songId]: false }));
     }
@@ -692,6 +751,12 @@ export default function MusicPage() {
                       <p className="mt-2 text-xs text-[#8B7355]">Searching songs...</p>
                     )}
 
+                    {!isFetchingSuggestions && suggestionsUnavailable && newTitle.trim().length >= 2 && (
+                      <p className="mt-2 text-xs text-[#8B7355]">
+                        Song search isn&apos;t available right now — just type the title and artist yourself.
+                      </p>
+                    )}
+
                     {showSuggestions && songSuggestions.length > 0 && (
                       <div className="mt-3 rounded-2xl border border-[#E8DDD5] bg-white shadow-lg overflow-hidden">
                         <ul className="max-h-72 overflow-y-auto">
@@ -766,10 +831,11 @@ export default function MusicPage() {
                   <div className="flex gap-3 pt-3">
                     <button
                       type="submit"
-                      className="flex-1 px-5 py-3 bg-[#8B7355] text-white rounded-xl font-semibold hover:bg-[#6B5345] transition-all hover:scale-[1.01] active:scale-[0.99]"
+                      disabled={isAddingSong}
+                      className="flex-1 px-5 py-3 bg-[#8B7355] text-white rounded-xl font-semibold hover:bg-[#6B5345] transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
                       style={{ touchAction: 'manipulation' }}
                     >
-                      Add Song
+                      {isAddingSong ? 'Adding…' : 'Add Song'}
                     </button>
                     <button
                       type="button"
