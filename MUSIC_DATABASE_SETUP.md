@@ -134,6 +134,12 @@ After running it, the music page will show clear messages when a guest hits eith
 > with `function digest(text, unknown) does not exist`. The fix script is safe to
 > re-run and keeps the same vote rules.
 
+> **Votes v2:** then run `MUSIC_VOTES_V2.sql`. It switches to per-guest limits
+> (5 votes held at a time, removable/reallocatable, recognised by device id or
+> the same name), a 50-new-votes-per-day safety cap per network, adds
+> `songs.preview_url` for 30-second previews, and makes votes changeable only
+> through the `submit_song_vote` / `remove_song_vote` functions.
+
 ## Database Functions
 
 Updated functions in `/src/lib/songs.ts`:

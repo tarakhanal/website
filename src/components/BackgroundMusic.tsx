@@ -129,11 +129,34 @@ export default function BackgroundMusic() {
     };
     document.addEventListener('wedding-music-start', handleMusicStart, { once: true });
 
+    // ── Song previews on the Music page: pause while a preview plays ──────
+    let pausedForPreview = false;
+    const handlePreviewStart = () => {
+      const a = audioRefs.current[partRef.current];
+      cancelInteraction();
+      if (a && !a.paused) {
+        a.pause();
+        pausedForPreview = true;
+      }
+    };
+    const handlePreviewStop = () => {
+      const a = audioRefs.current[partRef.current];
+      const nowMuted = localStorage.getItem(STORAGE_MUTED) === 'true';
+      if (a && pausedForPreview && !nowMuted) {
+        a.play().catch(() => {});
+      }
+      pausedForPreview = false;
+    };
+    document.addEventListener('wedding-preview-start', handlePreviewStart);
+    document.addEventListener('wedding-preview-stop', handlePreviewStop);
+
     return () => {
       if (saveIntervalRef.current) clearInterval(saveIntervalRef.current);
       savePosition();
       cancelInteraction();
       document.removeEventListener('wedding-music-start', handleMusicStart);
+      document.removeEventListener('wedding-preview-start', handlePreviewStart);
+      document.removeEventListener('wedding-preview-stop', handlePreviewStop);
       audioRefs.current.forEach(a => { a?.removeEventListener('ended', handlePartEnded); a?.pause(); });
       audioRefs.current = [null, null];
     };

@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '@/components/Navigation';
 import NameModal from '@/components/NameModal';
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { Music, ThumbsUp, Plus, Sparkles, X, Search } from 'lucide-react';
+import { Music, ThumbsUp, Plus, Sparkles, X, Search, Play, Pause, Check } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { getAllSongs, addSongToDb, submitSongVote, getRemainingVoteCredits, getSongVotersBySongIds, normalizeText, type SongData } from '@/lib/songs';
+import { getAllSongs, addSongToDb, submitSongVote, removeSongVote, getGuestVoteStatus, getSongVotersBySongIds, saveSongPreviewUrl, normalizeText, type SongData } from '@/lib/songs';
 
 type LocalSong = {
   id: string;
@@ -15,9 +15,9 @@ type LocalSong = {
   artist: string;
   suggestedBy: string;
   votes: number;
-  votedBy: Set<string>;
   albumName: string | null;
   artworkUrl: string | null;
+  previewUrl: string | null;
 };
 
 const toLocalSong = (song: SongData): LocalSong => ({
@@ -26,9 +26,9 @@ const toLocalSong = (song: SongData): LocalSong => ({
   artist: song.artist,
   suggestedBy: song.suggested_by,
   votes: song.vote_count,
-  votedBy: new Set<string>(),
   albumName: song.album_name || null,
   artworkUrl: song.artwork_url || null,
+  previewUrl: song.preview_url || null,
 });
 
 type SongSuggestion = {
@@ -37,11 +37,13 @@ type SongSuggestion = {
   artistName: string;
   albumName: string;
   artworkUrl: string;
+  previewUrl: string;
 };
 
 type SongMetadata = {
   albumName: string;
   artworkUrl: string;
+  previewUrl: string;
 };
 
 type ItunesTrack = {
@@ -50,6 +52,27 @@ type ItunesTrack = {
   artistName?: string;
   collectionName?: string;
   artworkUrl100?: string;
+  previewUrl?: string;
+};
+
+// Tells BackgroundMusic to pause while a song preview plays (and resume after).
+const PREVIEW_START_EVENT = 'wedding-preview-start';
+const PREVIEW_STOP_EVENT = 'wedding-preview-stop';
+const MAX_VOTES = 5;
+
+// Kept outside the component: plain DOM audio element handling.
+const startPreviewAudio = (audio: HTMLAudioElement, url: string): Promise<void> => {
+  audio.pause();
+  audio.src = url;
+  audio.currentTime = 0;
+  return audio.play();
+};
+
+const resetPreviewAudio = (audio: HTMLAudioElement | null) => {
+  if (!audio) return;
+  audio.pause();
+  audio.removeAttribute('src');
+  audio.load();
 };
 
 const getHighResArtwork = (url: string): string =>
@@ -143,6 +166,7 @@ const fetchSongMetadata = async (title: string, artist: string): Promise<SongMet
     return {
       albumName: item.collectionName || 'Unknown Album',
       artworkUrl: item.artworkUrl100 ? getHighResArtwork(item.artworkUrl100) : '',
+      previewUrl: item.previewUrl || '',
     };
   } catch {
     return null;
@@ -178,6 +202,13 @@ export default function MusicPage() {
   const [pendingVoteSongId, setPendingVoteSongId] = useState<string | null>(null);
   const [realtimeStatus, setRealtimeStatus] = useState<'realtime' | 'polling'>('polling');
   const [votesLeft, setVotesLeft] = useState<number | null>(null);
+  const [votedSongIds, setVotedSongIds] = useState<Set<string>>(() => new Set());
+  const [selectedPreviewUrl, setSelectedPreviewUrl] = useState<string | null>(null);
+  const [playingSongId, setPlayingSongId] = useState<string | null>(null);
+  const [previewProgress, setPreviewProgress] = useState(0);
+  const previewAudioRef = useRef<HTMLAudioElement | null>(null);
+  const playingSongIdRef = useRef<string | null>(null);
+  const guestNameRef = useRef(guestName);
   const [songSearchDraft, setSongSearchDraft] = useState('');
   const [songSearchQuery, setSongSearchQuery] = useState('');
   const songIdsRef = useRef<string[]>([]);
@@ -212,10 +243,20 @@ export default function MusicPage() {
     setSongVotersById(votersById);
   }, []);
 
+  useEffect(() => {
+    guestNameRef.current = guestName;
+  }, [guestName]);
+
+  // Votes left + which songs this guest has voted for (by device id or same name).
   const refreshVoteCredits = useCallback(async () => {
-    const remaining = await getRemainingVoteCredits();
-    setVotesLeft(remaining);
-  }, []);
+    const status = await getGuestVoteStatus(userId, guestNameRef.current);
+    if (!status) {
+      setVotesLeft(null);
+      return;
+    }
+    setVotesLeft(status.remaining);
+    setVotedSongIds(new Set(status.votedSongIds));
+  }, [userId]);
 
   const refreshSongsFromDb = useCallback(async () => {
     const dbSongs = await getAllSongs();
@@ -249,6 +290,7 @@ export default function MusicPage() {
           artistName: item.artistName || '',
           albumName: item.collectionName || 'Unknown Album',
           artworkUrl: item.artworkUrl100 ? getHighResArtwork(item.artworkUrl100) : '',
+          previewUrl: item.previewUrl || '',
         }));
 
         setSongSuggestions(suggestions.filter((item) => item.trackName && item.artistName));
@@ -272,26 +314,33 @@ export default function MusicPage() {
 
   useEffect(() => {
     const songsNeedingMetadata = localSongs.filter(
-      (song) => !song.albumName && !song.artworkUrl && songMetadataById[song.id] === undefined
+      (song) =>
+        ((!song.albumName && !song.artworkUrl) || !song.previewUrl) &&
+        songMetadataById[song.id] === undefined
     );
     if (songsNeedingMetadata.length === 0) return;
 
     let isCancelled = false;
 
     const loadMetadata = async () => {
+      // 4 songs at a time (Apple allows ~20 searches per minute per visitor). Each
+      // batch is stored right away; the state update re-runs this effect for the next batch.
+      const batch = songsNeedingMetadata.slice(0, 4);
       const entries = await Promise.all(
-        songsNeedingMetadata.map(async (song) => {
-          const metadata = await fetchSongMetadata(song.title, song.artist);
-          return [song.id, metadata] as const;
-        })
+        batch.map(async (song) => [song, await fetchSongMetadata(song.title, song.artist)] as const)
       );
-
       if (isCancelled) return;
+
+      for (const [song, metadata] of entries) {
+        if (!song.previewUrl && metadata?.previewUrl) {
+          void saveSongPreviewUrl(song.id, metadata.previewUrl);
+        }
+      }
 
       setSongMetadataById((prev) => {
         const next = { ...prev };
-        for (const [songId, metadata] of entries) {
-          next[songId] = metadata;
+        for (const [song, metadata] of entries) {
+          next[song.id] = metadata;
         }
         return next;
       });
@@ -402,8 +451,11 @@ export default function MusicPage() {
 
   const handleNameModalSubmit = (name: string) => {
     setGuestName(name);
+    guestNameRef.current = name;
     safeStorageSet('guest_name', name);
     setShowNameModal(false);
+    // A returning guest (e.g. after clearing their browser) gets their earlier votes back.
+    void refreshVoteCredits();
 
     if (pendingVoteSongId) {
       const songIdToVote = pendingVoteSongId;
@@ -420,6 +472,7 @@ export default function MusicPage() {
     setNewArtist(suggestion.artistName);
     setSelectedArtworkUrl(suggestion.artworkUrl || null);
     setSelectedAlbumName(suggestion.albumName || null);
+    setSelectedPreviewUrl(suggestion.previewUrl || null);
     setShowSuggestions(false);
     setSongSuggestions([]);
   };
@@ -471,6 +524,7 @@ export default function MusicPage() {
         const result = await addSongToDb(normalizedTitle, normalizedArtist, guestName, {
           albumName: selectedAlbumName,
           artworkUrl: selectedArtworkUrl,
+          previewUrl: selectedPreviewUrl,
         });
 
         if (result.ok) {
@@ -481,6 +535,7 @@ export default function MusicPage() {
           setNewArtist('');
           setSelectedArtworkUrl(null);
           setSelectedAlbumName(null);
+          setSelectedPreviewUrl(null);
           setSongSuggestions([]);
           setShowSuggestions(false);
           setIsFormVisible(false);
@@ -525,14 +580,10 @@ export default function MusicPage() {
       }
 
       if (voteResult.ok) {
-        // Update local store
         setLocalSongs((prevSongs) =>
-          prevSongs.map((song) =>
-            song.id === songId
-              ? { ...song, votes: song.votes + 1, votedBy: new Set([...song.votedBy, userId]) }
-              : song
-          )
+          prevSongs.map((song) => (song.id === songId ? { ...song, votes: song.votes + 1 } : song))
         );
+        setVotedSongIds((prev) => new Set(prev).add(songId));
         setSongVotersById((prev) => {
           const current = prev[songId] || [];
           const name = normalizedGuestName || 'Guest';
@@ -542,14 +593,23 @@ export default function MusicPage() {
             [songId]: [...current, name],
           };
         });
-        setSuccessMessage('Vote counted 💛');
+        setSuccessMessage(
+          typeof voteResult.votesLeft === 'number' && voteResult.votesLeft === 0
+            ? 'Vote counted 💛 That was your last one — tap a voted song to move a vote.'
+            : 'Vote counted 💛'
+        );
       } else {
-        if (voteResult.reason === 'rate_limit_song_24h') {
+        if (voteResult.reason === 'guest_limit' || voteResult.reason === 'rate_limit_day') {
+          setErrorMessage(
+            `You've used all ${MAX_VOTES} votes. Tap a song you voted for to take that vote back, then vote here.`
+          );
+        } else if (voteResult.reason === 'rate_limit_network') {
+          setErrorMessage('Lots of votes from this Wi-Fi today! Please try again tomorrow or switch to mobile data.');
+        } else if (voteResult.reason === 'rate_limit_song_24h') {
           setErrorMessage('You already used a vote on this song.');
-        } else if (voteResult.reason === 'rate_limit_day') {
-          setErrorMessage('You have used all 5 votes.');
         } else if (voteResult.reason === 'duplicate_user' || voteResult.reason === 'duplicate_name') {
           setErrorMessage('You already voted for this song.');
+          void refreshVoteCredits();
         } else if (voteResult.reason === 'song_not_found') {
           setErrorMessage('That song was removed from the playlist.');
           void refreshSongsFromDb();
@@ -566,6 +626,93 @@ export default function MusicPage() {
       setVotingStates((prev) => ({ ...prev, [songId]: false }));
     }
   };
+
+  const handleRemoveVote = async (songId: string) => {
+    if (votingStates[songId]) return;
+
+    try {
+      setErrorMessage(null);
+      setVotingStates((prev) => ({ ...prev, [songId]: true }));
+
+      const result = await removeSongVote(songId, userId, guestName || null);
+
+      if (typeof result.votesLeft === 'number') {
+        setVotesLeft(result.votesLeft);
+      }
+
+      if (result.ok) {
+        setLocalSongs((prevSongs) =>
+          prevSongs.map((song) => (song.id === songId ? { ...song, votes: Math.max(0, song.votes - 1) } : song))
+        );
+        setVotedSongIds((prev) => {
+          const next = new Set(prev);
+          next.delete(songId);
+          return next;
+        });
+        setSongVotersById((prev) => {
+          const current = prev[songId] || [];
+          const name = (guestName || '').trim().toLowerCase();
+          const index = current.findIndex((voter) => voter.trim().toLowerCase() === name);
+          if (index === -1) return prev;
+          return { ...prev, [songId]: [...current.slice(0, index), ...current.slice(index + 1)] };
+        });
+        setSuccessMessage('Vote removed — you can use it on another song.');
+      } else if (result.reason === 'not_voted') {
+        void refreshVoteCredits();
+        void refreshSongsFromDb();
+      } else if (result.reason === 'setup_required') {
+        setErrorMessage('Changing votes is not available yet. Please try again later.');
+      } else {
+        setErrorMessage('Could not remove your vote — please check your connection and try again.');
+      }
+    } catch (error) {
+      console.error('[music] Failed to remove vote:', error);
+      setErrorMessage('Could not remove your vote — please check your connection and try again.');
+    } finally {
+      setVotingStates((prev) => ({ ...prev, [songId]: false }));
+    }
+  };
+
+  // ── 30-second song previews (one at a time) ───────────────────────────
+  const stopPreview = useCallback(() => {
+    resetPreviewAudio(previewAudioRef.current);
+    if (playingSongIdRef.current) {
+      document.dispatchEvent(new Event(PREVIEW_STOP_EVENT));
+    }
+    playingSongIdRef.current = null;
+    setPlayingSongId(null);
+    setPreviewProgress(0);
+  }, []);
+
+  const togglePreview = (songId: string, previewUrl: string) => {
+    if (playingSongId === songId) {
+      stopPreview();
+      return;
+    }
+
+    if (!previewAudioRef.current) {
+      const created = new Audio();
+      created.preload = 'none';
+      created.addEventListener('timeupdate', () => {
+        if (created.duration > 0) setPreviewProgress(created.currentTime / created.duration);
+      });
+      created.addEventListener('ended', () => stopPreview());
+      previewAudioRef.current = created;
+    }
+
+    setPreviewProgress(0);
+    if (!playingSongIdRef.current) document.dispatchEvent(new Event(PREVIEW_START_EVENT));
+    playingSongIdRef.current = songId;
+    setPlayingSongId(songId);
+    // play() must run synchronously inside the tap for iOS Safari to allow it.
+    startPreviewAudio(previewAudioRef.current, previewUrl).catch((error) => {
+      console.error('[music] Preview playback failed:', error);
+      setErrorMessage('Could not play this preview right now.');
+      stopPreview();
+    });
+  };
+
+  useEffect(() => () => stopPreview(), [stopPreview]);
 
   // Sort songs by votes
   const sortedSongs = useMemo(
@@ -974,8 +1121,10 @@ export default function MusicPage() {
             <AnimatePresence mode="popLayout">
               <div className="max-h-[460px] space-y-3 overflow-y-auto pr-1">
                 {filteredSongs.map((song, index) => {
-                  const hasVoted = song.votedBy.has(userId);
+                  const hasVoted = votedSongIds.has(song.id);
                   const metadata = songMetadataById[song.id];
+                  const previewUrl = song.previewUrl || metadata?.previewUrl || '';
+                  const isPlaying = playingSongId === song.id;
                   const voters = songVotersById[song.id] || [];
                   const displayedVoters = voters.slice(-2);
                   const remainingVoters = Math.max(0, voters.length - displayedVoters.length);
@@ -995,20 +1144,42 @@ export default function MusicPage() {
                               #{index + 1}
                             </span>
 
-                            {artworkUrl ? (
-                              <Image
-                                src={artworkUrl}
-                                alt={`${song.title} album art`}
-                                width={48}
-                                height={48}
-                                sizes="48px"
-                                className="h-12 w-12 rounded-lg object-cover border border-[#E8DDD5] shadow-sm"
-                              />
-                            ) : (
-                              <div className="h-12 w-12 rounded-lg bg-[#F3ECE5] border border-[#E8DDD5] flex items-center justify-center">
-                                <Music className="h-4 w-4 text-[#B89B7A]" />
-                              </div>
-                            )}
+                            <div className="relative h-12 w-12 flex-shrink-0">
+                              {artworkUrl ? (
+                                <Image
+                                  src={artworkUrl}
+                                  alt={`${song.title} album art`}
+                                  width={48}
+                                  height={48}
+                                  sizes="48px"
+                                  className="h-12 w-12 rounded-lg object-cover border border-[#E8DDD5] shadow-sm"
+                                />
+                              ) : (
+                                <div className="h-12 w-12 rounded-lg bg-[#F3ECE5] border border-[#E8DDD5] flex items-center justify-center">
+                                  <Music className="h-4 w-4 text-[#B89B7A]" />
+                                </div>
+                              )}
+                              {previewUrl && (
+                                <button
+                                  type="button"
+                                  onClick={() => togglePreview(song.id, previewUrl)}
+                                  aria-label={isPlaying ? `Stop preview of ${song.title}` : `Play 30-second preview of ${song.title}`}
+                                  data-testid={`preview-button-${song.id}`}
+                                  className={`absolute inset-0 flex items-center justify-center rounded-lg transition-colors ${
+                                    isPlaying ? 'bg-black/45' : 'bg-black/20 hover:bg-black/35'
+                                  }`}
+                                  style={{ touchAction: 'manipulation' }}
+                                >
+                                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 shadow">
+                                    {isPlaying ? (
+                                      <Pause className="h-3.5 w-3.5 text-[#6D5744]" />
+                                    ) : (
+                                      <Play className="ml-0.5 h-3.5 w-3.5 text-[#6D5744]" />
+                                    )}
+                                  </span>
+                                </button>
+                              )}
+                            </div>
 
                             <div className="min-w-0">
                               <h3 className="text-base font-semibold text-[#6D5744] truncate">
@@ -1020,6 +1191,17 @@ export default function MusicPage() {
                               <p className="text-[11px] text-[#9B866F] mt-0.5 truncate">
                                 {albumName}
                               </p>
+                              {isPlaying && (
+                                <div
+                                  className="mt-1 h-1 w-28 overflow-hidden rounded-full bg-[#EFE5DC]"
+                                  aria-label="Preview progress"
+                                >
+                                  <div
+                                    className="h-full bg-[#D4AF85] transition-[width] duration-200"
+                                    style={{ width: `${Math.round(previewProgress * 100)}%` }}
+                                  />
+                                </div>
+                              )}
                               <p className="text-[11px] text-[#8B7355] mt-1 tracking-wide">
                                 Suggested by {song.suggestedBy}
                               </p>
@@ -1051,18 +1233,24 @@ export default function MusicPage() {
 
                         <div className="mt-0.5 mr-0.5 flex flex-col items-end gap-1 flex-shrink-0">
                           <button
-                            onClick={() => handleVote(song.id)}
-                            disabled={hasVoted || votingStates[song.id]}
-                            className={`flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold transition-all min-w-[86px] active:scale-95 ${
+                            onClick={() => (hasVoted ? handleRemoveVote(song.id) : handleVote(song.id))}
+                            disabled={votingStates[song.id]}
+                            aria-pressed={hasVoted}
+                            aria-label={hasVoted ? `Remove your vote for ${song.title}` : `Vote for ${song.title}`}
+                            data-testid={`vote-button-${song.id}`}
+                            className={`flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold transition-all min-w-[86px] active:scale-95 disabled:opacity-60 ${
                               hasVoted
-                                ? 'bg-[#D4AF85]/30 text-[#8B7355] cursor-not-allowed'
+                                ? 'bg-white text-[#8B7355] border-2 border-[#D4AF85]'
                                 : 'bg-[#D4AF85] text-white hover:bg-[#C1A78C] shadow-md shadow-[#D4AF85]/30'
                             }`}
                             style={{ touchAction: 'manipulation' }}
                           >
-                            <ThumbsUp className="w-3.5 h-3.5" />
+                            {hasVoted ? <Check className="w-3.5 h-3.5" /> : <ThumbsUp className="w-3.5 h-3.5" />}
                             <span className="text-sm font-bold">{song.votes}</span>
                           </button>
+                          {hasVoted && (
+                            <span className="text-[10px] text-[#9B866F]">Tap to remove</span>
+                          )}
                         </div>
                       </div>
                     </motion.div>
@@ -1071,6 +1259,18 @@ export default function MusicPage() {
               </div>
             </AnimatePresence>
           )}
+
+          <p className="mt-3 text-center text-[11px] text-[#9B866F]">
+            Tap the album art to hear a 30-second preview · Previews courtesy of{' '}
+            <a
+              href="https://music.apple.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-[#6D5744]"
+            >
+              Apple Music
+            </a>
+          </p>
         </motion.div>
       </section>
 
@@ -1098,7 +1298,7 @@ export default function MusicPage() {
             <div className="text-center rounded-2xl border border-[#E8DDD5] bg-white/80 p-5 shadow-sm">
               <div className="text-3xl font-bold text-[#D4AF85] mb-2">2</div>
               <p className="text-[#3D3D3D] leading-relaxed">
-                <span className="font-semibold">Vote</span> for songs you love (one vote per song)
+<span className="font-semibold">Vote</span> for up to 5 songs you love — tap again to move a vote
               </p>
             </div>
             <div className="text-center rounded-2xl border border-[#E8DDD5] bg-white/80 p-5 shadow-sm">
