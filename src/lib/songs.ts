@@ -18,7 +18,27 @@ export interface SongVoteData {
   voter_name?: string | null;
 }
 
-const normalizeVoterName = (name?: string | null): string => (name || '').trim();
+// iPhone "Smart Punctuation" turns ' and " into curly quotes; normalize so
+// "Can’t Help Falling" and "Can't Help Falling" are treated as the same song.
+export const normalizeText = (value?: string | null): string =>
+  (value || '')
+    .replace(/[\u2018\u2019\u201A\u201B\u2032]/g, "'")
+    .replace(/[\u201C\u201D\u201E\u201F\u2033]/g, '"')
+    .replace(/[\u2013\u2014]/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const normalizeVoterName = (name?: string | null): string => normalizeText(name);
+
+// Escape LIKE wildcards so titles such as "100%" or "Hey_Jude" match literally.
+const escapeLike = (value: string): string => value.replace(/[\\%_]/g, (c) => `\\${c}`);
+
+const describeError = (error: unknown): string => {
+  if (!error) return 'unknown error';
+  if (typeof error === 'string') return error;
+  const e = error as { code?: string; message?: string; details?: string | null; hint?: string | null };
+  return [e.code, e.message, e.details, e.hint].filter(Boolean).join(' | ') || String(error);
+};
 
 export type VoteSubmitReason =
   | 'success'
@@ -26,6 +46,7 @@ export type VoteSubmitReason =
   | 'duplicate_name'
   | 'rate_limit_song_24h'
   | 'rate_limit_day'
+  | 'song_not_found'
   | 'setup_required'
   | 'error';
 
@@ -39,7 +60,20 @@ type VoteRpcPayload = {
   ok?: boolean;
   reason?: VoteSubmitReason;
   votes_left?: number | null;
+  error_code?: string;
+  error_message?: string;
 };
+
+export type AddSongResult =
+  | { ok: true; song: SongData }
+  | { ok: false; reason: 'duplicate' | 'error'; message: string };
+
+// Missing/broken DB functions: PGRST202 = RPC not found, 42883 = a function it
+// calls (e.g. pgcrypto digest) not found. Both mean the SQL setup needs running.
+const isSetupError = (error: { code?: string; message?: string }): boolean =>
+  error.code === 'PGRST202' ||
+  error.code === '42883' ||
+  /could not find the function|does not exist/i.test(error.message || '');
 
 // Fetch all songs from Supabase, ordered by vote count
 export async function getAllSongs(): Promise<SongData[]> {
@@ -62,8 +96,8 @@ export async function checkDuplicateSong(title: string, artist: string): Promise
     const { data, error } = await supabase
       .from('songs')
       .select('id')
-      .ilike('title', title.trim())
-      .ilike('artist', artist.trim());
+      .ilike('title', escapeLike(normalizeText(title)))
+      .ilike('artist', escapeLike(normalizeText(artist)));
 
     if (error) {
       console.error('Error checking duplicate song:', error);
@@ -86,22 +120,24 @@ export async function addSongToDb(
     albumName?: string | null;
     artworkUrl?: string | null;
   }
-): Promise<SongData | null> {
+): Promise<AddSongResult> {
+  const cleanTitle = normalizeText(title);
+  const cleanArtist = normalizeText(artist);
+  const cleanName = normalizeText(suggestedBy) || 'Guest';
+
   try {
-    // Check for duplicate first
-    const isDuplicate = await checkDuplicateSong(title, artist);
-    
+    const isDuplicate = await checkDuplicateSong(cleanTitle, cleanArtist);
     if (isDuplicate) {
-      return null;
+      return { ok: false, reason: 'duplicate', message: 'This song has already been suggested.' };
     }
 
     const { data, error } = await supabase
       .from('songs')
       .insert([
         {
-          title: title.trim(),
-          artist: artist.trim(),
-          suggested_by: suggestedBy,
+          title: cleanTitle,
+          artist: cleanArtist,
+          suggested_by: cleanName,
           vote_count: 0,
           album_name: metadata?.albumName || null,
           artwork_url: metadata?.artworkUrl || null,
@@ -111,14 +147,14 @@ export async function addSongToDb(
       .single();
 
     if (error) {
-      console.error('Error inserting song:', error);
-      return null;
+      console.error('[music] Error inserting song:', describeError(error), error);
+      return { ok: false, reason: 'error', message: describeError(error) };
     }
 
-    return data;
+    return { ok: true, song: data as SongData };
   } catch (error) {
-    console.error('Unexpected error adding song:', error);
-    return null;
+    console.error('[music] Unexpected error adding song:', describeError(error), error);
+    return { ok: false, reason: 'error', message: describeError(error) };
   }
 }
 
@@ -179,27 +215,19 @@ export async function submitSongVote(
     });
 
     if (error) {
-      const message = (error.message || '').toLowerCase();
-      const details = (error.details || '').toLowerCase();
-      const setupRequired =
-        message.includes('submit_song_vote') ||
-        details.includes('submit_song_vote') ||
-        message.includes('function') ||
-        message.includes('does not exist');
-
-      if (setupRequired) {
-        return { ok: false, reason: 'setup_required', votesLeft: null };
-      }
-
-      console.error('Error submitting vote:', error);
-      return { ok: false, reason: 'error', votesLeft: null };
+      console.error('[music] submit_song_vote failed:', describeError(error), error);
+      return { ok: false, reason: isSetupError(error) ? 'setup_required' : 'error', votesLeft: null };
     }
 
     if (!data || typeof data !== 'object') {
+      console.error('[music] submit_song_vote returned an unexpected payload:', data);
       return { ok: false, reason: 'error', votesLeft: null };
     }
 
     const response = data as VoteRpcPayload;
+    if (response.ok !== true && response.reason === 'error') {
+      console.error('[music] submit_song_vote rejected the vote:', response.error_code, response.error_message);
+    }
 
     if (response.ok === true) {
       return {
@@ -215,7 +243,7 @@ export async function submitSongVote(
       votesLeft: typeof response.votes_left === 'number' ? response.votes_left : null,
     };
   } catch (err) {
-    console.error('Error submitting vote:', err);
+    console.error('[music] Error submitting vote:', describeError(err), err);
     return { ok: false, reason: 'error', votesLeft: null };
   }
 }
@@ -225,17 +253,7 @@ export async function getRemainingVoteCredits(): Promise<number | null> {
     const { data, error } = await supabase.rpc('get_vote_credits_remaining');
 
     if (error) {
-      const message = (error.message || '').toLowerCase();
-      const details = (error.details || '').toLowerCase();
-      const setupRequired =
-        message.includes('get_vote_credits_remaining') ||
-        details.includes('get_vote_credits_remaining') ||
-        message.includes('function') ||
-        message.includes('does not exist');
-
-      if (!setupRequired) {
-        console.error('Error fetching remaining vote credits:', error);
-      }
+      console.error('[music] get_vote_credits_remaining failed:', describeError(error), error);
       return null;
     }
 
