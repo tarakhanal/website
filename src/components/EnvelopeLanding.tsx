@@ -92,7 +92,7 @@ export default function EnvelopeLanding() {
         className="min-h-screen flex flex-col items-center justify-center overflow-hidden relative"
         style={{ background: 'linear-gradient(160deg, #fdf6f0 0%, #f5e6de 50%, #ede0d4 100%)' }}
       >
-        <div className="relative z-10 flex flex-col items-center w-full px-10" style={{ maxWidth: '400px' }}>
+        <div className="relative z-10 flex flex-col items-center w-full px-8" style={{ maxWidth: '440px' }}>
 
           {/* Polaroid frame */}
           <motion.div
