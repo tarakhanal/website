@@ -49,6 +49,7 @@ export type VoteSubmitReason =
   | 'rate_limit_day'
   | 'guest_limit'
   | 'rate_limit_network'
+  | 'network_song_limit'
   | 'song_not_found'
   | 'setup_required'
   | 'error';

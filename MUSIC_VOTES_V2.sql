@@ -12,10 +12,9 @@
 --     browser and re-enters the same name, their earlier votes are recognised
 --     again (they count toward the 5 and can be removed).
 --   * One vote per guest per song.
---   * Safety cap: at most 50 new votes per day per network (IP address), so a
---     whole venue on one Wi-Fi can vote, but one person can't add hundreds.
---   * The old "1 vote per IP per song per 24h" rule is removed — it blocked
---     families and guests sharing Wi-Fi.
+--   * One vote per song per network (IP address) — most guests use mobile
+--     data. If that vote is removed, the song is open to that network again.
+--   * Safety cap: at most 50 new votes per day per network.
 --
 -- Also:
 --   * songs.preview_url stores the 30-second Apple Music preview clip link.
@@ -35,6 +34,7 @@ ALTER TABLE public.song_votes
 CREATE INDEX IF NOT EXISTS idx_song_votes_user_id ON public.song_votes(user_id);
 CREATE INDEX IF NOT EXISTS idx_song_votes_voter_name_lower ON public.song_votes(lower(voter_name));
 CREATE INDEX IF NOT EXISTS idx_song_votes_ip_created_at ON public.song_votes(ip_hash, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_song_votes_song_ip ON public.song_votes(song_id, ip_hash);
 
 -- Votes only through the functions below.
 DROP POLICY IF EXISTS "Allow public insert votes" ON public.song_votes;
@@ -151,6 +151,10 @@ BEGIN
   END IF;
 
   v_ip_hash := get_request_ip_hash();
+
+  IF EXISTS (SELECT 1 FROM song_votes WHERE song_id = p_song_id AND ip_hash = v_ip_hash) THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'network_song_limit', 'votes_left', v_votes_left);
+  END IF;
 
   SELECT COUNT(*)::INTEGER INTO v_network_today
   FROM song_votes

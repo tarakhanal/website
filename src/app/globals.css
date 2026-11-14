@@ -14,67 +14,72 @@
   --color-border: #E8DDD5;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
+/* Element defaults live in the base layer so Tailwind utility classes
+   (p-4, mb-1, text-xs, …) can override them. Unlayered, these rules beat
+   every utility and silently removed all padding/margins sitewide. */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
 
-*::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-}
+  *::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 
-html {
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
+  html {
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
 
-html::-webkit-scrollbar {
-  display: none;
-}
+  html::-webkit-scrollbar {
+    display: none;
+  }
 
-body {
-  background: #F7F3EE;
-  color: var(--color-dark);
-  font-family: 'Inter', sans-serif;
-  line-height: 1.6;
-  overflow-x: hidden;
-  overscroll-behavior-y: none;
-  scrollbar-width: none; /* Firefox */
-}
+  body {
+    background: #F7F3EE;
+    color: var(--color-dark);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    overscroll-behavior-y: none;
+    scrollbar-width: none; /* Firefox */
+  }
 
-body::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, mobile WebKit */
-}
+  body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, mobile WebKit */
+  }
 
-/* Fonts */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Playfair Display', serif;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 0.5rem;
-}
+  /* Fonts */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
 
-h1 {
-  font-size: clamp(2rem, 8vw, 4rem);
-}
+  h1 {
+    font-size: clamp(2rem, 8vw, 4rem);
+  }
 
-h2 {
-  font-size: clamp(1.5rem, 6vw, 3rem);
-}
+  h2 {
+    font-size: clamp(1.5rem, 6vw, 3rem);
+  }
 
-h3 {
-  font-size: clamp(1.25rem, 4vw, 2rem);
-}
+  h3 {
+    font-size: clamp(1.25rem, 4vw, 2rem);
+  }
 
-p {
-  font-size: clamp(0.95rem, 2vw, 1.1rem);
-  margin-bottom: 1rem;
+  p {
+    font-size: clamp(0.95rem, 2vw, 1.1rem);
+    margin-bottom: 1rem;
+  }
 }
 
 /* Animations */

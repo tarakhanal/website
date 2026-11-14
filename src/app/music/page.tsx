@@ -603,6 +603,8 @@ export default function MusicPage() {
           setErrorMessage(
             `You've used all ${MAX_VOTES} votes. Tap a song you voted for to take that vote back, then vote here.`
           );
+        } else if (voteResult.reason === 'network_song_limit') {
+          setErrorMessage('Someone on this Wi-Fi already voted for this song. Switch to mobile data to add your vote.');
         } else if (voteResult.reason === 'rate_limit_network') {
           setErrorMessage('Lots of votes from this Wi-Fi today! Please try again tomorrow or switch to mobile data.');
         } else if (voteResult.reason === 'rate_limit_song_24h') {
