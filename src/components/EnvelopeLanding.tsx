@@ -854,3 +854,24 @@ export default function EnvelopeLanding() {
                 </div>
               </div>
             </div>
+
+            {/* Tap indicator */}
+            <div
+              className="absolute bottom-4 left-0 right-0 text-center z-20"
+              style={{ animation: 'tap-blink 2s ease-in-out infinite', pointerEvents: 'none' }}
+            >
+              <span className="text-[#D4AF85] text-xs uppercase tracking-widest font-light">Tap to open</span>
+            </div>
+          </button>
+        </div>
+
+        {/* Instructions below card */}
+        <div className="text-center">
+          <p className="text-[#C41E3A] text-sm md:text-base uppercase tracking-widest font-light animate-pulse">
+            Tap the card to begin
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
