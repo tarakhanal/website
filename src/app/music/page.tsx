@@ -1278,7 +1278,7 @@ export default function MusicPage() {
               <div
                 ref={scrollContainerRef}
                 onScroll={(e) => setShowJumpTop(e.currentTarget.scrollTop > JUMP_TOP_AFTER_PX)}
-                className="max-h-[460px] space-y-3 overflow-y-auto overscroll-contain pr-1"
+                className="max-h-[460px] space-y-3 overflow-y-auto overscroll-contain pr-1 pb-12"
                 data-testid="songs-list"
               >
                 {sortedSongs.map((song, index) => {
@@ -1383,7 +1383,7 @@ export default function MusicPage() {
                               </p>
                               <div className="mt-1 text-[11px] text-[#8B7355]/90 [&_p]:text-[11px]">
                                 {voters.length > 0 ? (
-                                  <p className="truncate">
+                                  <p className="break-words leading-snug">
                                     Liked by: {displayedVoters.join(', ')}
                                     {remainingVoters > 0 && (
                                       <>
@@ -1454,7 +1454,7 @@ export default function MusicPage() {
                   onClick={() => scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
                   aria-label="Back to top of the song list"
                   data-testid="songs-back-to-top"
-                  className="absolute bottom-3 left-1/2 z-10 -ml-[52px] inline-flex w-[104px] items-center justify-center gap-1.5 rounded-full border border-[#E8DDD5] bg-white/95 py-2 text-xs font-semibold text-[#8B7355] shadow-lg shadow-[#8B7355]/15 backdrop-blur-sm transition-colors hover:bg-[#FCFAF6] active:scale-95"
+                  className="absolute -bottom-1 left-1/2 z-10 -ml-[52px] inline-flex w-[104px] items-center justify-center gap-1.5 rounded-full border border-[#E8DDD5] bg-white/95 py-2 text-xs font-semibold text-[#8B7355] shadow-lg shadow-[#8B7355]/15 backdrop-blur-sm transition-colors hover:bg-[#FCFAF6] active:scale-95"
                   style={{ touchAction: 'manipulation' }}
                 >
                   <ArrowUp className="h-3.5 w-3.5" />
