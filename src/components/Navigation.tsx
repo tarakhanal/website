@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Volume2, VolumeX } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useAudioStore } from '@/store/audioStore';
+import MusicToggle from '@/components/MusicToggle';
 
 const navItems = [
   { label: 'Home', href: '/home' },
@@ -60,29 +61,14 @@ export default function Navigation() {
             ))}
             {/* Music toggle — only visible after music has started */}
             {hasStarted && (
-              <button
-                onClick={toggle}
-                aria-label={isMuted ? 'Unmute music' : 'Mute music'}
-                title={isMuted ? 'Unmute music' : 'Mute music'}
-                className="text-[#8B7355] hover:text-[#D4AF85] transition-colors"
-                style={{ touchAction: 'manipulation' }}
-              >
-                {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-              </button>
+              <MusicToggle isMuted={isMuted} onToggle={toggle} testId="music-toggle-desktop" />
             )}
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-3">
             {hasStarted && (
-              <button
-                onClick={toggle}
-                aria-label={isMuted ? 'Unmute music' : 'Mute music'}
-                className="text-[#8B7355]"
-                style={{ touchAction: 'manipulation' }}
-              >
-                {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-              </button>
+              <MusicToggle isMuted={isMuted} onToggle={toggle} testId="music-toggle-mobile" />
             )}
             <button
               className=""
