@@ -2,9 +2,21 @@
 
 import { motion } from 'framer-motion';
 import Navigation from '@/components/Navigation';
-import { ExternalLink } from 'lucide-react';
+import { useState } from 'react';
+import { ExternalLink, Copy, Check } from 'lucide-react';
+
+// TODO: replace with the real Zelle email or phone number
+const ZELLE_HANDLE = 'REPLACE_WITH_ZELLE_EMAIL_OR_PHONE';
 
 export default function RegistryPage() {
+  const [copied, setCopied] = useState(false);
+  const copyZelle = async () => {
+    try {
+      await navigator.clipboard.writeText(ZELLE_HANDLE);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {}
+  };
 
   return (
     <main style={{ minHeight: '100svh', background: '#F7F3EE' }}>
@@ -57,7 +69,7 @@ export default function RegistryPage() {
       </section>
 
       {/* ── Registry Card ────────────────────────────────────── */}
-      <section style={{ padding: '0 clamp(1rem, 5vw, 2rem) clamp(3rem, 8vw, 5rem)', maxWidth: '600px', margin: '0 auto' }}>
+      <section style={{ padding: '0 clamp(1rem, 5vw, 2rem) clamp(3rem, 8vw, 5rem)', maxWidth: '920px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -142,6 +154,101 @@ export default function RegistryPage() {
             View Registry
             <ExternalLink style={{ width: '16px', height: '16px' }} />
           </a>
+        </motion.div>
+
+        {/* Zelle card */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          style={{
+            position: 'relative',
+            background: '#FAF7F4',
+            borderRadius: '1.5rem',
+            border: '1px solid #E8E0D5',
+            boxShadow: '0 8px 32px rgba(139,115,85,0.12)',
+            overflow: 'hidden',
+            padding: 'clamp(2rem, 7vw, 3rem) clamp(1.5rem, 6vw, 2.5rem)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(to right, #C9A96E, #8B7355, #C9A96E)' }} />
+
+          <div style={{
+            width: '64px', height: '64px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #8F3DF0, #6D1ED4)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: "'Playfair Display', serif",
+            fontSize: '1.9rem', fontWeight: 700, color: '#fff',
+            marginBottom: '1.25rem',
+            boxShadow: '0 4px 12px rgba(109,30,212,0.25)',
+          }}>
+            Z
+          </div>
+
+          <h2 style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: 'clamp(1.5rem, 4.5vw, 2rem)',
+            fontWeight: 700,
+            color: '#3D3229',
+            marginBottom: '0.75rem',
+          }}>
+            Zelle
+          </h2>
+
+          <p style={{
+            fontFamily: "'Lora', serif",
+            color: '#7A6652',
+            fontSize: 'clamp(0.9rem, 2.8vw, 0.98rem)',
+            lineHeight: 1.7,
+            marginBottom: '1.25rem',
+          }}>
+            A gift toward our new life together
+          </p>
+
+          <div style={{
+            fontFamily: "'Lora', serif",
+            fontSize: '0.95rem',
+            color: '#3D3229',
+            background: '#fff',
+            border: '1px dashed #C9A96E',
+            borderRadius: '0.75rem',
+            padding: '0.6rem 1rem',
+            marginBottom: '1.25rem',
+            wordBreak: 'break-all',
+          }}>
+            {ZELLE_HANDLE}
+          </div>
+
+          <button
+            onClick={copyZelle}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.85rem 2rem',
+              background: 'linear-gradient(135deg, #8B7355, #A8896C)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '3rem',
+              fontFamily: "'Playfair Display', serif",
+              fontSize: 'clamp(0.9rem, 2.5vw, 0.95rem)',
+              fontWeight: 600,
+              letterSpacing: '0.02em',
+              boxShadow: '0 4px 16px rgba(139,115,85,0.3)',
+              touchAction: 'manipulation',
+              WebkitTapHighlightColor: 'transparent',
+              cursor: 'pointer',
+            }}
+          >
+            {copied ? 'Copied!' : 'Copy Zelle Info'}
+            {copied ? <Check style={{ width: '16px', height: '16px' }} /> : <Copy style={{ width: '16px', height: '16px' }} />}
+          </button>
         </motion.div>
       </section>
 
