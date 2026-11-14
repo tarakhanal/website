@@ -2,13 +2,14 @@
 
 import { motion } from 'framer-motion';
 import Navigation from '@/components/Navigation';
+import { PageShell } from '@/components/SinglePage';
 import Image from 'next/image';
 import photo1 from '@/app/images/holding-hands.jpg';
 import photo2 from '@/app/images/9B540E62-DA4C-4F60-93CE-C4784369E726_1_105_c.jpeg';
 
 export default function StoryPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-[#F5F1ED] overflow-x-hidden">
+    <PageShell className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-[#F5F1ED] overflow-x-hidden">
       <Navigation />
 
       {/* Header */}
@@ -111,6 +112,6 @@ export default function StoryPage() {
           </p>
         </motion.div>
       </section>
-    </main>
+    </PageShell>
   );
 }

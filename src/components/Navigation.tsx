@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { useAudioStore } from '@/store/audioStore';
 import MusicToggle from '@/components/MusicToggle';
+import { useIsSinglePage } from '@/components/SinglePage';
 
 const navItems = [
   { label: 'Home', href: '/home' },
@@ -20,6 +21,7 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { isMuted, hasStarted, toggle, hydrate } = useAudioStore();
+  const isSinglePage = useIsSinglePage();
 
   useEffect(() => { hydrate(); }, []);
 
@@ -31,6 +33,9 @@ export default function Navigation() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Sections of the one-page home have no menu bar.
+  if (isSinglePage) return null;
 
   return (
     <nav

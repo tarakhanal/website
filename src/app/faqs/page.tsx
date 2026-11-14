@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Navigation from '@/components/Navigation';
+import { PageShell } from '@/components/SinglePage';
 import PageHeader from '@/components/PageHeader';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
@@ -97,7 +98,7 @@ export default function FAQPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-[#F5F1ED]">
+    <PageShell className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-[#F5F1ED]">
       <Navigation />
 
       {/* Header */}
@@ -188,6 +189,6 @@ export default function FAQPage() {
           </a>
         </motion.div>
       </section>
-    </main>
+    </PageShell>
   );
 }

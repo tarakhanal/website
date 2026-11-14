@@ -2,12 +2,13 @@
 
 import { motion } from 'framer-motion';
 import Navigation from '@/components/Navigation';
+import { PageShell } from '@/components/SinglePage';
 import { ExternalLink } from 'lucide-react';
 
 export default function RegistryPage() {
 
   return (
-    <main style={{ minHeight: '100svh', background: '#F7F3EE' }}>
+    <PageShell style={{ minHeight: '100svh', background: '#F7F3EE' }}>
       <Navigation />
 
       {/* ── Hero ─────────────────────────────────────────────── */}
@@ -176,6 +177,6 @@ export default function RegistryPage() {
           </p>
         </motion.div>
       </section>
-    </main>
+    </PageShell>
   );
 }

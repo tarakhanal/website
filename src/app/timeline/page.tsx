@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Navigation from '@/components/Navigation';
+import { PageShell } from '@/components/SinglePage';
 import PageHeader from '@/components/PageHeader';
 import { Clock } from 'lucide-react';
 
@@ -72,7 +73,7 @@ export default function TimelinePage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-[#F5F1ED]">
+    <PageShell className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-[#F5F1ED]">
       <Navigation />
 
       {/* Header */}
@@ -177,6 +178,6 @@ export default function TimelinePage() {
           </ul>
         </motion.div>
       </section>
-    </main>
+    </PageShell>
   );
 }
