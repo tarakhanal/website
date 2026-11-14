@@ -5,10 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '@/components/Navigation';
 import PageHeader from '@/components/PageHeader';
 import NameModal from '@/components/NameModal';
+import NewSongToasts, { type NewSongToast } from '@/components/NewSongToasts';
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { Music, ThumbsUp, Plus, Sparkles, X, Search, Play, Pause, Check } from 'lucide-react';
+import { Music, ThumbsUp, Plus, Sparkles, X, Search, Play, Pause, Check, Crown, ArrowUp } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { getAllSongs, addSongToDb, submitSongVote, removeSongVote, getGuestVoteStatus, getSongVotersBySongIds, saveSongPreviewUrl, normalizeText, type SongData } from '@/lib/songs';
+import { getSongsPage, getNewestSongs, getVotesSince, SONGS_PAGE_SIZE, addSongToDb, submitSongVote, removeSongVote, getGuestVoteStatus, getSongVotersBySongIds, saveSongPreviewUrl, normalizeText, type SongData } from '@/lib/songs';
 
 type LocalSong = {
   id: string;
@@ -19,7 +20,12 @@ type LocalSong = {
   albumName: string | null;
   artworkUrl: string | null;
   previewUrl: string | null;
+  createdAt: string | null;
 };
+
+// Postgres `timestamp` columns come back without a zone; they are stored in UTC.
+const parseDbTime = (value: string | null): number =>
+  value ? Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(value) ? value : `${value}Z`) : NaN;
 
 const toLocalSong = (song: SongData): LocalSong => ({
   id: song.id,
@@ -30,6 +36,7 @@ const toLocalSong = (song: SongData): LocalSong => ({
   albumName: song.album_name || null,
   artworkUrl: song.artwork_url || null,
   previewUrl: song.preview_url || null,
+  createdAt: song.created_at || null,
 });
 
 type SongSuggestion = {
@@ -61,6 +68,10 @@ const PREVIEW_START_EVENT = 'wedding-preview-start';
 const PREVIEW_STOP_EVENT = 'wedding-preview-stop';
 const MAX_VOTES = 5;
 const LIVE_REFRESH_MS = 6000;
+const FRESH_SONG_WINDOW_MS = 2 * 60 * 1000;
+const FRESH_GLOW_MS = 5000;
+const TOAST_MS = 5000;
+const JUMP_TOP_AFTER_PX = 600;
 
 // Kept outside the component: plain DOM audio element handling.
 const startPreviewAudio = (audio: HTMLAudioElement, url: string): Promise<void> => {
@@ -178,7 +189,7 @@ const fetchSongMetadata = async (title: string, artist: string): Promise<SongMet
 export default function MusicPage() {
   // Local state for songs - don't rely on Zustand for rendering
   const [localSongs, setLocalSongs] = useState<LocalSong[]>([]);
-  
+
   const [newTitle, setNewTitle] = useState('');
   const [newArtist, setNewArtist] = useState('');
   const [userId] = useState(() => getOrCreateVoterId());
@@ -212,12 +223,122 @@ export default function MusicPage() {
   const guestNameRef = useRef(guestName);
   const [songSearchDraft, setSongSearchDraft] = useState('');
   const [songSearchQuery, setSongSearchQuery] = useState('');
-  const songIdsRef = useRef<string[]>([]);
   const listSectionRef = useRef<HTMLElement | null>(null);
+  const [totalSongs, setTotalSongs] = useState(0);
+  const [totalMatches, setTotalMatches] = useState(0);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  // How many songs the list window shows; live refreshes re-fetch this whole window.
+  const loadedCountRef = useRef(SONGS_PAGE_SIZE);
+  const reachedEndRef = useRef(false);
+  const loadingMoreRef = useRef(false);
+  const searchQueryRef = useRef('');
+  const requestSeqRef = useRef(0);
+  const liveRefreshTimerRef = useRef<number | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const [freshSongIds, setFreshSongIds] = useState<Set<string>>(() => new Set());
+  const [showJumpTop, setShowJumpTop] = useState(false);
+  const [storedTopSongIds, setStoredTopSongIds] = useState<string[]>([]);
+  const knownSongIdsRef = useRef<Set<string>>(new Set());
+  const ownAddedSongIdsRef = useRef<Set<string>>(new Set());
+  const hasLoadedOnceRef = useRef(false);
+  const [newSongToasts, setNewSongToasts] = useState<NewSongToast[]>([]);
+  const prevTotalRef = useRef<number | null>(null);
+  const announcedSongIdsRef = useRef<Set<string>>(new Set());
 
-  useEffect(() => {
-    songIdsRef.current = localSongs.map((song) => song.id);
-  }, [localSongs]);
+  const dismissToast = useCallback((id: string) => {
+    setNewSongToasts((prev) => prev.filter((toast) => toast.id !== id));
+  }, []);
+
+  const pushToast = useCallback((toast: NewSongToast) => {
+    setNewSongToasts((prev) => [...prev.filter((t) => t.id !== toast.id), toast].slice(-3));
+    window.setTimeout(() => dismissToast(toast.id), TOAST_MS);
+  }, [dismissToast]);
+
+  // undefined = baseline not loaded yet; null = no votes exist yet.
+  const lastVoteSeenAtRef = useRef<string | null | undefined>(undefined);
+  const checkingVotesRef = useRef(false);
+
+  // Announce votes other guests cast since the last check.
+  const announceNewVotes = useCallback(async () => {
+    if (checkingVotesRef.current) return;
+    checkingVotesRef.current = true;
+    try {
+      if (lastVoteSeenAtRef.current === undefined) {
+        const latest = await getVotesSince(null, 1, true);
+        if (latest) lastVoteSeenAtRef.current = latest[0]?.created_at ?? null;
+        return;
+      }
+      const votes = await getVotesSince(lastVoteSeenAtRef.current, 5);
+      if (!votes || votes.length === 0) return;
+      lastVoteSeenAtRef.current = votes[votes.length - 1].created_at;
+
+      const myName = normalizeText(guestNameRef.current).toLowerCase();
+      votes
+        .filter(
+          (vote) =>
+            vote.user_id !== userId &&
+            !(myName && normalizeText(vote.voter_name).toLowerCase() === myName) &&
+            vote.songs?.title
+        )
+        .slice(-3)
+        .forEach((vote) =>
+          pushToast({
+            id: `vote-${vote.id}`,
+            name: normalizeText(vote.voter_name) || 'A guest',
+            action: 'voted for',
+            title: vote.songs!.title,
+          })
+        );
+    } finally {
+      checkingVotesRef.current = false;
+    }
+  }, [pushToast, userId]);
+
+  // The total went up: announce the newest songs unless this guest added them.
+  const announceNewSongs = useCallback(async (count: number) => {
+    const newest = await getNewestSongs(Math.min(count, 3));
+    const myName = normalizeText(guestNameRef.current).toLowerCase();
+    const toShow = newest.filter(
+      (song) =>
+        !announcedSongIdsRef.current.has(song.id) &&
+        !ownAddedSongIdsRef.current.has(song.id) &&
+        normalizeText(song.suggested_by).toLowerCase() !== myName
+    );
+    newest.forEach((song) => announcedSongIdsRef.current.add(song.id));
+
+    toShow.reverse().forEach((song) =>
+      pushToast({ id: song.id, name: song.suggested_by || 'A guest', action: 'suggested', title: song.title })
+    );
+  }, [pushToast]);
+
+  // Songs other guests added in the last couple of minutes glow briefly when they first appear.
+  const markFreshSongs = useCallback((songs: LocalSong[]) => {
+    const known = knownSongIdsRef.current;
+    const now = Date.now();
+    const fresh = hasLoadedOnceRef.current
+      ? songs
+          .filter(
+            (song) =>
+              !known.has(song.id) &&
+              !ownAddedSongIdsRef.current.has(song.id) &&
+              now - parseDbTime(song.createdAt) < FRESH_SONG_WINDOW_MS
+          )
+          .map((song) => song.id)
+      : [];
+    songs.forEach((song) => known.add(song.id));
+    hasLoadedOnceRef.current = true;
+    if (fresh.length === 0) return;
+
+    setFreshSongIds((prev) => new Set([...prev, ...fresh]));
+    window.setTimeout(() => {
+      setFreshSongIds((prev) => {
+        const next = new Set(prev);
+        fresh.forEach((id) => next.delete(id));
+        return next;
+      });
+    }, FRESH_GLOW_MS);
+  }, []);
 
   useEffect(() => {
     if (!successMessage) return;
@@ -259,12 +380,46 @@ export default function MusicPage() {
     setVotedSongIds(new Set(status.votedSongIds));
   }, [userId]);
 
-  const refreshSongsFromDb = useCallback(async () => {
-    const dbSongs = await getAllSongs();
-    const formattedSongs = dbSongs.map(toLocalSong);
+  // Returns false when the request failed. Once the end is reached, peek one page further
+  // so songs added live (0 votes → placed last) still show up.
+  const refreshSongsFromDb = useCallback(async (): Promise<boolean> => {
+    const seq = ++requestSeqRef.current;
+    const search = searchQueryRef.current;
+    const limit = loadedCountRef.current + (reachedEndRef.current ? SONGS_PAGE_SIZE : 0);
+    const page = await getSongsPage(0, limit, search);
+    void announceNewVotes();
+    if (seq !== requestSeqRef.current) return true;
+    if (!page) return false;
+
+    const formattedSongs = page.songs.map(toLocalSong);
+    loadedCountRef.current = Math.max(loadedCountRef.current, formattedSongs.length);
+    reachedEndRef.current = formattedSongs.length >= page.total;
+    markFreshSongs(formattedSongs);
     setLocalSongs(formattedSongs);
+    setTotalMatches(page.total);
+    if (!search) {
+      setTotalSongs(page.total);
+      setStoredTopSongIds(formattedSongs.filter((song) => song.votes > 0).slice(0, 3).map((song) => song.id));
+      const prevTotal = prevTotalRef.current;
+      prevTotalRef.current = page.total;
+      if (prevTotal !== null && page.total > prevTotal) void announceNewSongs(page.total - prevTotal);
+    }
     await refreshSongVoters(formattedSongs.map((song) => song.id));
-  }, [refreshSongVoters]);
+    return true;
+  }, [refreshSongVoters, markFreshSongs, announceNewSongs, announceNewVotes]);
+
+  const loadMoreSongs = useCallback(async () => {
+    if (loadingMoreRef.current) return;
+    loadingMoreRef.current = true;
+    setIsLoadingMore(true);
+    loadedCountRef.current += SONGS_PAGE_SIZE;
+    try {
+      await refreshSongsFromDb();
+    } finally {
+      loadingMoreRef.current = false;
+      setIsLoadingMore(false);
+    }
+  }, [refreshSongsFromDb]);
 
   useEffect(() => {
     const query = newTitle.trim();
@@ -354,57 +509,44 @@ export default function MusicPage() {
     };
   }, [localSongs, songMetadataById]);
 
-  // Load songs and vote credits from Supabase on mount
   useEffect(() => {
-    let isMounted = true; // Prevent state updates after unmount
-    
-    const loadSongs = async () => {
-      try {
-        setErrorMessage(null);
-        if (!isMounted) return;
+    void refreshVoteCredits();
+  }, [refreshVoteCredits]);
 
-    await Promise.all([refreshSongsFromDb(), refreshVoteCredits()]);
+  // First page on mount, and again (from the top) whenever the search changes.
+  useEffect(() => {
+    let isMounted = true;
+    searchQueryRef.current = songSearchQuery;
+    loadedCountRef.current = SONGS_PAGE_SIZE;
+    reachedEndRef.current = false;
+    scrollContainerRef.current?.scrollTo({ top: 0 });
 
-        if (!isMounted) return;
+    refreshSongsFromDb().then((ok) => {
+      if (!isMounted) return;
+      if (!ok) setErrorMessage('Could not load songs right now. Please refresh and try again.');
+      setIsLoading(false);
+    });
 
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Failed to load songs:', error);
-        if (isMounted) {
-          setErrorMessage('Could not load songs right now. Please refresh and try again.');
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadSongs();
-    
     return () => {
-      isMounted = false; // Cleanup
+      isMounted = false;
     };
+  }, [songSearchQuery, refreshSongsFromDb]);
+
+  // Bursts of realtime events (a vote touches songs + song_votes) collapse into one refresh.
+  const scheduleLiveRefresh = useCallback(() => {
+    if (liveRefreshTimerRef.current !== null) return;
+    liveRefreshTimerRef.current = window.setTimeout(() => {
+      liveRefreshTimerRef.current = null;
+      void Promise.all([refreshSongsFromDb(), refreshVoteCredits()]);
+    }, 400);
   }, [refreshSongsFromDb, refreshVoteCredits]);
 
   // Realtime sync across tabs/devices for songs + vote counts
   useEffect(() => {
     const channel = supabase
       .channel('songs-realtime-sync')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'songs' },
-        async () => {
-          await refreshSongsFromDb();
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'song_votes' },
-        async () => {
-          const currentSongIds = songIdsRef.current;
-          if (currentSongIds.length > 0) {
-            await Promise.all([refreshSongVoters(currentSongIds), refreshVoteCredits()]);
-          }
-        }
-      )
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'songs' }, scheduleLiveRefresh)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'song_votes' }, scheduleLiveRefresh)
       .subscribe((status, err) => {
         if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
           console.warn('[music] Realtime channel issue, relying on auto-refresh:', status, err);
@@ -412,9 +554,13 @@ export default function MusicPage() {
       });
 
     return () => {
+      if (liveRefreshTimerRef.current !== null) {
+        window.clearTimeout(liveRefreshTimerRef.current);
+        liveRefreshTimerRef.current = null;
+      }
       void supabase.removeChannel(channel);
     };
-  }, [refreshSongsFromDb, refreshSongVoters, refreshVoteCredits]);
+  }, [scheduleLiveRefresh]);
 
   // Auto-refresh. Always on: a realtime channel can report SUBSCRIBED yet never
   // deliver events (e.g. tables not added to the supabase_realtime publication),
@@ -527,9 +673,10 @@ export default function MusicPage() {
         });
 
         if (result.ok) {
+          ownAddedSongIdsRef.current.add(result.song.id);
           await refreshSongsFromDb();
           setSuccessMessage('Song added to the playlist ✨');
-          
+
           setNewTitle('');
           setNewArtist('');
           setSelectedArtworkUrl(null);
@@ -566,7 +713,7 @@ export default function MusicPage() {
 
     try {
       setErrorMessage(null);
-      
+
       const normalizedGuestName = resolvedGuestName;
 
       // Mark as voting
@@ -715,21 +862,38 @@ export default function MusicPage() {
 
   useEffect(() => () => stopPreview(), [stopPreview]);
 
-  // Sort songs by votes
+  // Stable sort keeps the server's tie order (oldest first) after optimistic vote changes.
   const sortedSongs = useMemo(
     () => [...localSongs].sort((a, b) => b.votes - a.votes),
     [localSongs]
   );
 
-  const filteredSongs = useMemo(() => {
-    const normalizedQuery = songSearchQuery.trim().toLowerCase();
-    if (!normalizedQuery) return sortedSongs;
+  const hasMoreSongs = localSongs.length < totalMatches;
 
-    return sortedSongs.filter((song) => {
-      const haystack = `${song.title} ${song.artist} ${song.suggestedBy}`.toLowerCase();
-      return haystack.includes(normalizedQuery);
-    });
-  }, [songSearchQuery, sortedSongs]);
+  // Top 3 by votes across all songs (kept from the last unfiltered load while searching).
+  const topSongIds = useMemo(
+    () =>
+      songSearchQuery
+        ? storedTopSongIds
+        : sortedSongs.filter((song) => song.votes > 0).slice(0, 3).map((song) => song.id),
+    [songSearchQuery, storedTopSongIds, sortedSongs]
+  );
+
+  // Infinite scroll: load the next page when the end of the list nears.
+  useEffect(() => {
+    const root = scrollContainerRef.current;
+    const target = sentinelRef.current;
+    if (!root || !target || !hasMoreSongs) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) void loadMoreSongs();
+      },
+      { root, rootMargin: '0px 0px 240px 0px' }
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [hasMoreSongs, loadMoreSongs, localSongs.length, isLoading]);
 
   const handleSongSearch = () => {
     setSongSearchQuery(songSearchDraft.trim());
@@ -774,6 +938,8 @@ export default function MusicPage() {
     <main className="min-h-screen bg-gradient-to-b from-[#FCFBF8] via-[#F9F6F2] to-[#F4EEE8] text-[#3D3D3D]">
       <Navigation />
 
+      <NewSongToasts toasts={newSongToasts} onDismiss={dismissToast} />
+
       <NameModal
         isOpen={showNameModal}
         onSubmit={handleNameModalSubmit}
@@ -802,7 +968,7 @@ export default function MusicPage() {
           >
             <div className="flex flex-wrap items-center justify-center gap-3">
               <div className="rounded-full border border-[#E8DDD5] bg-white/80 px-5 py-2.5 text-sm shadow-sm" data-testid="songs-count">
-                <span className="font-semibold text-[#8B7355]">{sortedSongs.length}</span>{' '}
+                <span className="font-semibold text-[#8B7355]">{totalSongs}</span>{' '}
                 <span className="text-[#7E6A55]">suggested songs</span>
               </div>
               <div className="rounded-full border border-[#E8DDD5] bg-white/90 px-5 py-2.5 text-sm shadow-sm" data-testid="votes-left">
@@ -1091,7 +1257,7 @@ export default function MusicPage() {
             </form>
             {songSearchQuery && (
               <p className="mt-2 px-1 text-xs text-[#8B7355]">
-                Showing {filteredSongs.length} result{filteredSongs.length === 1 ? '' : 's'} for “{songSearchQuery}”
+                Showing {totalMatches} result{totalMatches === 1 ? '' : 's'} for “{songSearchQuery}”
               </p>
             )}
           </div>
@@ -1100,22 +1266,28 @@ export default function MusicPage() {
             <motion.div variants={itemVariants} className="text-center py-12 bg-white/70 border border-[#E8DDD5] rounded-2xl shadow-sm">
               <p className="text-[#8B7355] text-lg">Loading songs...</p>
             </motion.div>
-          ) : sortedSongs.length === 0 ? (
+          ) : sortedSongs.length === 0 && !songSearchQuery ? (
             <motion.div variants={itemVariants} className="text-center py-12 bg-white/70 border border-[#E8DDD5] rounded-2xl shadow-sm">
               <p className="text-[#8B7355] text-lg">
                 No songs suggested yet. Be the first to suggest one!
               </p>
             </motion.div>
-          ) : filteredSongs.length === 0 ? (
+          ) : sortedSongs.length === 0 ? (
             <motion.div variants={itemVariants} className="text-center py-10 bg-white/70 border border-[#E8DDD5] rounded-2xl shadow-sm">
               <p className="text-[#8B7355] text-base">
                 No matching songs found. Try a different title or artist.
               </p>
             </motion.div>
           ) : (
+            <div className="relative">
             <AnimatePresence mode="popLayout">
-              <div className="max-h-[460px] space-y-3 overflow-y-auto pr-1">
-                {filteredSongs.map((song, index) => {
+              <div
+                ref={scrollContainerRef}
+                onScroll={(e) => setShowJumpTop(e.currentTarget.scrollTop > JUMP_TOP_AFTER_PX)}
+                className="max-h-[460px] space-y-3 overflow-y-auto overscroll-contain pr-1"
+                data-testid="songs-list"
+              >
+                {sortedSongs.map((song, index) => {
                   const hasVoted = votedSongIds.has(song.id);
                   const metadata = songMetadataById[song.id];
                   const previewUrl = song.previewUrl || metadata?.previewUrl || '';
@@ -1130,14 +1302,29 @@ export default function MusicPage() {
                       key={song.id}
                       variants={songVariants}
                       layout
-                      className="group bg-white/92 border border-[#E8DDD5] p-4 rounded-2xl shadow-sm hover:shadow-md transition-all"
+                      className={`group bg-white/92 border border-[#E8DDD5] p-4 rounded-2xl shadow-sm hover:shadow-md transition-all ${
+                        freshSongIds.has(song.id) ? 'song-fresh-glow' : ''
+                      }`}
+                      data-testid={`song-card-${song.id}`}
+                      data-fresh={freshSongIds.has(song.id) || undefined}
                     >
                       <div className="flex items-start justify-between gap-3.5">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 mb-1.5">
-                            <span className="text-sm md:text-base font-bold text-[#D4AF85] w-7 flex-shrink-0">
-                              #{index + 1}
-                            </span>
+                            {topSongIds.includes(song.id) ? (
+                              <span
+                                className="flex w-7 flex-shrink-0 flex-col items-center leading-none"
+                                aria-label={`Top ${topSongIds.indexOf(song.id) + 1} song`}
+                                data-testid={`top-song-crown-${song.id}`}
+                              >
+                                <Crown className="h-4 w-4 fill-[#E9C46A] text-[#C9A227] drop-shadow-[0_1px_2px_rgba(201,162,39,0.45)]" />
+                                <span className="mt-0.5 text-[11px] font-bold text-[#C9A227]">#{index + 1}</span>
+                              </span>
+                            ) : (
+                              <span className="text-sm md:text-base font-bold text-[#D4AF85] w-7 flex-shrink-0">
+                                #{index + 1}
+                              </span>
+                            )}
 
                             <div className="relative h-12 w-12 flex-shrink-0">
                               {artworkUrl ? (
@@ -1251,8 +1438,37 @@ export default function MusicPage() {
                     </motion.div>
                   );
                 })}
+                {hasMoreSongs && (
+                  <div
+                    ref={sentinelRef}
+                    className="flex items-center justify-center py-3 text-xs text-[#8B7355]"
+                    data-testid="songs-load-more"
+                  >
+                    {isLoadingMore ? 'Loading more songs…' : 'Scroll for more songs'}
+                  </div>
+                )}
               </div>
             </AnimatePresence>
+            <AnimatePresence>
+              {showJumpTop && (
+                <motion.button
+                  type="button"
+                  initial={{ opacity: 0, y: 8, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
+                  aria-label="Back to top of the song list"
+                  data-testid="songs-back-to-top"
+                  className="absolute bottom-3 left-1/2 z-10 -ml-[52px] inline-flex w-[104px] items-center justify-center gap-1.5 rounded-full border border-[#E8DDD5] bg-white/95 py-2 text-xs font-semibold text-[#8B7355] shadow-lg shadow-[#8B7355]/15 backdrop-blur-sm transition-colors hover:bg-[#FCFAF6] active:scale-95"
+                  style={{ touchAction: 'manipulation' }}
+                >
+                  <ArrowUp className="h-3.5 w-3.5" />
+                  Top
+                </motion.button>
+              )}
+            </AnimatePresence>
+            </div>
           )}
 
           <p className="mt-3 text-center text-[11px] text-[#9B866F]">

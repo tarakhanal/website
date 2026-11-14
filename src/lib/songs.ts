@@ -105,6 +105,81 @@ export async function getAllSongs(): Promise<SongData[]> {
   return data || [];
 }
 
+export const SONGS_PAGE_SIZE = 10;
+
+export type SongsPage = { songs: SongData[]; total: number };
+
+// Characters that would break a PostgREST `or=(...)` filter or act as wildcards.
+const cleanSearchTerm = (value: string): string =>
+  normalizeText(value.replace(/[%_*\\"(),]/g, ' '));
+
+// Songs ranked by votes; ties go to the earliest suggestion, so new 0-vote songs land at the end.
+export async function getSongsPage(offset: number, limit: number, search?: string): Promise<SongsPage | null> {
+  let query = supabase
+    .from('songs')
+    .select('*', { count: 'exact' })
+    .order('vote_count', { ascending: false })
+    .order('created_at', { ascending: true })
+    .order('id', { ascending: true })
+    .range(offset, offset + limit - 1);
+
+  const term = cleanSearchTerm(search || '');
+  if (term) {
+    const pattern = `"*${term}*"`;
+    query = query.or(`title.ilike.${pattern},artist.ilike.${pattern},suggested_by.ilike.${pattern}`);
+  }
+
+  const { data, error, count } = await query;
+  if (error) {
+    console.error('[music] Error fetching songs page:', describeError(error), error);
+    return null;
+  }
+
+  return { songs: data || [], total: count ?? (data || []).length };
+}
+
+// Newest suggestions first — used to announce songs other guests just added.
+export async function getNewestSongs(limit: number): Promise<SongData[]> {
+  const { data, error } = await supabase
+    .from('songs')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) {
+    console.error('[music] Error fetching newest songs:', describeError(error), error);
+    return [];
+  }
+  return data || [];
+}
+
+export type RecentVote = {
+  id: string;
+  song_id: string;
+  user_id: string;
+  voter_name: string | null;
+  created_at: string;
+  songs: { title: string } | null;
+};
+
+// Votes cast after `since` (oldest first; all votes when `since` is null). `latestOnly` returns just
+// the newest vote, used as a baseline. Null on error so callers can retry.
+export async function getVotesSince(since: string | null, limit: number, latestOnly = false): Promise<RecentVote[] | null> {
+  let query = supabase.from('song_votes').select('id, song_id, user_id, voter_name, created_at, songs(title)');
+  if (latestOnly) {
+    query = query.order('created_at', { ascending: false }).limit(1);
+  } else {
+    if (since) query = query.gt('created_at', since);
+    query = query.order('created_at', { ascending: true }).limit(limit);
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    console.error('[music] Error fetching recent votes:', describeError(error), error);
+    return null;
+  }
+  return (data || []) as unknown as RecentVote[];
+}
+
 // Check if a song already exists (case-insensitive)
 export async function checkDuplicateSong(title: string, artist: string): Promise<boolean> {
   try {
@@ -412,17 +487,18 @@ export async function saveSongPreviewUrl(songId: string, previewUrl: string): Pr
   }
 }
 
-// Delete a song entirely
+// Delete a song entirely (its votes go with it). False if nothing was removed.
 export async function deleteSong(id: string): Promise<boolean> {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('songs')
     .delete()
-    .eq('id', id);
+    .eq('id', id)
+    .select('id');
 
   if (error) {
     console.error('Error deleting song:', error);
     return false;
   }
 
-  return true;
+  return !!(data && data.length > 0);
 }

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
 import Link from 'next/link';
+import AdminSongCleanup from '@/components/AdminSongCleanup';
 import {
   getAllGuestCodes,
   addGuestCode,
@@ -16,6 +17,19 @@ const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'wedding2024';
 const AUTH_KEY = 'admin_auth';
 const DEFAULT_SUPABASE_DB_LIMIT_MB = 500;
 
+const subscribeNoop = () => () => {};
+const subscribeStorage = (onChange: () => void) => {
+  window.addEventListener('storage', onChange);
+  return () => window.removeEventListener('storage', onChange);
+};
+const readStoredAuth = (): boolean => {
+  try {
+    return localStorage.getItem(AUTH_KEY) === 'true';
+  } catch {
+    return false;
+  }
+};
+
 export default function AdminPage() {
   const [guestCodes, setGuestCodes] = useState<GuestCode[]>([]);
   const [newCode, setNewCode] = useState('');
@@ -25,10 +39,11 @@ export default function AdminPage() {
   const [isLoaded, setIsLoaded] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem(AUTH_KEY) === 'true';
-  });
+  // Read the saved login only in the browser so the server render and first client render match.
+  const hasHydrated = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const storedAuth = useSyncExternalStore(subscribeStorage, readStoredAuth, () => false);
+  const [authOverride, setAuthOverride] = useState<boolean | null>(null);
+  const isAuthenticated = authOverride ?? storedAuth;
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [musicUsageStats, setMusicUsageStats] = useState<MusicUsageStats | null>(null);
@@ -40,7 +55,7 @@ export default function AdminPage() {
 
     if (password === ADMIN_PASSWORD) {
       localStorage.setItem(AUTH_KEY, 'true');
-      setIsAuthenticated(true);
+      setAuthOverride(true);
       setPassword('');
       loadCodes();
     } else {
@@ -51,7 +66,7 @@ export default function AdminPage() {
 
   const handleLogout = () => {
     localStorage.removeItem(AUTH_KEY);
-    setIsAuthenticated(false);
+    setAuthOverride(false);
     setPassword('');
     setGuestCodes([]);
   };
@@ -191,6 +206,18 @@ export default function AdminPage() {
       window.clearTimeout(timeoutId);
     };
   }, [isAuthenticated]);
+
+  // Until the browser has read the saved login, show a neutral screen (no login-form flash).
+  if (!hasHydrated) {
+    return (
+      <div
+        className="min-h-screen bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] flex items-center justify-center"
+        data-testid="admin-loading"
+      >
+        <p className="text-sm text-[#8B7355]">Loading…</p>
+      </div>
+    );
+  }
 
   // Login screen
   if (!isAuthenticated) {
@@ -409,6 +436,8 @@ export default function AdminPage() {
         </div>
 
         {/* Music Usage Stats */}
+        <AdminSongCleanup />
+
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border-2 border-[#D4AF85]">
           <div className="flex items-center justify-between gap-4 mb-4">
             <h2 className="text-2xl font-semibold text-[#C41E3A]" style={{ fontFamily: "'Playfair Display', serif" }}>
