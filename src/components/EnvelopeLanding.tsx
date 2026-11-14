@@ -6,8 +6,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { getGuestByCode } from '@/lib/supabase';
 import guestCodesData from '@/data/guestCodes.json';
-import GathbandhanKnot from '@/components/GathbandhanKnot';
-import MirrorFrame from '@/components/MirrorFrame';
+import MalaFrame from '@/components/MalaFrame';
 import WeddingBorder from '@/components/WeddingBorder';
 
 const GUEST_CODE_KEY = 'wedding_guest_code';
@@ -110,11 +109,8 @@ export default function EnvelopeLanding() {
               boxShadow: '0 20px 60px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.08)',
             }}
           >
-            {/* Gathbandhan wedding knot (same component as the flying preview card) */}
-            <GathbandhanKnot />
-
-            {/* Photo — object-position top to keep faces in frame */}
-            <MirrorFrame scale={1}>
+            {/* Photo in an arched mirror, draped with a marigold mala (same component in the flying preview) */}
+            <MalaFrame scale={1}>
               <div className="w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -124,7 +120,7 @@ export default function EnvelopeLanding() {
                   style={{ display: 'block', objectPosition: '50% 15%', filter: 'sepia(8%) contrast(1.04)' }}
                 />
               </div>
-            </MirrorFrame>
+            </MalaFrame>
 
             {/* Polaroid bottom label */}
             <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center" style={{ height: 58 }}>
@@ -223,10 +219,8 @@ export default function EnvelopeLanding() {
                   width: '74%',
                 }}
               >
-                {/* Gathbandhan wedding knot (mirror of opened stage) */}
-                <GathbandhanKnot />
-                {/* Photo — objectPosition top = faces visible */}
-                <MirrorFrame scale={0.5}>
+                {/* Photo in an arched mirror with marigold mala (mirror of opened stage) */}
+                <MalaFrame scale={0.5}>
                   <div className="w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -236,7 +230,7 @@ export default function EnvelopeLanding() {
                       style={{ display: 'block', objectPosition: '50% 15%', filter: 'sepia(8%) contrast(1.04)' }}
                     />
                   </div>
-                </MirrorFrame>
+                </MalaFrame>
                 {/* Polaroid label */}
                 <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center" style={{ height: 22 }}>
                   <p
