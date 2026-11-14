@@ -180,7 +180,7 @@ export default function FAQPage() {
             concerns.
           </p>
           <a
-            href="tel:+14155551234"
+            href="tel:+13303483285"
             className="inline-block px-8 py-3 bg-[#8B7355] text-white rounded-full font-semibold hover:bg-[#6B5345] transition-colors hover:scale-105 active:scale-95"
             style={{ touchAction: 'manipulation' }}
           >

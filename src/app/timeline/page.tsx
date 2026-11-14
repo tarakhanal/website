@@ -168,11 +168,7 @@ export default function TimelinePage() {
             </li>
             <li className="flex items-start gap-3">
               <span className="text-[#D4AF85] font-bold mt-1">•</span>
-              <span>Please silence your phones during the ceremony</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-[#D4AF85] font-bold mt-1">•</span>
-              <span>Join us in suggesting songs for the reception!</span>
+              <span>Please clear the path for our photographer — thank you!</span>
             </li>
           </ul>
         </motion.div>

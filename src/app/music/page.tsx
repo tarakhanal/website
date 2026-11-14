@@ -958,12 +958,6 @@ export default function MusicPage() {
         <div className="relative">
           <PageHeader
             title="Reception Music"
-            eyebrow={
-              <span className="inline-flex items-center gap-2 rounded-full border border-[#E8DDD5] bg-white/80 px-4 py-2 text-sm font-medium text-[#8B7355] shadow-sm backdrop-blur-sm">
-                <Sparkles className="h-4 w-4 text-[#D4AF85]" />
-                Build our reception playlist together
-              </span>
-            }
             subtitle="Help us create the perfect playlist! Suggest songs and vote for your favorites. The songs with the most votes will be played at our reception."
           >
             <div className="flex flex-wrap items-center justify-center gap-3">

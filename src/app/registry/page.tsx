@@ -160,20 +160,6 @@ export default function RegistryPage() {
             <span style={{ color: '#C9A96E', fontSize: '0.65rem', letterSpacing: '0.15em' }}>✦</span>
             <div style={{ height: '1px', width: '40px', background: 'linear-gradient(to left, transparent, #C9A96E)' }} />
           </div>
-          <p style={{
-            fontFamily: "'Lora', serif",
-            fontSize: 'clamp(1.05rem, 3.8vw, 1.35rem)',
-            fontStyle: 'italic',
-            color: '#8B7355',
-            maxWidth: '520px',
-            margin: '0 auto 1rem',
-            lineHeight: 1.8,
-          }}>
-            &ldquo;Whether you bring a gift or simply bring yourself, you&apos;ve already given us the greatest joy.&rdquo;
-          </p>
-          <p style={{ fontFamily: "'Lora', serif", color: '#B0967E', fontSize: '0.9rem', letterSpacing: '0.05em' }}>
-            — Bandana &amp; Tara
-          </p>
         </motion.div>
       </section>
     </main>
