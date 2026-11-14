@@ -6,35 +6,11 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { getGuestByCode } from '@/lib/supabase';
 import guestCodesData from '@/data/guestCodes.json';
+import GathbandhanKnot from '@/components/GathbandhanKnot';
+import MirrorFrame from '@/components/MirrorFrame';
 
 const GUEST_CODE_KEY = 'wedding_guest_code';
 
-
-// Cute ribbon bow with a little heart pin; replaces the old tape strip.
-// Used by BOTH the opened page and the flying preview card so they stay in sync.
-function PolaroidBow({ width }: { width: number }) {
-  return (
-    <svg
-      className="absolute pointer-events-none"
-      style={{ top: -width * 0.36, left: '50%', transform: 'translateX(-50%) rotate(-3deg)', width, height: width * 0.62, overflow: 'visible', filter: 'drop-shadow(0 2px 2px rgba(0,0,0,0.18))' }}
-      viewBox="0 0 84 52"
-      aria-hidden="true"
-    >
-      {/* tails */}
-      <path d="M42 26 L30 50 L38 45 L42 52 Z" fill="#d98a8f" />
-      <path d="M42 26 L54 50 L46 45 L42 52 Z" fill="#c9767c" />
-      {/* loops */}
-      <path d="M42 26 C30 2 4 4 6 20 C8 34 30 32 42 26 Z" fill="#f0a6ab" stroke="#d98a8f" strokeWidth="1" />
-      <path d="M42 26 C54 2 80 4 78 20 C76 34 54 32 42 26 Z" fill="#f0a6ab" stroke="#d98a8f" strokeWidth="1" />
-      <path d="M40 24 C30 12 16 12 14 19" fill="none" stroke="#fbd0d3" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M44 24 C54 12 68 12 70 19" fill="none" stroke="#fbd0d3" strokeWidth="1.6" strokeLinecap="round" />
-      {/* knot */}
-      <rect x="36" y="19" width="12" height="14" rx="4" fill="#d98a8f" />
-      {/* heart */}
-      <path d="M42 31 C37 27 37 22 40 22 C41.5 22 42 23.5 42 23.5 C42 23.5 42.5 22 44 22 C47 22 47 27 42 31 Z" fill="#fff6f0" />
-    </svg>
-  );
-}
 
 export default function EnvelopeLanding() {
   const [stage, setStage] = useState<'envelope' | 'animating' | 'opened'>('envelope');
@@ -131,19 +107,21 @@ export default function EnvelopeLanding() {
               boxShadow: '0 20px 60px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.08)',
             }}
           >
-            {/* Pinned bow + heart (shared with preview card) */}
-            <PolaroidBow width={84} />
+            {/* Gathbandhan wedding knot (same component as the flying preview card) */}
+            <GathbandhanKnot />
 
             {/* Photo — object-position top to keep faces in frame */}
-            <div className="w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/images/childhood.jpg"
-                alt="Tara and Bandana as kids"
-                className="w-full h-full object-cover"
-                style={{ display: 'block', objectPosition: '50% 15%', filter: 'sepia(8%) contrast(1.04)' }}
-              />
-            </div>
+            <MirrorFrame scale={1}>
+              <div className="w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/childhood.jpg"
+                  alt="Tara and Bandana as kids"
+                  className="w-full h-full object-cover"
+                  style={{ display: 'block', objectPosition: '50% 15%', filter: 'sepia(8%) contrast(1.04)' }}
+                />
+              </div>
+            </MirrorFrame>
 
             {/* Polaroid bottom label */}
             <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center" style={{ height: 58 }}>
@@ -240,18 +218,20 @@ export default function EnvelopeLanding() {
                   width: '74%',
                 }}
               >
-                {/* Pinned bow + heart (mirror of opened stage) */}
-                <PolaroidBow width={44} />
+                {/* Gathbandhan wedding knot (mirror of opened stage) */}
+                <GathbandhanKnot />
                 {/* Photo — objectPosition top = faces visible */}
-                <div className="w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/images/childhood.jpg"
-                    alt="Tara and Bandana as kids"
-                    className="w-full h-full object-cover"
-                    style={{ display: 'block', objectPosition: '50% 15%', filter: 'sepia(8%) contrast(1.04)' }}
-                  />
-                </div>
+                <MirrorFrame scale={0.5}>
+                  <div className="w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/images/childhood.jpg"
+                      alt="Tara and Bandana as kids"
+                      className="w-full h-full object-cover"
+                      style={{ display: 'block', objectPosition: '50% 15%', filter: 'sepia(8%) contrast(1.04)' }}
+                    />
+                  </div>
+                </MirrorFrame>
                 {/* Polaroid label */}
                 <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center" style={{ height: 22 }}>
                   <p
