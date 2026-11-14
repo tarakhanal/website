@@ -2,15 +2,10 @@
 
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
+import Navigation from '@/components/Navigation';
 import DirectionsModal from '@/components/DirectionsModal';
 import ScratchTheDate from '@/components/ScratchTheDate';
-import { LazySection, FloatingMusicToggle, scrollToSection } from '@/components/SinglePage';
-import StoryPage from '@/app/story/page';
-import TimelinePage from '@/app/timeline/page';
-import GalleryPage from '@/app/gallery/page';
-import MusicPage from '@/app/music/page';
-import RegistryPage from '@/app/registry/page';
-import FAQPage from '@/app/faqs/page';
 import { Phone, MapPin, CalendarPlus, Navigation as NavigationIcon } from 'lucide-react';
 
 import { ceremonyEvent, receptionEvent } from '@/lib/events';
@@ -139,9 +134,10 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-[#F5F1ED]">
-      <FloatingMusicToggle />
+      <Navigation />
 
-      <div className="h-10" />
+      {/* Spacer for fixed navbar */}
+      <div className="h-24" />
 
       {/* Floating Image Marquee */}
       <section className="relative min-h-[60vh] flex flex-col justify-center py-12 bg-gradient-to-r from-[#F5F1ED] via-white/60 to-[#F5F1ED]" style={{ overflowX: 'hidden', overflowY: 'visible' }}>
@@ -412,15 +408,13 @@ export default function HomePage() {
           <motion.div className='song-suggestion max-w-4xl mx-auto w-full text-center mt-8 py-12'>
             
             <p>Do you want to suggest songs for our reception?</p>
-            <a
-              href="#music"
-              onClick={scrollToSection('music')}
+            <Link
+              href="/music"
               className="px-8 py-4 border-2 border-[#D4AF85] text-[#8B7355] rounded-full font-semibold uppercase tracking-wide text-sm transition-all inline-block hover:scale-105 active:scale-95"
               style={{ touchAction: 'manipulation' }}
-              data-testid="home-suggest-songs-link"
             >
               Suggest Songs
-            </a>
+            </Link>
             </motion.div>
 
           {/* Registry */}
@@ -497,10 +491,8 @@ export default function HomePage() {
                 Your love and presence is the greatest gift of all. But if you'd like to celebrate us, we've curated a few things we'd cherish.
               </p>
 
-              <a
-                href="#registry"
-                onClick={scrollToSection('registry')}
-                data-testid="home-view-registry-link"
+              <Link
+                href="/registry"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -522,19 +514,12 @@ export default function HomePage() {
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(139,115,85,0.35)'; }}
               >
                 View Our Registry
-              </a>
+              </Link>
             </div>
           </motion.div>
 
         </motion.div>
       </section>
-
-      <LazySection id="story"><StoryPage /></LazySection>
-      <LazySection id="timeline"><TimelinePage /></LazySection>
-      <LazySection id="gallery"><GalleryPage /></LazySection>
-      <LazySection id="music"><MusicPage /></LazySection>
-      <LazySection id="registry"><RegistryPage /></LazySection>
-      <LazySection id="faqs"><FAQPage /></LazySection>
     </main>
   );
 }

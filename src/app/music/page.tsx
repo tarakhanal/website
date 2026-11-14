@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '@/components/Navigation';
-import { PageShell } from '@/components/SinglePage';
 import PageHeader from '@/components/PageHeader';
 import NameModal from '@/components/NameModal';
 import NewSongToasts, { type NewSongToast } from '@/components/NewSongToasts';
@@ -936,7 +935,7 @@ export default function MusicPage() {
   };
 
   return (
-    <PageShell className="min-h-screen bg-gradient-to-b from-[#FCFBF8] via-[#F9F6F2] to-[#F4EEE8] text-[#3D3D3D]">
+    <main className="min-h-screen bg-gradient-to-b from-[#FCFBF8] via-[#F9F6F2] to-[#F4EEE8] text-[#3D3D3D]">
       <Navigation />
 
       <NewSongToasts toasts={newSongToasts} onDismiss={dismissToast} />
@@ -1563,6 +1562,6 @@ export default function MusicPage() {
           </div>
         </div>
       )}
-    </PageShell>
+    </main>
   );
 }

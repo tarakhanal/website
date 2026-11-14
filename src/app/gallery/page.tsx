@@ -3,7 +3,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '@/components/Navigation';
-import { PageShell, useIsSinglePage } from '@/components/SinglePage';
 import Image, { StaticImageData } from 'next/image';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -212,8 +211,6 @@ function GalleryScroller() {
   const WHEEL_THRESHOLD = 340;
   const TOUCH_THRESHOLD = 65;
   const COOLDOWN_MS = 800; // min ms between photo changes
-  const embedded = useIsSinglePage();
-  const pinRef = useRef<HTMLDivElement>(null);
 
   const advance = useCallback(() => setStackIndex((i) => Math.min(i + 1, N - 1)), []);
   const retreat = useCallback(() => setStackIndex((i) => Math.max(i - 1, 0)), []);
@@ -221,7 +218,6 @@ function GalleryScroller() {
   // Lock body scroll for the entire gallery page — iOS Safari requires this at
   // the document level (not just the element) to reliably block native scroll.
   useEffect(() => {
-    if (embedded) return;
     const prevOverflow = document.body.style.overflow;
     const prevPosition = document.body.style.position;
     const prevWidth = document.body.style.width;
@@ -233,36 +229,9 @@ function GalleryScroller() {
       document.body.style.position = prevPosition;
       document.body.style.width = prevWidth;
     };
-  }, [embedded]);
-
-  // One-page home: the section pins while the page scrolls, and scroll progress picks the photo.
-  useEffect(() => {
-    if (!embedded) return;
-    const el = pinRef.current;
-    if (!el) return;
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const rect = el.getBoundingClientRect();
-      const travel = Math.max(1, rect.height - window.innerHeight);
-      const progress = Math.min(1, Math.max(0, -rect.top / travel));
-      setStackIndex(Math.min(N - 1, Math.floor(progress * N)));
-    };
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-    frame = requestAnimationFrame(update);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-    };
-  }, [embedded]);
+  }, []);
 
   useEffect(() => {
-    if (embedded) return;
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       if (e.deltaY > 0 && stackIndex < N - 1) {
@@ -326,21 +295,19 @@ function GalleryScroller() {
       window.removeEventListener('touchmove', onTouchMove);
       window.removeEventListener('touchend', onTouchEnd);
     };
-  }, [stackIndex, advance, retreat, embedded]);
+  }, [stackIndex, advance, retreat]);
 
   const openLightbox = useCallback((i: number) => setLightboxIndex(i), []);
 
   return (
     <>
-      <div ref={pinRef} style={embedded ? { height: `${N * 45 + 100}svh` } : undefined}>
       <div
         ref={sectionRef}
-        className={`flex flex-col items-center px-6 sm:px-12 ${embedded ? 'sticky top-0 overflow-hidden' : ''}`}
+        className="flex flex-col items-center px-6 sm:px-12"
         style={{
           minHeight: '100svh',
-          height: embedded ? '100svh' : undefined,
           paddingTop: 'clamp(1.5rem, 6vw, 5rem)',
-          touchAction: embedded ? undefined : 'none',
+          touchAction: 'none',
         }}
       >
         {/* Mobile: chapter label above stack — sticky so it stays visible */}
@@ -368,7 +335,6 @@ function GalleryScroller() {
           <div className="sm:hidden" style={{ height: 'min(480px, 92vw)' }} />
         )}
       </div>
-      </div>
 
       <AnimatePresence>
         {lightboxIndex !== null && (
@@ -387,7 +353,7 @@ function GalleryScroller() {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function GalleryPage() {
   return (
-    <PageShell className="bg-[#F7F3EE] min-h-screen overflow-x-hidden">
+    <main className="bg-[#F7F3EE] min-h-screen overflow-x-hidden">
       <Navigation />
 
       <section className="pt-28 md:pt-36 pb-6 px-4 text-center">
@@ -402,6 +368,6 @@ export default function GalleryPage() {
       </section>
 
       <GalleryScroller />
-    </PageShell>
+    </main>
   );
 }
