@@ -1,8 +1,8 @@
 import React from 'react';
 
 // Wedding-style draped pardha for the photo: slim maroon drapes over a sheer ivory layer,
-// gold-embroidered edges, a lotus medallion on a scalloped valance with pearl drops,
-// and ribbon-bow tiebacks with little heart charms.
+// gold-embroidered edges, and a scalloped valance with pearl drops. A little peacock
+// stands on each side, out in the margin beside the frame.
 // Drawn in a fixed 300x400 viewBox (same 3:4 ratio as the photo), so the opened page and
 // the mini flying preview card scale identically.
 const gold = '#d9b25c';
@@ -18,7 +18,7 @@ function Drape({ flip }: { flip?: boolean }) {
         fill="#fff6e6"
         opacity="0.28"
       />
-      {/* heavy curtain body, pinched at the tieback (y=250) */}
+      {/* heavy curtain body */}
       <path
         d="M0 0 L78 0 C70 70 100 150 84 250 C70 300 96 360 74 400 L0 400 Z"
         fill="url(#pardhaRed)"
@@ -48,34 +48,44 @@ function Drape({ flip }: { flip?: boolean }) {
   );
 }
 
-function Heart({ x, y, s = 1, fill = '#c2203a' }: { x: number; y: number; s?: number; fill?: string }) {
+// A cute little peacock facing right (flip it for the other side)
+function Peacock({ flip }: { flip?: boolean }) {
+  const feathers = [-62, -31, 0, 31, 62];
   return (
-    <path
-      transform={`translate(${x} ${y}) scale(${s})`}
-      d="M0 0 C -3 -4 -8 0 0 7 C 8 0 3 -4 0 0 Z"
-      fill={fill}
-    />
-  );
-}
-
-// ribbon-bow tieback with a little heart charm
-function BowTie({ x, y }: { x: number; y: number }) {
-  return (
-    <g transform={`translate(${x} ${y})`}>
-      {/* rope band around the drape */}
-      <path d="M-12 -3 C -4 3 4 3 12 -3 L12 3 C 4 9 -4 9 -12 3 Z" fill={gold} />
-      <path d="M-12 -2 C -4 4 4 4 12 -2" stroke={goldLt} strokeWidth="1" fill="none" />
-      {/* tails */}
-      <path d="M0 3 L-6 17 L-2 15 L0 19 Z" fill="#e8c25f" />
-      <path d="M0 3 L6 17 L2 15 L0 19 Z" fill="#e8c25f" />
-      {/* bow loops */}
-      <path d="M0 0 C -8 -10 -15 -4 -12 2 C -9 7 -3 3 0 0 Z" fill={goldLt} stroke={gold} strokeWidth="0.8" />
-      <path d="M0 0 C 8 -10 15 -4 12 2 C 9 7 3 3 0 0 Z" fill={goldLt} stroke={gold} strokeWidth="0.8" />
-      <circle cx="0" cy="0" r="2.6" fill={gold} />
-      {/* heart charm on a tiny chain */}
-      <path d="M0 19 L0 24" stroke={gold} strokeWidth="1" />
-      <Heart x={0} y={24} s={0.9} />
-    </g>
+    <svg
+      viewBox="0 0 64 90"
+      className="w-full h-full"
+      style={{ transform: flip ? 'scaleX(-1)' : undefined, overflow: 'visible' }}
+      aria-hidden="true"
+    >
+      {/* tail fan */}
+      <g transform="translate(24 66)">
+        {feathers.map((a) => (
+          <g key={a} transform={`rotate(${a - 30})`}>
+            <path d="M0 0 C -7 -14 -7 -30 0 -40 C 7 -30 7 -14 0 0 Z" fill="#1f8a70" opacity="0.92" />
+            <ellipse cx="0" cy="-31" rx="4.2" ry="5.4" fill="#2a5db0" stroke={gold} strokeWidth="0.8" />
+            <ellipse cx="0" cy="-31" rx="1.7" ry="2.4" fill="#0e8c9a" />
+          </g>
+        ))}
+      </g>
+      {/* body */}
+      <ellipse cx="32" cy="64" rx="10" ry="14" fill="#1b6fa8" transform="rotate(-14 32 64)" />
+      <ellipse cx="33" cy="67" rx="5" ry="8" fill="#3aa6c4" opacity="0.7" transform="rotate(-14 33 67)" />
+      {/* neck */}
+      <path d="M34 56 C 42 46 44 36 40 28 L46 28 C 50 38 48 50 40 62 Z" fill="#1b6fa8" />
+      {/* head */}
+      <circle cx="43" cy="26" r="5" fill="#1b6fa8" />
+      <circle cx="44.6" cy="25" r="1" fill="#fff" />
+      <circle cx="44.9" cy="25" r="0.5" fill="#222" />
+      <path d="M47 27 L52 29 L47 30 Z" fill={gold} />
+      {/* crest */}
+      <path d="M41 21 L39 12 M43 21 L43 10 M45 21 L47 12" stroke={gold} strokeWidth="1" strokeLinecap="round" />
+      <circle cx="39" cy="11.5" r="1.5" fill="#e8486a" />
+      <circle cx="43" cy="9.5" r="1.5" fill="#e8486a" />
+      <circle cx="47" cy="11.5" r="1.5" fill="#e8486a" />
+      {/* little feet */}
+      <path d="M30 77 L29 86 M35 77 L36 86" stroke={gold} strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
   );
 }
 
@@ -120,10 +130,6 @@ export default function PardhaFrame({ children }: { children: React.ReactNode })
         <Drape />
         <Drape flip />
 
-        {/* tieback bows */}
-        <BowTie x={22} y={245} />
-        <BowTie x={278} y={245} />
-
         {/* scalloped valance */}
         <path
           d="M-6 -6 L306 -6 L306 20 Q 281 42 256 20 Q 231 42 206 20 Q 181 42 156 20 Q 131 42 106 20 Q 81 42 56 20 Q 31 42 6 20 L-6 20 Z"
@@ -135,7 +141,6 @@ export default function PardhaFrame({ children }: { children: React.ReactNode })
           stroke={gold}
           strokeWidth="2"
         />
-        {/* inner gold lace line */}
         <path
           d="M6 14 Q 31 34 56 14 Q 81 34 106 14 Q 131 34 156 14 Q 181 34 206 14 Q 231 34 256 14 Q 281 34 306 14"
           fill="none"
@@ -148,27 +153,26 @@ export default function PardhaFrame({ children }: { children: React.ReactNode })
         {/* pearl drops at each scallop dip */}
         {[31, 81, 131, 181, 231, 281].map((x) => (
           <g key={x}>
-          <path d={`M${x} 36 L${x} 41`} stroke={gold} strokeWidth="1" />
+            <path d={`M${x} 36 L${x} 41`} stroke={gold} strokeWidth="1" />
             <circle cx={x} cy="44" r="3" fill={pearl} stroke={gold} strokeWidth="0.8" />
           </g>
         ))}
         <rect x="-6" y="-6" width="312" height="6" fill={gold} />
-
-        {/* lotus medallion in the center of the valance */}
-        <g transform="translate(150 24)">
-          <circle r="15" fill="#7d0e20" stroke={gold} strokeWidth="1.6" />
-          <circle r="12" fill="none" stroke={goldLt} strokeWidth="0.8" strokeDasharray="1 2.5" />
-          {[-52, -26, 26, 52].map((a) => (
-            <ellipse key={a} cx="0" cy="-5" rx="3.4" ry="7" fill="#f6c9cf" stroke={gold} strokeWidth="0.5" transform={`rotate(${a})`} />
-          ))}
-          <ellipse cx="0" cy="-5" rx="3.6" ry="8" fill="#fff1ea" stroke={gold} strokeWidth="0.6" />
-          <circle cy="3" r="1.8" fill={gold} />
-        </g>
-
-        {/* tiny hearts flanking the medallion */}
-        <Heart x={122} y={14} s={0.8} fill={goldLt} />
-        <Heart x={178} y={14} s={0.8} fill={goldLt} />
       </svg>
+
+      {/* peacocks standing in the side margins, clear of the frame */}
+      <div
+        className="absolute pointer-events-none"
+        style={{ left: '-19%', bottom: '-2%', width: '15%', aspectRatio: '64/90' }}
+      >
+        <Peacock />
+      </div>
+      <div
+        className="absolute pointer-events-none"
+        style={{ right: '-19%', bottom: '-2%', width: '15%', aspectRatio: '64/90' }}
+      >
+        <Peacock flip />
+      </div>
     </div>
   );
 }
