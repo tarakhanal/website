@@ -8,6 +8,7 @@ import { getGuestByCode } from '@/lib/supabase';
 import guestCodesData from '@/data/guestCodes.json';
 import GathbandhanKnot from '@/components/GathbandhanKnot';
 import MirrorFrame from '@/components/MirrorFrame';
+import WeddingBorder from '@/components/WeddingBorder';
 
 const GUEST_CODE_KEY = 'wedding_guest_code';
 
@@ -93,7 +94,9 @@ export default function EnvelopeLanding() {
         className="min-h-screen flex flex-col items-center justify-center overflow-hidden relative"
         style={{ background: 'linear-gradient(160deg, #fdf6f0 0%, #f5e6de 50%, #ede0d4 100%)' }}
       >
-        <div className="relative z-10 flex flex-col items-center w-full px-8" style={{ maxWidth: '380px' }}>
+        {/* Red Nepali wedding border: marigold garlands, string lights, kalash (same component in the flying preview) */}
+        <WeddingBorder scale={1} />
+        <div className="relative z-10 flex flex-col items-center w-full px-10" style={{ maxWidth: '400px' }}>
 
           {/* Polaroid frame */}
           <motion.div
@@ -204,9 +207,11 @@ export default function EnvelopeLanding() {
           >
             {/* Mini preview — exact mirror of the opened stage */}
             <div
-              className="w-full h-full flex flex-col items-center justify-center"
+              className="relative w-full h-full flex flex-col items-center justify-center"
               style={{ background: 'linear-gradient(160deg, #fdf6f0 0%, #f5e6de 50%, #ede0d4 100%)' }}
             >
+              {/* Same border as the opened page, scaled to the preview card width */}
+              <WeddingBorder scale={0.85} />
               {/* Polaroid */}
               <div
                 className="relative"
@@ -500,9 +505,9 @@ export default function EnvelopeLanding() {
       {(guestName || true) && (
         <motion.div
           initial={{ y: -60, opacity: 0 }}
-          animate={{ y: 120, opacity: 1 }}
+          animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1.2, delay: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-          className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-32"
+          className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6"
           style={{ pointerEvents: 'none' }}
         >
           {/* Text Banner */}
