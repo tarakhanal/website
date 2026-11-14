@@ -67,7 +67,10 @@ type ItunesTrack = {
 const PREVIEW_START_EVENT = 'wedding-preview-start';
 const PREVIEW_STOP_EVENT = 'wedding-preview-stop';
 const MAX_VOTES = 5;
-const LIVE_REFRESH_MS = 6000;
+// Backup poll only: realtime delivers changes within ~1s when it works.
+const LIVE_REFRESH_MS = 30000;
+// Stop the backup poll after this long with no touch/scroll/key (resumes on next touch).
+const IDLE_PAUSE_MS = 3 * 60 * 1000;
 const FRESH_SONG_WINDOW_MS = 2 * 60 * 1000;
 const FRESH_GLOW_MS = 5000;
 const TOAST_MS = 5000;
@@ -562,25 +565,48 @@ export default function MusicPage() {
     };
   }, [scheduleLiveRefresh]);
 
-  // Auto-refresh. Always on: a realtime channel can report SUBSCRIBED yet never
-  // deliver events (e.g. tables not added to the supabase_realtime publication),
-  // which previously froze vote counts until a page reload.
+  // Backup auto-refresh. A realtime channel can report SUBSCRIBED yet never deliver
+  // events (e.g. tables not added to the supabase_realtime publication), so a slow poll
+  // stays as a safety net. It pauses while the tab is hidden or the guest is idle, and
+  // refreshes right away when they come back.
   useEffect(() => {
+    let lastActivity = Date.now();
+    let wasIdle = false;
+
+    const refreshAll = () => Promise.all([refreshSongsFromDb(), refreshVoteCredits()]);
+
+    const onActivity = () => {
+      lastActivity = Date.now();
+      if (wasIdle) {
+        wasIdle = false;
+        if (document.visibilityState === 'visible') void refreshAll();
+      }
+    };
+
     const intervalId = window.setInterval(async () => {
       if (document.visibilityState !== 'visible') return;
-      await Promise.all([refreshSongsFromDb(), refreshVoteCredits()]);
+      if (Date.now() - lastActivity > IDLE_PAUSE_MS) {
+        wasIdle = true;
+        return;
+      }
+      await refreshAll();
     }, LIVE_REFRESH_MS);
 
     const onVisible = async () => {
       if (document.visibilityState === 'visible') {
-        await Promise.all([refreshSongsFromDb(), refreshVoteCredits()]);
+        lastActivity = Date.now();
+        wasIdle = false;
+        await refreshAll();
       }
     };
 
+    const activityEvents = ['pointerdown', 'touchstart', 'keydown', 'scroll'] as const;
+    activityEvents.forEach((name) => window.addEventListener(name, onActivity, { passive: true, capture: true }));
     document.addEventListener('visibilitychange', onVisible);
 
     return () => {
       window.clearInterval(intervalId);
+      activityEvents.forEach((name) => window.removeEventListener(name, onActivity, { capture: true }));
       document.removeEventListener('visibilitychange', onVisible);
     };
   }, [refreshSongsFromDb, refreshVoteCredits]);
