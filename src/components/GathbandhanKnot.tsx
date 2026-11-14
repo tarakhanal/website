@@ -10,7 +10,7 @@ export default function GathbandhanKnot() {
   return (
     <svg
       className="absolute pointer-events-none"
-      style={{ zIndex: 5, top: 0, left: '-7%', width: '114%', transform: 'translateY(-42%) rotate(-1deg)', overflow: 'visible', filter: 'drop-shadow(0 3px 3px rgba(60,20,10,0.25))' }}
+      style={{ zIndex: 5, top: 0, left: '14%', width: '72%', transform: 'translateY(-40%) rotate(-1deg)', overflow: 'visible', filter: 'drop-shadow(0 3px 3px rgba(60,20,10,0.25))' }}
       viewBox="0 0 200 90"
       aria-hidden="true"
     >
