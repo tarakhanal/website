@@ -196,20 +196,21 @@ export default function AdminPage() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#F5E6E0] to-[#E8D5CC] flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-[#D4AF85]">
+        <div className="w-full max-w-md rounded-3xl border border-[#E8D5CC] bg-white p-8 shadow-2xl sm:p-10">
           <h1 className="text-3xl font-bold text-center text-[#C41E3A] mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>
             Admin Login
           </h1>
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">Password</label>
+              <label htmlFor="admin-password-input" className="ui-label">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                id="admin-password-input"
                 placeholder="Enter admin password"
-                className="w-full px-4 py-2 border-2 border-[#D4AF85] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C41E3A]"
+                className="ui-input"
                 autoFocus
               />
             </div>
@@ -222,7 +223,7 @@ export default function AdminPage() {
 
             <button
               type="submit"
-              className="w-full px-4 py-3 bg-[#C41E3A] text-white rounded-lg font-semibold hover:bg-[#8B1A2B] transition"
+              className="ui-btn w-full bg-[#C41E3A] text-white shadow-[0_10px_22px_-12px_rgba(196,30,58,0.8)] hover:bg-[#8B1A2B]"
             >
               Login
             </button>

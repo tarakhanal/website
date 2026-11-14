@@ -8,6 +8,7 @@ export interface SongData {
   vote_count: number;
   album_name?: string | null;
   artwork_url?: string | null;
+  preview_url?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -46,6 +47,9 @@ export type VoteSubmitReason =
   | 'duplicate_name'
   | 'rate_limit_song_24h'
   | 'rate_limit_day'
+  | 'guest_limit'
+  | 'rate_limit_network'
+  | 'network_song_limit'
   | 'song_not_found'
   | 'setup_required'
   | 'error';
@@ -62,6 +66,17 @@ type VoteRpcPayload = {
   votes_left?: number | null;
   error_code?: string;
   error_message?: string;
+};
+
+export type RemoveVoteResult = {
+  ok: boolean;
+  reason: 'removed' | 'not_voted' | 'setup_required' | 'error';
+  votesLeft: number | null;
+};
+
+export type GuestVoteStatus = {
+  remaining: number;
+  votedSongIds: string[];
 };
 
 export type AddSongResult =
@@ -119,6 +134,7 @@ export async function addSongToDb(
   metadata?: {
     albumName?: string | null;
     artworkUrl?: string | null;
+    previewUrl?: string | null;
   }
 ): Promise<AddSongResult> {
   const cleanTitle = normalizeText(title);
@@ -131,20 +147,24 @@ export async function addSongToDb(
       return { ok: false, reason: 'duplicate', message: 'This song has already been suggested.' };
     }
 
-    const { data, error } = await supabase
-      .from('songs')
-      .insert([
-        {
-          title: cleanTitle,
-          artist: cleanArtist,
-          suggested_by: cleanName,
-          vote_count: 0,
-          album_name: metadata?.albumName || null,
-          artwork_url: metadata?.artworkUrl || null,
-        },
-      ])
-      .select()
-      .single();
+    const row: Record<string, string | number | null> = {
+      title: cleanTitle,
+      artist: cleanArtist,
+      suggested_by: cleanName,
+      vote_count: 0,
+      album_name: metadata?.albumName || null,
+      artwork_url: metadata?.artworkUrl || null,
+    };
+    if (metadata?.previewUrl) row.preview_url = metadata.previewUrl;
+
+    let { data, error } = await supabase.from('songs').insert([row]).select().single();
+
+    // preview_url column missing (MUSIC_VOTES_V2.sql not run yet) — save the song without it.
+    if (error && row.preview_url && /preview_url/i.test(error.message || '')) {
+      console.warn('[music] songs.preview_url column missing; saving without preview. Run MUSIC_VOTES_V2.sql.');
+      delete row.preview_url;
+      ({ data, error } = await supabase.from('songs').insert([row]).select().single());
+    }
 
     if (error) {
       console.error('[music] Error inserting song:', describeError(error), error);
@@ -248,6 +268,41 @@ export async function submitSongVote(
   }
 }
 
+// Votes left + songs this guest (device id or same name) currently votes for.
+export async function getGuestVoteStatus(
+  userId: string,
+  voterName?: string | null
+): Promise<GuestVoteStatus | null> {
+  if (!userId) return null;
+  try {
+    const { data, error } = await supabase.rpc('get_guest_vote_status', {
+      p_user_id: userId,
+      p_voter_name: normalizeVoterName(voterName) || null,
+    });
+
+    if (error) {
+      console.error('[music] get_guest_vote_status failed:', describeError(error), error);
+      if (isSetupError(error)) {
+        // MUSIC_VOTES_V2.sql not run yet — fall back to the old counter.
+        const remaining = await getRemainingVoteCredits();
+        return remaining === null ? null : { remaining, votedSongIds: [] };
+      }
+      return null;
+    }
+
+    const payload = (data || {}) as { remaining?: number; voted_song_ids?: string[] | null };
+    if (typeof payload.remaining !== 'number') return null;
+
+    return {
+      remaining: Math.max(0, Math.min(5, payload.remaining)),
+      votedSongIds: Array.isArray(payload.voted_song_ids) ? payload.voted_song_ids : [],
+    };
+  } catch (err) {
+    console.error('[music] Error fetching guest vote status:', describeError(err), err);
+    return null;
+  }
+}
+
 export async function getRemainingVoteCredits(): Promise<number | null> {
   try {
     const { data, error } = await supabase.rpc('get_vote_credits_remaining');
@@ -311,35 +366,49 @@ export async function getSongVotersBySongIds(songIds: string[]): Promise<Record<
   return grouped;
 }
 
-// Remove a vote for a song
-export async function removeSongVote(songId: string, userId: string): Promise<boolean> {
+// Remove a vote so it can be used on another song (server enforces ownership)
+export async function removeSongVote(
+  songId: string,
+  userId: string,
+  voterName?: string | null
+): Promise<RemoveVoteResult> {
   try {
-    // Delete vote
-    const { error: deleteError } = await supabase
-      .from('song_votes')
-      .delete()
-      .eq('song_id', songId)
-      .eq('user_id', userId);
-
-    if (deleteError) {
-      console.error('Error removing vote:', deleteError);
-      return false;
-    }
-
-    // Decrement vote count
-    const { error: updateError } = await supabase.rpc('decrement_song_votes', {
+    const { data, error } = await supabase.rpc('remove_song_vote', {
       p_song_id: songId,
+      p_user_id: userId,
+      p_voter_name: normalizeVoterName(voterName) || null,
     });
 
-    if (updateError) {
-      console.error('Error decrementing vote count:', updateError);
-      return false;
+    if (error) {
+      console.error('[music] remove_song_vote failed:', describeError(error), error);
+      return { ok: false, reason: isSetupError(error) ? 'setup_required' : 'error', votesLeft: null };
     }
 
-    return true;
+    const payload = (data || {}) as { ok?: boolean; reason?: RemoveVoteResult['reason']; votes_left?: number | null; error_code?: string; error_message?: string };
+    if (payload.reason === 'error') {
+      console.error('[music] remove_song_vote rejected:', payload.error_code, payload.error_message);
+    }
+
+    return {
+      ok: payload.ok === true,
+      reason: payload.reason || (payload.ok ? 'removed' : 'error'),
+      votesLeft: typeof payload.votes_left === 'number' ? payload.votes_left : null,
+    };
   } catch (err) {
-    console.error('Error removing vote:', err);
-    return false;
+    console.error('[music] Error removing vote:', describeError(err), err);
+    return { ok: false, reason: 'error', votesLeft: null };
+  }
+}
+
+// Remember a song's 30-second preview link so later visitors don't need to look it up.
+export async function saveSongPreviewUrl(songId: string, previewUrl: string): Promise<void> {
+  const { error } = await supabase
+    .from('songs')
+    .update({ preview_url: previewUrl })
+    .eq('id', songId)
+    .is('preview_url', null);
+  if (error) {
+    console.warn('[music] Could not save preview link:', describeError(error));
   }
 }
 

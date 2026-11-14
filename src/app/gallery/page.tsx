@@ -356,13 +356,12 @@ export default function GalleryPage() {
     <main className="bg-[#F7F3EE] min-h-screen overflow-x-hidden">
       <Navigation />
 
-      <section className="pt-40 pb-8 px-4 text-center">
+      <section className="pt-28 md:pt-36 pb-6 px-4 text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-[#8B7355] mt-4 text-lg"
-          style={{ fontFamily: "'Lora', serif" }}
+          className="page-subtitle text-lg text-[#8B7355]"
         >
           Moments from our journey together
         </motion.p>

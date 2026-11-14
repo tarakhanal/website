@@ -12,14 +12,13 @@ export default function StoryPage() {
       <Navigation />
 
       {/* Header */}
-      <section className="pt-32 pb-12 flex justify-center px-4 sm:px-6 lg:px-8 text-center">
+      <section className="pt-28 md:pt-36 pb-10 flex justify-center px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-xl text-[#8B7355] font-light max-w-2xl mx-auto"
-             style={{ fontFamily: "'Lora', serif", marginTop: '5rem' }}>
+          <p className="page-subtitle text-xl text-[#8B7355]">
             A journey of love, laughter, and forever growth
           </p>
         </motion.div>
