@@ -6,8 +6,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { getGuestByCode } from '@/lib/supabase';
 import guestCodesData from '@/data/guestCodes.json';
-import MalaFrame from '@/components/MalaFrame';
-import WeddingBorder from '@/components/WeddingBorder';
+import PardhaFrame from '@/components/PardhaFrame';
 
 const GUEST_CODE_KEY = 'wedding_guest_code';
 
@@ -93,8 +92,6 @@ export default function EnvelopeLanding() {
         className="min-h-screen flex flex-col items-center justify-center overflow-hidden relative"
         style={{ background: 'linear-gradient(160deg, #fdf6f0 0%, #f5e6de 50%, #ede0d4 100%)' }}
       >
-        {/* Red Nepali wedding border: marigold garlands, string lights, kalash (same component in the flying preview) */}
-        <WeddingBorder scale={1} />
         <div className="relative z-10 flex flex-col items-center w-full px-10" style={{ maxWidth: '400px' }}>
 
           {/* Polaroid frame */}
@@ -109,8 +106,8 @@ export default function EnvelopeLanding() {
               boxShadow: '0 20px 60px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.08)',
             }}
           >
-            {/* Photo in an arched mirror, draped with a marigold mala (same component in the flying preview) */}
-            <MalaFrame scale={1}>
+            {/* Photo framed by a draped maroon pardha (same component in the flying preview) */}
+            <PardhaFrame>
               <div className="w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -120,7 +117,7 @@ export default function EnvelopeLanding() {
                   style={{ display: 'block', objectPosition: '50% 15%', filter: 'sepia(8%) contrast(1.04)' }}
                 />
               </div>
-            </MalaFrame>
+            </PardhaFrame>
 
             {/* Polaroid bottom label */}
             <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center" style={{ height: 58 }}>
@@ -203,11 +200,9 @@ export default function EnvelopeLanding() {
           >
             {/* Mini preview — exact mirror of the opened stage */}
             <div
-              className="relative w-full h-full flex flex-col items-center justify-center"
+              className="w-full h-full flex flex-col items-center justify-center"
               style={{ background: 'linear-gradient(160deg, #fdf6f0 0%, #f5e6de 50%, #ede0d4 100%)' }}
             >
-              {/* Same border as the opened page, scaled to the preview card width */}
-              <WeddingBorder scale={0.85} />
               {/* Polaroid */}
               <div
                 className="relative"
@@ -219,8 +214,8 @@ export default function EnvelopeLanding() {
                   width: '74%',
                 }}
               >
-                {/* Photo in an arched mirror with marigold mala (mirror of opened stage) */}
-                <MalaFrame scale={0.5}>
+                {/* Photo framed by the draped pardha (mirror of opened stage) */}
+                <PardhaFrame>
                   <div className="w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -230,7 +225,7 @@ export default function EnvelopeLanding() {
                       style={{ display: 'block', objectPosition: '50% 15%', filter: 'sepia(8%) contrast(1.04)' }}
                     />
                   </div>
-                </MalaFrame>
+                </PardhaFrame>
                 {/* Polaroid label */}
                 <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center" style={{ height: 22 }}>
                   <p
