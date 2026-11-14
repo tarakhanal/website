@@ -49,35 +49,41 @@ export default function NameModal({ isOpen, onSubmit, onCancel }: NameModalProps
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 md:p-8"
+            className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl sm:p-8"
           >
-            <div className="flex justify-between items-center mb-4">
+            <div className="mb-3 flex items-start justify-between gap-4">
               <h2
-                className="text-2xl font-bold text-[#3D3D3D]"
+                className="mb-0 text-2xl font-bold leading-tight text-[#3D3D3D]"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 Before you continue...
               </h2>
               <button
                 onClick={onCancel}
-                className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="Close"
+                className="-mr-2 -mt-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-[#F5F1ED]"
               >
                 <X className="w-5 h-5 text-gray-500" />
               </button>
             </div>
 
-            <div className="mb-6 space-y-2">
-              <p className="text-[#8B7355] text-base leading-relaxed">
+            <div className="mb-6 space-y-1.5">
+              <p className="mb-0 text-base leading-relaxed text-[#8B7355]">
                 Please tell us your name so we know who suggested and liked each song! 🎵
               </p>
-              <p className="text-sm text-[#9B866F] leading-relaxed">
+              <p className="mb-0 text-sm leading-relaxed text-[#9B866F]">
                 (Please put your actual name here.)
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
+                <label htmlFor="guest-name-input" className="ui-label">
+                  Your name
+                </label>
                 <input
+                  id="guest-name-input"
+                  autoComplete="name"
                   type="text"
                   value={name}
                   onChange={(e) => {
@@ -85,7 +91,7 @@ export default function NameModal({ isOpen, onSubmit, onCancel }: NameModalProps
                     setError('');
                   }}
                   placeholder="Enter your name"
-                  className="w-full px-4 py-3 border border-[#E8DDD5] rounded-lg focus:outline-none focus:border-[#D4AF85] focus:ring-2 focus:ring-[#D4AF85]/20 text-[#3D3D3D]"
+                  className="ui-input"
                   autoFocus
                 />
                 <AnimatePresence>
@@ -102,19 +108,17 @@ export default function NameModal({ isOpen, onSubmit, onCancel }: NameModalProps
                 </AnimatePresence>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col-reverse gap-3 pt-1 sm:flex-row">
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2.5 bg-[#8B7355] text-white rounded-lg font-semibold hover:bg-[#6B5345] transition-colors hover:scale-105 active:scale-95"
-                  style={{ touchAction: 'manipulation' }}
+                  className="ui-btn ui-btn-primary w-full sm:w-auto sm:flex-1"
                 >
                   Continue
                 </button>
                 <button
                   type="button"
                   onClick={onCancel}
-                  className="flex-1 px-4 py-2.5 border border-[#E8DDD5] text-[#8B7355] rounded-lg font-semibold hover:bg-[#F5F1ED] transition-colors hover:scale-105 active:scale-95"
-                  style={{ touchAction: 'manipulation' }}
+                  className="ui-btn ui-btn-ghost w-full sm:w-auto sm:flex-1"
                 >
                   Cancel
                 </button>

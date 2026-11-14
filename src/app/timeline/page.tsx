@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Navigation from '@/components/Navigation';
+import PageHeader from '@/components/PageHeader';
 import { Clock } from 'lucide-react';
 
 const timelineEvents = [
@@ -75,26 +76,10 @@ export default function TimelinePage() {
       <Navigation />
 
       {/* Header */}
-      <section className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 text-center">
-        <motion.div
-          initial={{ opacity: 1, y: 0 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1
-            className="text-5xl md:text-6xl font-bold text-[#3D3D3D] mb-4"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            Wedding Day Timeline
-          </h1>
-          <p className="text-xl text-[#8B7355] font-light max-w-2xl mx-auto">
-            April 24, 2027 • South Park Township, PA
-          </p>
-        </motion.div>
-      </section>
+      <PageHeader title="Wedding Day Timeline" subtitle="April 24, 2027 • South Park Township, PA" />
 
       {/* Timeline */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="pt-6 pb-20 md:pt-10 px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={containerVariants}
           initial="hidden"

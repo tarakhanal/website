@@ -17,6 +17,7 @@
 --   * Safety cap: at most 50 new votes per day per network.
 --
 -- Also:
+--   * turns on Supabase Realtime for songs + song_votes (live vote updates),
 --   * songs.preview_url stores the 30-second Apple Music preview clip link.
 --   * Votes can now only be added/removed through these functions (direct
 --     table inserts/deletes by the public are no longer allowed), so the
@@ -241,6 +242,29 @@ REVOKE EXECUTE ON FUNCTION public.guest_active_votes(TEXT, TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.get_guest_vote_status(TEXT, TEXT) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.submit_song_vote(UUID, TEXT, TEXT) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.remove_song_vote(UUID, TEXT, TEXT) TO anon, authenticated;
+
+-- ---------------------------------------------------------------------
+-- Live updates: send song/vote changes to open Music pages instantly.
+-- (Without this, Supabase Realtime connects but never delivers events.)
+-- ---------------------------------------------------------------------
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_publication_tables
+      WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'songs'
+    ) THEN
+      ALTER PUBLICATION supabase_realtime ADD TABLE public.songs;
+    END IF;
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_publication_tables
+      WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'song_votes'
+    ) THEN
+      ALTER PUBLICATION supabase_realtime ADD TABLE public.song_votes;
+    END IF;
+  END IF;
+END
+$$;
 
 -- Resync vote counts with actual vote rows (no-op if already correct).
 UPDATE public.songs s
