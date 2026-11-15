@@ -108,7 +108,7 @@ export default function EnvelopeLanding() {
             }}
           >
             {/* Gathbandhan wedding knot (same component as the flying preview card) */}
-            <GathbandhanKnot />
+            {/* <GathbandhanKnot /> */}
 
             {/* Photo — object-position top to keep faces in frame */}
             <MirrorFrame scale={1}>
@@ -219,7 +219,7 @@ export default function EnvelopeLanding() {
                 }}
               >
                 {/* Gathbandhan wedding knot (mirror of opened stage) */}
-                <GathbandhanKnot />
+                {/* <GathbandhanKnot /> */}
                 {/* Photo — objectPosition top = faces visible */}
                 <MirrorFrame scale={0.5}>
                   <div className="w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
