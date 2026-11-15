@@ -68,7 +68,7 @@ const PREVIEW_START_EVENT = 'wedding-preview-start';
 const PREVIEW_STOP_EVENT = 'wedding-preview-stop';
 const MAX_VOTES = 5;
 // Backup poll only: realtime delivers changes within ~1s when it works.
-const LIVE_REFRESH_MS = 30000;
+const LIVE_REFRESH_MS = 12000;
 // Stop the backup poll after this long with no touch/scroll/key (resumes on next touch).
 const IDLE_PAUSE_MS = 3 * 60 * 1000;
 const FRESH_SONG_WINDOW_MS = 2 * 60 * 1000;
