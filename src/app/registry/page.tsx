@@ -6,7 +6,8 @@ import { useState } from 'react';
 import { ExternalLink, Copy, Check } from 'lucide-react';
 
 // TODO: replace with the real Zelle email or phone number
-const ZELLE_HANDLE = 'REPLACE_WITH_ZELLE_EMAIL_OR_PHONE';
+const zelle_email = process.env.NEXT_PUBLIC_ZELLE_HANDLE_EMAIL || '';
+const ZELLE_HANDLE = zelle_email;
 
 export default function RegistryPage() {
   const [copied, setCopied] = useState(false);
