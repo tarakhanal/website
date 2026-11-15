@@ -356,7 +356,7 @@ export default function GalleryPage() {
     <main className="bg-[#F7F3EE] min-h-screen overflow-x-hidden">
       <Navigation />
 
-      <section className="pt-28 md:pt-36 pb-6 px-4 text-center">
+      <section className="pt-30 md:pt-25 px-4 text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
