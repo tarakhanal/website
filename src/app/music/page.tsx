@@ -66,7 +66,6 @@ type ItunesTrack = {
 // Tells BackgroundMusic to pause while a song preview plays (and resume after).
 const PREVIEW_START_EVENT = 'wedding-preview-start';
 const PREVIEW_STOP_EVENT = 'wedding-preview-stop';
-const MAX_VOTES = 5;
 // Backup poll only: realtime delivers changes within ~1s when it works.
 const LIVE_REFRESH_MS = 12000;
 // Stop the backup poll after this long with no touch/scroll/key (resumes on next touch).
@@ -216,7 +215,6 @@ export default function MusicPage() {
   const [songVotersById, setSongVotersById] = useState<Record<string, string[]>>({});
   const [openVotersSongId, setOpenVotersSongId] = useState<string | null>(null);
   const [pendingVoteSongId, setPendingVoteSongId] = useState<string | null>(null);
-  const [votesLeft, setVotesLeft] = useState<number | null>(null);
   const [votedSongIds, setVotedSongIds] = useState<Set<string>>(() => new Set());
   const [selectedPreviewUrl, setSelectedPreviewUrl] = useState<string | null>(null);
   const [playingSongId, setPlayingSongId] = useState<string | null>(null);
@@ -372,14 +370,10 @@ export default function MusicPage() {
     guestNameRef.current = guestName;
   }, [guestName]);
 
-  // Votes left + which songs this guest has voted for (by device id or same name).
+  // Which songs this guest has voted for (by device id or same name).
   const refreshVoteCredits = useCallback(async () => {
     const status = await getGuestVoteStatus(userId, guestNameRef.current);
-    if (!status) {
-      setVotesLeft(null);
-      return;
-    }
-    setVotesLeft(status.remaining);
+    if (!status) return;
     setVotedSongIds(new Set(status.votedSongIds));
   }, [userId]);
 
@@ -747,10 +741,6 @@ export default function MusicPage() {
 
       const voteResult = await submitSongVote(songId, userId, normalizedGuestName || 'Guest');
 
-      if (typeof voteResult.votesLeft === 'number') {
-        setVotesLeft(voteResult.votesLeft);
-      }
-
       if (voteResult.ok) {
         setLocalSongs((prevSongs) =>
           prevSongs.map((song) => (song.id === songId ? { ...song, votes: song.votes + 1 } : song))
@@ -765,17 +755,9 @@ export default function MusicPage() {
             [songId]: [...current, name],
           };
         });
-        setSuccessMessage(
-          typeof voteResult.votesLeft === 'number' && voteResult.votesLeft === 0
-            ? 'Vote counted 💛 That was your last one — tap a voted song to move a vote.'
-            : 'Vote counted 💛'
-        );
+        setSuccessMessage('Vote counted 💛');
       } else {
-        if (voteResult.reason === 'guest_limit' || voteResult.reason === 'rate_limit_day') {
-          setErrorMessage(
-            `You've used all ${MAX_VOTES} votes. Tap a song you voted for to take that vote back, then vote here.`
-          );
-        } else if (voteResult.reason === 'network_song_limit') {
+        if (voteResult.reason === 'network_song_limit') {
           setErrorMessage('Someone on this Wi-Fi already voted for this song. Switch to mobile data to add your vote.');
         } else if (voteResult.reason === 'rate_limit_network') {
           setErrorMessage('Lots of votes from this Wi-Fi today! Please try again tomorrow or switch to mobile data.');
@@ -810,10 +792,6 @@ export default function MusicPage() {
 
       const result = await removeSongVote(songId, userId, guestName || null);
 
-      if (typeof result.votesLeft === 'number') {
-        setVotesLeft(result.votesLeft);
-      }
-
       if (result.ok) {
         setLocalSongs((prevSongs) =>
           prevSongs.map((song) => (song.id === songId ? { ...song, votes: Math.max(0, song.votes - 1) } : song))
@@ -830,7 +808,7 @@ export default function MusicPage() {
           if (index === -1) return prev;
           return { ...prev, [songId]: [...current.slice(0, index), ...current.slice(index + 1)] };
         });
-        setSuccessMessage('Vote removed — you can use it on another song.');
+        setSuccessMessage('Vote removed.');
       } else if (result.reason === 'not_voted') {
         void refreshVoteCredits();
         void refreshSongsFromDb();
@@ -991,11 +969,11 @@ export default function MusicPage() {
                 <span className="font-semibold text-[#8B7355]">{totalSongs}</span>{' '}
                 <span className="text-[#7E6A55]">suggested songs</span>
               </div>
-              <div className="rounded-full border border-[#E8DDD5] bg-white/90 px-5 py-2.5 text-sm shadow-sm" data-testid="votes-left">
+              <div className="rounded-full border border-[#E8DDD5] bg-white/90 px-5 py-2.5 text-sm shadow-sm" data-testid="votes-cast">
                 <span className="font-semibold text-[#8B7355]">
-                  {typeof votesLeft === 'number' ? votesLeft : '--'}
+                  {votedSongIds.size}
                 </span>{' '}
-                <span className="text-[#7E6A55]">votes left</span>
+                <span className="text-[#7E6A55]">{votedSongIds.size === 1 ? 'song voted' : 'songs voted'}</span>
               </div>
             </div>
           </PageHeader>
@@ -1529,7 +1507,7 @@ export default function MusicPage() {
             <div className="text-center rounded-2xl border border-[#E8DDD5] bg-white/80 p-5 shadow-sm">
               <div className="text-3xl font-bold text-[#D4AF85] mb-2">2</div>
               <p className="text-[#3D3D3D] leading-relaxed">
-<span className="font-semibold">Vote</span> for up to 5 songs you love — tap again to move a vote
+<span className="font-semibold">Vote</span> for as many songs as you love — one vote per song
               </p>
             </div>
             <div className="text-center rounded-2xl border border-[#E8DDD5] bg-white/80 p-5 shadow-sm">
