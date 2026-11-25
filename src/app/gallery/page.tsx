@@ -38,9 +38,9 @@ const chapterLabels = [
 ];
 
 const allPhotos: PhotoEntry[] = [
-  { src: img1,  caption: 'The beginning',      chapter: 0 },
-  { src: img2,  caption: 'Growing closer',      chapter: 1 },
-  { src: img3,  caption: 'Side by side',        chapter: 2 },
+  { src: img1,  caption: 'How it all started',      chapter: 0 },
+  { src: img2,  caption: 'First Meet',          chapter: 0 },
+  { src: img3,  caption: 'Side by side',            chapter: 2 },
   { src: img4,  caption: 'Finding each other',  chapter: 3 },
   { src: img5,  caption: 'Adventures together', chapter: 4 },
   { src: img6,  caption: 'Our favorite places', chapter: 5 },

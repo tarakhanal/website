@@ -279,7 +279,7 @@ export default function HomePage() {
               {ceremonyCopied ? '✓ Copied!' : '2050 Buffalo Dr, South Park Township, PA 15129'}
             </p>
             <p className="text-lg text-[#3D3D3D] mb-2">
-              <span className="font-semibold">9:30AM to 5PM</span>
+              <span className="font-semibold">9:00AM to 3:30PM</span>
             </p>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
               <div style={{ width: '100%', maxWidth: '600px', borderRadius: '0.75rem', overflow: 'hidden', boxShadow: '0 4px 24px rgba(0,0,0,0.12)' }}>
@@ -355,7 +355,7 @@ export default function HomePage() {
               {receptionCopied ? '✓ Copied!' : '4257 Eastland Square Dr Suite A, Columbus, OH 43232'}
             </p>
             <p className="text-lg text-[#3D3D3D] mb-2">
-              <span className="font-semibold">12PM to 11PM</span>
+              <span className="font-semibold">12PM to 4PM</span>
             </p>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
               <div style={{ width: '100%', maxWidth: '600px', borderRadius: '0.75rem', overflow: 'hidden', boxShadow: '0 4px 24px rgba(0,0,0,0.12)' }}>
